@@ -112,14 +112,33 @@
 
         .form-group {
             margin-bottom: 1.5rem;
+            position: relative;
         }
 
         .form-label {
-            display: block;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             font-weight: 500;
             color: #555;
             margin-bottom: 0.5rem;
             font-size: 0.9rem;
+        }
+
+        .live-value {
+            font-size: 0.85rem;
+            color: #0066cc;
+            font-weight: 600;
+            background: rgba(0,102,204,0.08);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            animation: pulse 0.3s ease;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
         }
 
         .form-input {
@@ -128,7 +147,7 @@
             border: 2px solid #e9ecef;
             border-radius: 6px;
             font-size: 1rem;
-            transition: border-color 0.2s;
+            transition: all 0.2s ease;
             background: white;
         }
 
@@ -136,6 +155,63 @@
             outline: none;
             border-color: #0066cc;
             box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .form-input:hover:not(:focus) {
+            border-color: #66b3ff;
+            transform: translateY(-0.5px);
+        }
+
+        .range-container {
+            margin-top: 0.5rem;
+        }
+
+        .form-range {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #e9ecef;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+            cursor: pointer;
+        }
+
+        .form-range::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background: #0066cc;
+            cursor: pointer;
+            border: 2px solid white;
+            box-shadow: 0 2px 6px rgba(0,102,204,0.3);
+            transition: all 0.2s ease;
+        }
+
+        .form-range::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 8px rgba(0,102,204,0.4);
+        }
+
+        .form-range::-moz-range-thumb {
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background: #0066cc;
+            cursor: pointer;
+            border: 2px solid white;
+            box-shadow: 0 2px 6px rgba(0,102,204,0.3);
+        }
+
+        .range-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+            color: #666;
         }
 
         .form-select {
@@ -192,6 +268,55 @@
             border-radius: 8px;
             text-align: center;
             margin-bottom: 2rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .result-highlight::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+            transition: left 0.4s ease;
+        }
+
+        .result-highlight.updating::before {
+            left: 100%;
+        }
+
+        .result-card {
+            background: linear-gradient(135deg, #f8f9ff 0%, #e8f0ff 100%);
+            border: 1px solid #d4e8ff;
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .result-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #0066cc, transparent);
+            transition: left 0.4s ease;
+        }
+
+        .result-card.updating::before {
+            left: 100%;
+        }
+
+        .result-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,102,204,0.15);
         }
 
         .result-main {
@@ -435,26 +560,45 @@
                         
                         <div class="form-group">
                             <label class="form-label">
-                                Стоимость недвижимости
-                                <span class="info-tooltip" data-tooltip="Полная стоимость покупаемой недвижимости">ℹ</span>
+                                <span>Стоимость недвижимости
+                                <span class="info-tooltip" data-tooltip="Полная стоимость покупаемой недвижимости">ℹ</span></span>
+                                <span class="live-value" id="propertyPriceDisplay">5 000 000 ₽</span>
                             </label>
                             <div class="input-suffix" data-suffix="₽">
-                                <input type="number" id="propertyPrice" class="form-input" value="5000000" min="500000" step="100000">
+                                <input type="number" id="propertyPrice" class="form-input" value="5000000" min="500000" step="100000" oninput="updateLiveValues()">
+                            </div>
+                            <div class="range-container">
+                                <input type="range" id="propertyPriceRange" class="form-range" min="500000" max="20000000" step="100000" value="5000000" oninput="syncRangeInput('propertyPrice', this.value); updateLiveValues()">
+                                <div class="range-labels">
+                                    <span>500 тыс ₽</span>
+                                    <span>20 млн ₽</span>
+                                </div>
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label class="form-label">
-                                Первоначальный взнос
-                                <span class="info-tooltip" data-tooltip="Сумма, которую вы готовы внести сразу">ℹ</span>
+                                <span>Первоначальный взнос
+                                <span class="info-tooltip" data-tooltip="Сумма, которую вы готовы внести сразу">ℹ</span></span>
+                                <span class="live-value" id="downPaymentDisplay">1 500 000 ₽</span>
                             </label>
                             <div class="input-suffix" data-suffix="₽">
-                                <input type="number" id="downPayment" class="form-input" value="1500000" min="0" step="50000">
+                                <input type="number" id="downPayment" class="form-input" value="1500000" min="0" step="50000" oninput="updateLiveValues()">
+                            </div>
+                            <div class="range-container">
+                                <input type="range" id="downPaymentRange" class="form-range" min="0" max="5000000" step="50000" value="1500000" oninput="syncRangeInput('downPayment', this.value); updateLiveValues()">
+                                <div class="range-labels">
+                                    <span>0 ₽</span>
+                                    <span id="downPaymentMaxLabel">5 млн ₽</span>
+                                </div>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label">Процент первоначального взноса</label>
+                            <label class="form-label">
+                                <span>Процент первоначального взноса</span>
+                                <span class="live-value" id="downPaymentPercentDisplay">30%</span>
+                            </label>
                             <div class="input-suffix" data-suffix="%">
                                 <input type="number" id="downPaymentPercent" class="form-input" value="30" min="0" max="100" step="1" readonly>
                             </div>
@@ -466,11 +610,19 @@
                         
                         <div class="form-group">
                             <label class="form-label">
-                                Процентная ставка
-                                <span class="info-tooltip" data-tooltip="Годовая процентная ставка по ипотеке">ℹ</span>
+                                <span>Процентная ставка
+                                <span class="info-tooltip" data-tooltip="Годовая процентная ставка по ипотеке">ℹ</span></span>
+                                <span class="live-value" id="interestRateDisplay">8.5%</span>
                             </label>
                             <div class="input-suffix" data-suffix="%">
-                                <input type="number" id="interestRate" class="form-input" value="8.5" min="1" max="30" step="0.1">
+                                <input type="number" id="interestRate" class="form-input" value="8.5" min="1" max="30" step="0.1" oninput="updateLiveValues()">
+                            </div>
+                            <div class="range-container">
+                                <input type="range" id="interestRateRange" class="form-range" min="1" max="30" step="0.1" value="8.5" oninput="syncRangeInput('interestRate', this.value); updateLiveValues()">
+                                <div class="range-labels">
+                                    <span>1%</span>
+                                    <span>30%</span>
+                                </div>
                             </div>
                         </div>
 
@@ -653,9 +805,142 @@
     <script>
         let mortgageChart;
 
+        // Живые обновления с дебаунсом
+        let updateTimeout;
+        let isRealTimeActive = false;
+        
+        // Функция для форматирования чисел
+        function formatNumber(num) {
+            return new Intl.NumberFormat('ru-RU').format(num);
+        }
+        
+        // Синхронизация слайдеров с полями ввода
+        function syncRangeInput(inputId, value) {
+            document.getElementById(inputId).value = value;
+            const rangeElement = document.getElementById(inputId + 'Range');
+            if (rangeElement) {
+                rangeElement.value = value;
+            }
+            
+            // Обновляем максимальное значение для слайдера первоначального взноса
+            if (inputId === 'propertyPrice') {
+                const downPaymentRange = document.getElementById('downPaymentRange');
+                const maxDownPayment = Math.min(value, 10000000);
+                downPaymentRange.max = maxDownPayment;
+                document.getElementById('downPaymentMaxLabel').textContent = 
+                    formatNumber(maxDownPayment / 1000000) + ' млн ₽';
+            }
+        }
+        
+        // Обновление живых значений
+        function updateLiveValues() {
+            const propertyPrice = parseFloat(document.getElementById('propertyPrice').value) || 0;
+            const downPayment = parseFloat(document.getElementById('downPayment').value) || 0;
+            const interestRate = parseFloat(document.getElementById('interestRate').value) || 0;
+            
+            // Обновляем отображаемые значения с анимацией
+            const elements = [
+                { id: 'propertyPriceDisplay', value: formatNumber(propertyPrice) + ' ₽' },
+                { id: 'downPaymentDisplay', value: formatNumber(downPayment) + ' ₽' },
+                { id: 'interestRateDisplay', value: interestRate + '%' },
+            ];
+            
+            elements.forEach(({ id, value }) => {
+                const element = document.getElementById(id);
+                if (element && element.textContent !== value) {
+                    element.classList.add('pulse');
+                    element.textContent = value;
+                    setTimeout(() => element.classList.remove('pulse'), 300);
+                }
+            });
+            
+            // Обновляем процент первоначального взноса
+            if (propertyPrice > 0) {
+                const percent = (downPayment / propertyPrice * 100).toFixed(1);
+                document.getElementById('downPaymentPercent').value = percent;
+                const percentDisplay = document.getElementById('downPaymentPercentDisplay');
+                if (percentDisplay) {
+                    percentDisplay.classList.add('pulse');
+                    percentDisplay.textContent = percent + '%';
+                    setTimeout(() => percentDisplay.classList.remove('pulse'), 300);
+                }
+            }
+            
+            // Синхронизация слайдеров
+            syncRangeInput('propertyPrice', propertyPrice);
+            syncRangeInput('downPayment', downPayment);
+            syncRangeInput('interestRate', interestRate);
+            
+            // Запуск расчета в реальном времени с дебаунсом
+            clearTimeout(updateTimeout);
+            updateTimeout = setTimeout(() => {
+                if (isRealTimeActive && propertyPrice > 0 && downPayment >= 0 && interestRate > 0) {
+                    calculateMortgageRealTime();
+                }
+            }, 300);
+        }
+        
+        // Быстрый расчет для реального времени
+        function calculateMortgageRealTime() {
+            const propertyPrice = parseFloat(document.getElementById('propertyPrice').value) || 0;
+            const downPayment = parseFloat(document.getElementById('downPayment').value) || 0;
+            const maternalCapital = parseFloat(document.getElementById('maternalCapital').value) || 0;
+            const interestRate = parseFloat(document.getElementById('interestRate').value) / 100;
+            const loanTerm = parseInt(document.getElementById('loanTerm').value) || 25;
+            
+            const loanAmount = propertyPrice - downPayment - maternalCapital;
+            
+            if (loanAmount > 0 && interestRate > 0) {
+                const monthlyRate = interestRate / 12;
+                const totalMonths = loanTerm * 12;
+                const monthlyPayment = loanAmount * (monthlyRate * Math.pow(1 + monthlyRate, totalMonths)) / (Math.pow(1 + monthlyRate, totalMonths) - 1);
+                const totalPayment = monthlyPayment * totalMonths;
+                const overpayment = totalPayment - loanAmount;
+                
+                // Быстрое обновление основных результатов
+                updateResultsRealTime({
+                    monthlyPayment,
+                    totalPayment,
+                    overpayment,
+                    loanAmount
+                });
+            }
+        }
+        
+        // Быстрое обновление результатов
+        function updateResultsRealTime(results) {
+            const resultElements = {
+                monthlyPayment: document.querySelector('.result-main'),
+                loanAmount: document.querySelector('[data-result="loanAmount"]'),
+                totalPayment: document.querySelector('[data-result="totalPayment"]'),
+                overpayment: document.querySelector('[data-result="overpayment"]')
+            };
+            
+            Object.entries(resultElements).forEach(([key, element]) => {
+                if (element && results[key]) {
+                    element.classList.add('updating');
+                    element.textContent = formatCurrency(results[key]);
+                    setTimeout(() => element.classList.remove('updating'), 400);
+                }
+            });
+        }
+        
+        // Включение режима реального времени
+        function enableRealTimeMode() {
+            isRealTimeActive = true;
+            document.querySelector('.calculate-btn').textContent = 'Режим реального времени активен';
+            document.querySelector('.calculate-btn').style.background = '#28a745';
+        }
+        
         // Синхронизация полей первоначального взноса
-        document.getElementById('propertyPrice').addEventListener('input', updateDownPaymentPercent);
-        document.getElementById('downPayment').addEventListener('input', updateDownPaymentPercent);
+        document.getElementById('propertyPrice').addEventListener('input', function() {
+            updateDownPaymentPercent();
+            updateLiveValues();
+        });
+        document.getElementById('downPayment').addEventListener('input', function() {
+            updateDownPaymentPercent();
+            updateLiveValues();
+        });
         document.getElementById('downPaymentPercent').addEventListener('input', updateDownPaymentAmount);
 
         function updateDownPaymentPercent() {
@@ -755,32 +1040,32 @@
 
             const resultsHTML = `
                 <div class="result-highlight">
-                    <div class="result-main">${formatCurrency(totalMonthlyPayment)}</div>
+                    <div class="result-main" data-result="monthlyPayment">${formatCurrency(totalMonthlyPayment)}</div>
                     <div class="result-label">Ежемесячный платеж (с страховкой)</div>
                 </div>
 
                 <div class="results-grid">
-                    <div class="result-item">
+                    <div class="result-item result-card">
                         <div class="result-value">${formatCurrency(monthlyPayment)}</div>
                         <div class="result-desc">Основной платеж по кредиту</div>
                     </div>
-                    <div class="result-item">
+                    <div class="result-item result-card">
                         <div class="result-value">${formatCurrency(monthlyInsurance)}</div>
                         <div class="result-desc">Страхование в месяц</div>
                     </div>
-                    <div class="result-item">
-                        <div class="result-value">${formatCurrency(loanAmount)}</div>
+                    <div class="result-item result-card">
+                        <div class="result-value" data-result="loanAmount">${formatCurrency(loanAmount)}</div>
                         <div class="result-desc">Сумма кредита</div>
                     </div>
-                    <div class="result-item">
-                        <div class="result-value">${formatCurrency(overpayment)}</div>
+                    <div class="result-item result-card">
+                        <div class="result-value" data-result="overpayment">${formatCurrency(overpayment)}</div>
                         <div class="result-desc">Переплата по процентам</div>
                     </div>
-                    <div class="result-item">
-                        <div class="result-value">${formatCurrency(totalPayment)}</div>
+                    <div class="result-item result-card">
+                        <div class="result-value" data-result="totalPayment">${formatCurrency(totalPayment)}</div>
                         <div class="result-desc">Общая сумма выплат</div>
                     </div>
-                    <div class="result-item">
+                    <div class="result-item result-card">
                         <div class="result-value">${loanTerm} лет</div>
                         <div class="result-desc">Срок кредита</div>
                     </div>
@@ -894,7 +1179,14 @@
         // Автоматический расчет при загрузке
         document.addEventListener('DOMContentLoaded', function() {
             updateDownPaymentPercent();
+            updateLiveValues();
             calculateMortgage();
+            
+            // Включаем режим реального времени через 2 секунды
+            setTimeout(() => {
+                enableRealTimeMode();
+                calculateMortgageRealTime();
+            }, 2000);
         });
     </script>
 </body>
