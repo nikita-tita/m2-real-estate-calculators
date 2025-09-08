@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Финансовые Калькуляторы - Универсальный Сервис</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #667eea;
+        }
+
+        .hero {
+            padding: 8rem 2rem 4rem;
+            text-align: center;
+            color: white;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .filters {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 3rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 0.8rem 1.5rem;
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+        }
+
+        .calculators-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .calculator-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .calculator-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            border-color: #667eea;
+        }
+
+        .card-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 1rem;
+        }
+
+        .card-description {
+            color: #666;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .card-features {
+            list-style: none;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-features li {
+            padding: 0.3rem 0;
+            color: #555;
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        .card-features li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .card-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .popular-badge {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+        }
+
+        .new-badge {
+            background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+        }
+
+        .stats {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            text-align: center;
+        }
+
+        .stat-item {
+            padding: 1rem;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #667eea;
+            display: block;
+        }
+
+        .stat-label {
+            color: #666;
+            margin-top: 0.5rem;
+        }
+
+        .footer {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2rem 0;
+            margin-top: 4rem;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: #666;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: #667eea;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .calculators-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-tabs {
+                flex-direction: column;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 2000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .cta-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">💰 FinCalc</div>
+            <ul class="nav-links">
+                <li><a href="#home">Главная</a></li>
+                <li><a href="#calculators">Калькуляторы</a></li>
+                <li><a href="#about">О нас</a></li>
+                <li><a href="#contact">Контакты</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <h1>Финансовые Калькуляторы</h1>
+        <p>Профессиональные инструменты для принятия финансовых решений. Более 10 специализированных калькуляторов для инвестиций, недвижимости и кредитов.</p>
+        <a href="#calculators" class="cta-button">Выбрать калькулятор</a>
+    </section>
+
+    <div class="container">
+        <div class="stats">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-number">15+</span>
+                    <span class="stat-label">Калькуляторов</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">50k+</span>
+                    <span class="stat-label">Пользователей</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">100k+</span>
+                    <span class="stat-label">Расчетов</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">99%</span>
+                    <span class="stat-label">Точность</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="filters">
+            <div class="filter-tabs">
+                <div class="filter-btn active" onclick="filterCalculators('all')">Все</div>
+                <div class="filter-btn" onclick="filterCalculators('investment')">Инвестиции</div>
+                <div class="filter-btn" onclick="filterCalculators('mortgage')">Недвижимость</div>
+                <div class="filter-btn" onclick="filterCalculators('loan')">Кредиты</div>
+                <div class="filter-btn" onclick="filterCalculators('business')">Бизнес</div>
+            </div>
+            <input type="text" class="search-box" placeholder="Поиск по названию или ключевым словам..." oninput="searchCalculators(this.value)">
+        </div>
+
+        <div class="calculators-grid" id="calculatorsGrid">
+            <!-- Инвестиционные калькуляторы -->
+            <div class="calculator-card" data-category="investment" onclick="openCalculator('compound')">
+                <span class="card-badge popular-badge">Популярный</span>
+                <div class="card-icon">📈</div>
+                <div class="card-title">Сложные проценты</div>
+                <div class="card-description">Расчет доходности инвестиций с учетом реинвестирования прибыли, налогов и инфляции.</div>
+                <ul class="card-features">
+                    <li>Учет налогов и комиссий</li>
+                    <li>Анализ рисков (Монте-Карло)</li>
+                    <li>Сравнение стратегий</li>
+                    <li>Экспорт результатов</li>
+                </ul>
+            </div>
+
+            <div class="calculator-card" data-category="investment">
+                <span class="card-badge">Инвестиции</span>
+                <div class="card-icon">💎</div>
+                <div class="card-title">Портфельный анализ</div>
+                <div class="card-description">Оптимизация инвестиционного портфеля, расчет риска и доходности.</div>
+                <ul class="card-features">
+                    <li>Диверсификация активов</li>
+                    <li>Коэффициент Шарпа</li>
+                    <li>VaR анализ</li>
+                    <li>Ребалансировка</li>
+                </ul>
+            </div>
+
+            <!-- Ипотечные калькуляторы -->
+            <div class="calculator-card" data-category="mortgage" onclick="openCalculator('mortgage')">
+                <span class="card-badge popular-badge">Популярный</span>
+                <div class="card-icon">🏠</div>
+                <div class="card-title">Ипотечный калькулятор</div>
+                <div class="card-description">Расчет ежемесячного платежа, переплаты и графика погашения ипотеки.</div>
+                <ul class="card-features">
+                    <li>Аннуитетные и дифференцированные платежи</li>
+                    <li>Материнский капитал</li>
+                    <li>Льготные программы</li>
+                    <li>График платежей</li>
+                </ul>
+            </div>
+
+            <div class="calculator-card" data-category="mortgage" onclick="openCalculator('prepayment')">
+                <span class="card-badge">Экономия</span>
+                <div class="card-icon">💰</div>
+                <div class="card-title">Досрочное погашение</div>
+                <div class="card-description">Расчет выгоды от досрочного погашения ипотеки различными способами.</div>
+                <ul class="card-features">
+                    <li>Уменьшение срока vs платежа</li>
+                    <li>Частичные погашения</li>
+                    <li>Экономия на процентах</li>
+                    <li>Оптимальная стратегия</li>
+                </ul>
+            </div>
+
+            <div class="calculator-card" data-category="mortgage" onclick="openCalculator('rent-vs-buy')">
+                <span class="card-badge new-badge">Новый</span>
+                <div class="card-icon">🤔</div>
+                <div class="card-title">Аренда vs Покупка</div>
+                <div class="card-description">Сравнительный анализ выгоды аренды жилья против покупки в ипотеку.</div>
+                <ul class="card-features">
+                    <li>Полная стоимость владения</li>
+                    <li>Альтернативные инвестиции</li>
+                    <li>Учет роста цен</li>
+                    <li>Точка безубыточности</li>
+                </ul>
+            </div>
+
+            <div class="calculator-card" data-category="business" onclick="openCalculator('rental-yield')">
+                <span class="card-badge">Доходность</span>
+                <div class="card-icon">🏢</div>
+                <div class="card-title">Доходность аренды</div>
+                <div class="card-description">Расчет рентабельности инвестиций в недвижимость для сдачи в аренду.</div>
+                <ul class="card-features">
+                    <li>Валовая и чистая доходность</li>
+                    <li>Учет всех расходов</li>
+                    <li>Срок окупаемости</li>
+                    <li>Сравнение с альтернативами</li>
+                </ul>
+            </div>
+
+            <!-- Кредитные калькуляторы -->
+            <div class="calculator-card" data-category="loan">
+                <span class="card-badge">Кредиты</span>
+                <div class="card-icon">🏦</div>
+                <div class="card-title">Потребительский кредит</div>
+                <div class="card-description">Расчет параметров потребительского кредита и сравнение предложений банков.</div>
+                <ul class="card-features">
+                    <li>Полная стоимость кредита</li>
+                    <li>Сравнение предложений</li>
+                    <li>График платежей</li>
+                    <li>Досрочное погашение</li>
+                </ul>
+            </div>
+
+            <div class="calculator-card" data-category="loan">
+                <span class="card-badge">Автокредит</span>
+                <div class="card-icon">🚗</div>
+                <div class="card-title">Автокредит</div>
+                <div class="card-description">Специализированный калькулятор для расчета автокредита с учетом КАСКО и первоначального взноса.</div>
+                <ul class="card-features">
+                    <li>Первоначальный взнос</li>
+                    <li>КАСКО и страхование</li>
+                    <li>Trade-in</li>
+                    <li>Льготные программы</li>
+                </ul>
+            </div>
+
+            <!-- Бизнес калькуляторы -->
+            <div class="calculator-card" data-category="business">
+                <span class="card-badge">ROI</span>
+                <div class="card-icon">📊</div>
+                <div class="card-title">ROI калькулятор</div>
+                <div class="card-description">Расчет возврата инвестиций (ROI) для бизнес-проектов и инвестиций.</div>
+                <ul class="card-features">
+                    <li>NPV и IRR</li>
+                    <li>Период окупаемости</li>
+                    <li>Анализ чувствительности</li>
+                    <li>Денежные потоки</li>
+                </ul>
+            </div>
+
+            <div class="calculator-card" data-category="business">
+                <span class="card-badge new-badge">Новый</span>
+                <div class="card-icon">💼</div>
+                <div class="card-title">Бизнес-план</div>
+                <div class="card-description">Финансовое планирование и прогнозирование для стартапов и малого бизнеса.</div>
+                <ul class="card-features">
+                    <li>Прогноз доходов</li>
+                    <li>Планирование расходов</li>
+                    <li>Точка безубыточности</li>
+                    <li>Сценарный анализ</li>
+                </ul>
+            </div>
+
+            <!-- Специальные калькуляторы -->
+            <div class="calculator-card" data-category="investment">
+                <span class="card-badge">Пенсия</span>
+                <div class="card-icon">👴</div>
+                <div class="card-title">Пенсионный калькулятор</div>
+                <div class="card-description">Планирование пенсионных накоплений и расчет необходимых взносов.</div>
+                <ul class="card-features">
+                    <li>ИИС и НПФ</li>
+                    <li>Государственная пенсия</li>
+                    <li>Инфляционная корректировка</li>
+                    <li>Разные стратегии</li>
+                </ul>
+            </div>
+
+            <div class="calculator-card" data-category="investment">
+                <span class="card-badge">Налоги</span>
+                <div class="card-icon">📋</div>
+                <div class="card-title">Налоговый калькулятор</div>
+                <div class="card-description">Расчет налогов с инвестиций, недвижимости и других доходов.</div>
+                <ul class="card-features">
+                    <li>НДФЛ с инвестиций</li>
+                    <li>Налоговые льготы</li>
+                    <li>ИИС вычеты</li>
+                    <li>Оптимизация налогов</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal для информации о калькуляторе -->
+    <div id="calculatorModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+            <h3 id="modalTitle">Калькулятор</h3>
+            <p id="modalDescription">Описание калькулятора</p>
+            <button class="cta-button" onclick="launchCalculator()">Открыть калькулятор</button>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="#privacy">Политика конфиденциальности</a>
+                <a href="#terms">Условия использования</a>
+                <a href="#api">API</a>
+                <a href="#support">Поддержка</a>
+                <a href="#blog">Блог</a>
+            </div>
+            <p>&copy; 2024 FinCalc. Все права защищены. Профессиональные финансовые калькуляторы для принятия обоснованных решений.</p>
+        </div>
+    </footer>
+
+    <script>
+        let selectedCalculator = null;
+
+        const calculators = {
+            compound: {
+                title: 'Калькулятор сложных процентов',
+                description: 'Расширенный калькулятор для расчета доходности инвестиций с учетом всех факторов',
+                file: 'advanced_compound_calculator.html'
+            },
+            mortgage: {
+                title: 'Ипотечный калькулятор',
+                description: 'Полный расчет ипотеки с различными параметрами и условиями',
+                file: 'mortgage_calculator.html'
+            },
+            prepayment: {
+                title: 'Досрочное погашение ипотеки',
+                description: 'Анализ выгоды досрочного погашения разными способами',
+                file: 'prepayment_calculator.html'
+            },
+            'rent-vs-buy': {
+                title: 'Аренда или покупка',
+                description: 'Сравнительный анализ выгоды аренды против покупки жилья',
+                file: 'rent_vs_buy_calculator.html'
+            },
+            'rental-yield': {
+                title: 'Доходность от аренды',
+                description: 'Расчет рентабельности инвестиций в арендную недвижимость',
+                file: 'rental_yield_calculator.html'
+            }
+        };
+
+        function filterCalculators(category) {
+            const cards = document.querySelectorAll('.calculator-card');
+            const buttons = document.querySelectorAll('.filter-btn');
+            
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            cards.forEach(card => {
+                if (category === 'all' || card.dataset.category === category) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        function searchCalculators(query) {
+            const cards = document.querySelectorAll('.calculator-card');
+            const searchTerm = query.toLowerCase();
+            
+            cards.forEach(card => {
+                const title = card.querySelector('.card-title').textContent.toLowerCase();
+                const description = card.querySelector('.card-description').textContent.toLowerCase();
+                const features = Array.from(card.querySelectorAll('.card-features li')).map(li => li.textContent.toLowerCase()).join(' ');
+                
+                if (title.includes(searchTerm) || description.includes(searchTerm) || features.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        function openCalculator(calculatorId) {
+            selectedCalculator = calculatorId;
+            const calc = calculators[calculatorId];
+            
+            if (calc) {
+                document.getElementById('modalTitle').textContent = calc.title;
+                document.getElementById('modalDescription').textContent = calc.description;
+                document.getElementById('calculatorModal').style.display = 'block';
+            } else {
+                alert('Этот калькулятор еще в разработке. Скоро будет доступен!');
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('calculatorModal').style.display = 'none';
+        }
+
+        function launchCalculator() {
+            if (selectedCalculator && calculators[selectedCalculator]) {
+                const calc = calculators[selectedCalculator];
+                
+                if (calc.file === 'advanced_compound_calculator.html') {
+                    // Открываем существующий калькулятор
+                    window.open('advanced_compound_calculator.html', '_blank');
+                } else {
+                    // Для остальных калькуляторов показываем уведомление
+                    alert(`Калькулятор "${calc.title}" еще в разработке. Скоро будет доступен!`);
+                }
+            }
+            closeModal();
+        }
+
+        // Закрытие модального окна при клике вне его
+        window.onclick = function(event) {
+            const modal = document.getElementById('calculatorModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+
+        // Плавная прокрутка к якорям
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Анимация появления карточек при прокрутке
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Применяем анимацию к карточкам
+        document.querySelectorAll('.calculator-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(card);
+        });
+
+        // Обновление статистики (имитация)
+        function animateStats() {
+            const statNumbers = document.querySelectorAll('.stat-number');
+            const targets = ['15+', '50k+', '100k+', '99%'];
+            
+            statNumbers.forEach((stat, index) => {
+                const target = targets[index];
+                const isNumeric = target.includes('k') || target.includes('%');
+                
+                if (isNumeric) {
+                    let current = 0;
+                    const targetNum = parseInt(target.replace(/[^\d]/g, ''));
+                    const increment = targetNum / 50;
+                    
+                    const timer = setInterval(() => {
+                        current += increment;
+                        if (current >= targetNum) {
+                            stat.textContent = target;
+                            clearInterval(timer);
+                        } else {
+                            const suffix = target.includes('k') ? 'k+' : target.includes('%') ? '%' : '+';
+                            stat.textContent = Math.floor(current) + suffix;
+                        }
+                    }, 50);
+                } else {
+                    stat.textContent = target;
+                }
+            });
+        }
+
+        // Запуск анимации статистики при загрузке
+        window.addEventListener('load', () => {
+            setTimeout(animateStats, 1000);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор ипотеки - М2</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.5;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+
+        .header {
+            background: white;
+            border-bottom: 1px solid #e9ecef;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #0066cc;
+            text-decoration: none;
+        }
+
+        .back-link {
+            color: #0066cc;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .page-header {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 1rem;
+        }
+
+        .page-subtitle {
+            font-size: 1.1rem;
+            color: #666;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .calculator-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .calculator-form, .results-section {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .form-section {
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 500;
+            color: #555;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e9ecef;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+            background: white;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #0066cc;
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e9ecef;
+            border-radius: 6px;
+            font-size: 1rem;
+            background: white;
+            cursor: pointer;
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: #0066cc;
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+        }
+
+        .input-suffix {
+            position: relative;
+        }
+
+        .input-suffix::after {
+            content: attr(data-suffix);
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+            pointer-events: none;
+        }
+
+        .calculate-btn {
+            width: 100%;
+            padding: 1rem 2rem;
+            background: #0066cc;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .calculate-btn:hover {
+            background: #0052a3;
+        }
+
+        .result-highlight {
+            background: linear-gradient(135deg, #0066cc, #004499);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .result-main {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .result-item {
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border-left: 4px solid #0066cc;
+        }
+
+        .result-value {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.25rem;
+        }
+
+        .result-desc {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .chart-container {
+            height: 300px;
+            margin: 2rem 0;
+        }
+
+        .payment-schedule {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-top: 2rem;
+        }
+
+        .schedule-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .schedule-table th,
+        .schedule-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+            font-size: 0.9rem;
+        }
+
+        .schedule-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .schedule-table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .banks-section {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-top: 2rem;
+        }
+
+        .banks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .bank-card {
+            padding: 1rem;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .bank-card:hover {
+            border-color: #0066cc;
+            box-shadow: 0 4px 12px rgba(0,102,204,0.1);
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .bank-logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #0066cc;
+        }
+
+        .bank-rate {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #28a745;
+        }
+
+        .faq-section {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-top: 2rem;
+        }
+
+        .faq-item {
+            border-bottom: 1px solid #e9ecef;
+            padding: 1rem 0;
+        }
+
+        .faq-item:last-child {
+            border-bottom: none;
+        }
+
+        .faq-question {
+            font-weight: 600;
+            color: #333;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .faq-answer {
+            color: #666;
+            margin-top: 0.5rem;
+            display: none;
+            line-height: 1.6;
+        }
+
+        .faq-answer.active {
+            display: block;
+        }
+
+        .toggle-icon {
+            transition: transform 0.2s;
+        }
+
+        .toggle-icon.active {
+            transform: rotate(180deg);
+        }
+
+        @media (max-width: 768px) {
+            .calculator-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .result-main {
+                font-size: 2rem;
+            }
+
+            .banks-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .info-tooltip {
+            position: relative;
+            display: inline-block;
+            margin-left: 0.25rem;
+            color: #0066cc;
+            cursor: help;
+        }
+
+        .info-tooltip::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: white;
+            padding: 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s;
+            z-index: 1000;
+        }
+
+        .info-tooltip:hover::after {
+            opacity: 1;
+            visibility: visible;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <a href="m2-hub.html" class="logo">М2</a>
+            <a href="m2-hub.html" class="back-link">← К выбору расчётов</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">Калькулятор ипотеки</h1>
+            <p class="page-subtitle">Рассчитайте ежемесячный платеж, переплату и выберите лучшее предложение банка</p>
+        </div>
+
+        <div class="calculator-layout">
+            <div class="calculator-form">
+                <form id="mortgageForm">
+                    <div class="form-section">
+                        <h3 class="section-title">Параметры недвижимости</h3>
+                        
+                        <div class="form-group">
+                            <label class="form-label">
+                                Стоимость недвижимости
+                                <span class="info-tooltip" data-tooltip="Полная стоимость покупаемой недвижимости">ℹ</span>
+                            </label>
+                            <div class="input-suffix" data-suffix="₽">
+                                <input type="number" id="propertyPrice" class="form-input" value="5000000" min="500000" step="100000">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                Первоначальный взнос
+                                <span class="info-tooltip" data-tooltip="Сумма, которую вы готовы внести сразу">ℹ</span>
+                            </label>
+                            <div class="input-suffix" data-suffix="₽">
+                                <input type="number" id="downPayment" class="form-input" value="1500000" min="0" step="50000">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Процент первоначального взноса</label>
+                            <div class="input-suffix" data-suffix="%">
+                                <input type="number" id="downPaymentPercent" class="form-input" value="30" min="0" max="100" step="1" readonly>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3 class="section-title">Условия кредита</h3>
+                        
+                        <div class="form-group">
+                            <label class="form-label">
+                                Процентная ставка
+                                <span class="info-tooltip" data-tooltip="Годовая процентная ставка по ипотеке">ℹ</span>
+                            </label>
+                            <div class="input-suffix" data-suffix="%">
+                                <input type="number" id="interestRate" class="form-input" value="8.5" min="1" max="30" step="0.1">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Срок кредита</label>
+                            <select id="loanTerm" class="form-select">
+                                <option value="5">5 лет</option>
+                                <option value="10">10 лет</option>
+                                <option value="15">15 лет</option>
+                                <option value="20">20 лет</option>
+                                <option value="25" selected>25 лет</option>
+                                <option value="30">30 лет</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Тип платежей</label>
+                            <select id="paymentType" class="form-select">
+                                <option value="annuity" selected>Аннуитетные (равные платежи)</option>
+                                <option value="differential">Дифференцированные (убывающие)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3 class="section-title">Дополнительные расходы</h3>
+                        
+                        <div class="form-group">
+                            <label class="form-label">
+                                Материнский капитал
+                                <span class="info-tooltip" data-tooltip="Если используете маткапитал как первоначальный взнос">ℹ</span>
+                            </label>
+                            <div class="input-suffix" data-suffix="₽">
+                                <input type="number" id="maternalCapital" class="form-input" value="0" min="0" step="10000">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                Страхование (в год)
+                                <span class="info-tooltip" data-tooltip="Страхование жизни, имущества, титула">ℹ</span>
+                            </label>
+                            <div class="input-suffix" data-suffix="₽">
+                                <input type="number" id="insurance" class="form-input" value="50000" min="0" step="5000">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">
+                                Субсидии и льготы
+                                <span class="info-tooltip" data-tooltip="Семейная ипотека, IT-ипотека, военная ипотека">ℹ</span>
+                            </label>
+                            <select id="subsidyType" class="form-select">
+                                <option value="none">Без льгот</option>
+                                <option value="family">Семейная ипотека (до 6%)</option>
+                                <option value="it">IT-ипотека (до 5%)</option>
+                                <option value="military">Военная ипотека</option>
+                                <option value="rural">Сельская ипотека (до 3%)</option>
+                                <option value="dv">Дальневосточная ипотека (до 2%)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">
+                                Дополнительные расходы при покупке
+                                <span class="info-tooltip" data-tooltip="Оценка, регистрация, нотариус, агентство">ℹ</span>
+                            </label>
+                            <div class="input-suffix" data-suffix="₽">
+                                <input type="number" id="additionalCosts" class="form-input" value="150000" min="0" step="10000">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">
+                                Ежемесячный доход семьи
+                                <span class="info-tooltip" data-tooltip="Для расчёта долговой нагрузки">ℹ</span>
+                            </label>
+                            <div class="input-suffix" data-suffix="₽">
+                                <input type="number" id="familyIncome" class="form-input" value="200000" min="0" step="10000">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="button" class="calculate-btn" onclick="calculateMortgage()">
+                        Рассчитать ипотеку
+                    </button>
+                </form>
+            </div>
+
+            <div class="results-section" id="resultsSection">
+                <div id="resultsContent">
+                    <div style="text-align: center; color: #666; padding: 2rem;">
+                        <p>Заполните форму слева и нажмите "Рассчитать ипотеку" для получения результатов</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="payment-schedule" id="paymentSchedule" style="display: none;">
+            <h3 class="section-title">График платежей</h3>
+            <div id="scheduleContent"></div>
+        </div>
+
+        <div class="banks-section">
+            <h3 class="section-title">Банки-партнеры</h3>
+            <p style="color: #666; margin-bottom: 1rem;">Лучшие предложения по ипотеке от ведущих банков</p>
+            <div class="banks-grid">
+                <a href="https://www.sberbank.ru/ru/person/credits/home/buying_home" class="bank-card" target="_blank">
+                    <div class="bank-logo">Сбер</div>
+                    <div class="bank-rate">от 8.1%</div>
+                </a>
+                <a href="https://www.vtb.ru/personal/ipoteka/" class="bank-card" target="_blank">
+                    <div class="bank-logo">ВТБ</div>
+                    <div class="bank-rate">от 8.3%</div>
+                </a>
+                <a href="https://www.gazprombank.ru/personal/loans/mortgage/" class="bank-card" target="_blank">
+                    <div class="bank-logo">Газпром</div>
+                    <div class="bank-rate">от 8.5%</div>
+                </a>
+                <a href="https://www.alfabank.ru/mortgage/" class="bank-card" target="_blank">
+                    <div class="bank-logo">Альфа</div>
+                    <div class="bank-rate">от 8.7%</div>
+                </a>
+                <a href="https://www.raiffeisen.ru/retail/loans/mortgage/" class="bank-card" target="_blank">
+                    <div class="bank-logo">Райффайзен</div>
+                    <div class="bank-rate">от 9.0%</div>
+                </a>
+                <a href="https://m2.ru/ipoteka/calculator/" class="bank-card" target="_blank" style="border: 2px solid #0066cc; background: #f0f8ff;">
+                    <div class="bank-logo">M2</div>
+                    <div class="bank-rate">Сравнить все</div>
+                </a>
+            </div>
+        </div>
+
+        <div class="faq-section">
+            <h3 class="section-title">Часто задаваемые вопросы</h3>
+            
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    Как рассчитывается ежемесячный платеж по ипотеке?
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    Ежемесячный платеж рассчитывается по формуле аннуитетного платежа: A = K × (P × (1+P)^N) / ((1+P)^N - 1), где K — сумма кредита, P — месячная процентная ставка, N — количество месяцев.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    Какой первоначальный взнос лучше внести?
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    Рекомендуется вносить не менее 20% от стоимости недвижимости. Чем больше первоначальный взнос, тем меньше переплата по кредиту и более выгодные условия от банка.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    В чем разница между аннуитетными и дифференцированными платежами?
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    Аннуитетные платежи одинаковы по размеру весь срок кредита. Дифференцированные — уменьшаются каждый месяц, но в начале больше аннуитетных.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    Можно ли использовать материнский капитал для ипотеки?
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="faq-answer">
+                    Да, материнский капитал можно использовать как первоначальный взнос или для частичного досрочного погашения ипотечного кредита.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let mortgageChart;
+
+        // Синхронизация полей первоначального взноса
+        document.getElementById('propertyPrice').addEventListener('input', updateDownPaymentPercent);
+        document.getElementById('downPayment').addEventListener('input', updateDownPaymentPercent);
+        document.getElementById('downPaymentPercent').addEventListener('input', updateDownPaymentAmount);
+
+        function updateDownPaymentPercent() {
+            const propertyPrice = parseFloat(document.getElementById('propertyPrice').value) || 0;
+            const downPayment = parseFloat(document.getElementById('downPayment').value) || 0;
+            
+            if (propertyPrice > 0) {
+                const percent = (downPayment / propertyPrice * 100).toFixed(1);
+                document.getElementById('downPaymentPercent').value = percent;
+            }
+        }
+
+        function updateDownPaymentAmount() {
+            const propertyPrice = parseFloat(document.getElementById('propertyPrice').value) || 0;
+            const percent = parseFloat(document.getElementById('downPaymentPercent').value) || 0;
+            
+            const downPayment = (propertyPrice * percent / 100).toFixed(0);
+            document.getElementById('downPayment').value = downPayment;
+        }
+
+        function calculateMortgage() {
+            const propertyPrice = parseFloat(document.getElementById('propertyPrice').value);
+            const downPayment = parseFloat(document.getElementById('downPayment').value);
+            const maternalCapital = parseFloat(document.getElementById('maternalCapital').value) || 0;
+            const interestRate = parseFloat(document.getElementById('interestRate').value) / 100;
+            const loanTerm = parseInt(document.getElementById('loanTerm').value);
+            const paymentType = document.getElementById('paymentType').value;
+            const insurance = parseFloat(document.getElementById('insurance').value) || 0;
+
+            const loanAmount = propertyPrice - downPayment - maternalCapital;
+            
+            if (loanAmount <= 0) {
+                alert('Сумма кредита должна быть положительной');
+                return;
+            }
+
+            const monthlyRate = interestRate / 12;
+            const totalMonths = loanTerm * 12;
+            
+            let monthlyPayment, totalPayment, overpayment;
+            let schedule = [];
+
+            if (paymentType === 'annuity') {
+                // Аннуитетные платежи
+                monthlyPayment = loanAmount * (monthlyRate * Math.pow(1 + monthlyRate, totalMonths)) / (Math.pow(1 + monthlyRate, totalMonths) - 1);
+                totalPayment = monthlyPayment * totalMonths;
+                overpayment = totalPayment - loanAmount;
+
+                // Создаем график для первых 12 месяцев
+                let remainingBalance = loanAmount;
+                for (let month = 1; month <= Math.min(totalMonths, 12); month++) {
+                    const interestPayment = remainingBalance * monthlyRate;
+                    const principalPayment = monthlyPayment - interestPayment;
+                    remainingBalance -= principalPayment;
+
+                    schedule.push({
+                        month,
+                        payment: monthlyPayment,
+                        principal: principalPayment,
+                        interest: interestPayment,
+                        balance: Math.max(remainingBalance, 0)
+                    });
+                }
+            } else {
+                // Дифференцированные платежи
+                const principalPayment = loanAmount / totalMonths;
+                totalPayment = 0;
+                let remainingBalance = loanAmount;
+
+                for (let month = 1; month <= Math.min(totalMonths, 12); month++) {
+                    const interestPayment = remainingBalance * monthlyRate;
+                    const payment = principalPayment + interestPayment;
+                    remainingBalance -= principalPayment;
+                    totalPayment += payment;
+
+                    schedule.push({
+                        month,
+                        payment,
+                        principal: principalPayment,
+                        interest: interestPayment,
+                        balance: Math.max(remainingBalance, 0)
+                    });
+                }
+
+                // Рассчитываем полную переплату
+                totalPayment = loanAmount + (loanAmount * monthlyRate * (totalMonths + 1) / 2);
+                overpayment = totalPayment - loanAmount;
+                monthlyPayment = schedule[0].payment; // Первый платеж как основной
+            }
+
+            displayResults(loanAmount, monthlyPayment, totalPayment, overpayment, schedule, insurance, loanTerm);
+        }
+
+        function displayResults(loanAmount, monthlyPayment, totalPayment, overpayment, schedule, insurance, loanTerm) {
+            const monthlyInsurance = insurance / 12;
+            const totalMonthlyPayment = monthlyPayment + monthlyInsurance;
+
+            const resultsHTML = `
+                <div class="result-highlight">
+                    <div class="result-main">${formatCurrency(totalMonthlyPayment)}</div>
+                    <div class="result-label">Ежемесячный платеж (с страховкой)</div>
+                </div>
+
+                <div class="results-grid">
+                    <div class="result-item">
+                        <div class="result-value">${formatCurrency(monthlyPayment)}</div>
+                        <div class="result-desc">Основной платеж по кредиту</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-value">${formatCurrency(monthlyInsurance)}</div>
+                        <div class="result-desc">Страхование в месяц</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-value">${formatCurrency(loanAmount)}</div>
+                        <div class="result-desc">Сумма кредита</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-value">${formatCurrency(overpayment)}</div>
+                        <div class="result-desc">Переплата по процентам</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-value">${formatCurrency(totalPayment)}</div>
+                        <div class="result-desc">Общая сумма выплат</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-value">${loanTerm} лет</div>
+                        <div class="result-desc">Срок кредита</div>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <canvas id="paymentChart"></canvas>
+                </div>
+            `;
+
+            document.getElementById('resultsContent').innerHTML = resultsHTML;
+            
+            // Показываем график платежей
+            document.getElementById('paymentSchedule').style.display = 'block';
+            displaySchedule(schedule);
+            
+            // Создаем диаграмму
+            createPaymentChart(loanAmount, overpayment);
+        }
+
+        function displaySchedule(schedule) {
+            let tableHTML = `
+                <table class="schedule-table">
+                    <thead>
+                        <tr>
+                            <th>Месяц</th>
+                            <th>Платеж</th>
+                            <th>Основной долг</th>
+                            <th>Проценты</th>
+                            <th>Остаток</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            schedule.forEach(row => {
+                tableHTML += `
+                    <tr>
+                        <td>${row.month}</td>
+                        <td>${formatCurrency(row.payment)}</td>
+                        <td>${formatCurrency(row.principal)}</td>
+                        <td>${formatCurrency(row.interest)}</td>
+                        <td>${formatCurrency(row.balance)}</td>
+                    </tr>
+                `;
+            });
+
+            tableHTML += '</tbody></table>';
+            
+            if (schedule.length === 12) {
+                tableHTML += '<p style="margin-top: 1rem; color: #666; font-size: 0.9rem;">Показаны первые 12 месяцев</p>';
+            }
+
+            document.getElementById('scheduleContent').innerHTML = tableHTML;
+        }
+
+        function createPaymentChart(loanAmount, overpayment) {
+            const ctx = document.getElementById('paymentChart').getContext('2d');
+            
+            if (mortgageChart) {
+                mortgageChart.destroy();
+            }
+
+            mortgageChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Основной долг', 'Переплата по процентам'],
+                    datasets: [{
+                        data: [loanAmount, overpayment],
+                        backgroundColor: ['#0066cc', '#ffc107'],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.label + ': ' + formatCurrency(context.raw);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('ru-RU', {
+                style: 'currency',
+                currency: 'RUB',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(amount);
+        }
+
+        function toggleFAQ(element) {
+            const answer = element.nextElementSibling;
+            const icon = element.querySelector('.toggle-icon');
+            
+            answer.classList.toggle('active');
+            icon.classList.toggle('active');
+        }
+
+        // Автоматический расчет при загрузке
+        document.addEventListener('DOMContentLoaded', function() {
+            updateDownPaymentPercent();
+            calculateMortgage();
+        });
+    </script>
+</body>
+</html>

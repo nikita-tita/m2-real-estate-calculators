@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькуляторы недвижимости - Профессиональные инструменты анализа</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f8f9fa;
+        }
+
+        .navbar {
+            background: white;
+            border-bottom: 1px solid #e9ecef;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #0066cc;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #555;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #0066cc;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #0066cc 0%, #004499 100%);
+            color: white;
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 1rem;
+        }
+
+        .section-subtitle {
+            font-size: 1.1rem;
+            color: #666;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .calculators-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .calculator-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .calculator-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, #0066cc 0%, #004499 100%);
+        }
+
+        .calculator-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+            border-color: #0066cc;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-icon {
+            font-size: 3rem;
+            margin-right: 1rem;
+            color: #0066cc;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-badge {
+            display: inline-block;
+            background: #0066cc;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .popular-badge {
+            background: #ff6b6b;
+        }
+
+        .new-badge {
+            background: #4ecdc4;
+        }
+
+        .pro-badge {
+            background: #f39c12;
+        }
+
+        .card-description {
+            color: #666;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .card-features {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .card-features li {
+            padding: 0.5rem 0;
+            color: #555;
+            position: relative;
+            padding-left: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .card-features li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .card-metrics {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .metric {
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #0066cc;
+        }
+
+        .metric-label {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .use-calculator {
+            background: #0066cc;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .use-calculator:hover {
+            background: #0052a3;
+            color: white;
+            text-decoration: none;
+        }
+
+        .complexity-indicator {
+            display: flex;
+            gap: 2px;
+        }
+
+        .complexity-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #ddd;
+        }
+
+        .complexity-dot.active {
+            background: #0066cc;
+        }
+
+        .features-section {
+            background: white;
+            border-radius: 12px;
+            padding: 3rem;
+            margin: 3rem 0;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .feature-item {
+            text-align: center;
+            padding: 1.5rem;
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            color: #0066cc;
+            margin-bottom: 1rem;
+        }
+
+        .feature-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-desc {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .comparison-section {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 12px;
+            padding: 3rem;
+            margin: 3rem 0;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .comparison-table th {
+            background: #0066cc;
+            color: white;
+            font-weight: 600;
+        }
+
+        .comparison-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .calculators-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .card-metrics {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .testimonials {
+            background: white;
+            border-radius: 12px;
+            padding: 3rem;
+            margin: 3rem 0;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .testimonial-item {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 2rem;
+            margin: 1rem 0;
+            position: relative;
+        }
+
+        .testimonial-text {
+            font-style: italic;
+            margin-bottom: 1rem;
+            color: #555;
+        }
+
+        .testimonial-author {
+            font-weight: 600;
+            color: #0066cc;
+        }
+
+        .footer {
+            background: #333;
+            color: white;
+            padding: 3rem 0;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            text-align: center;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: #ccc;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo">🏠 RealEstate Calc</a>
+            <ul class="nav-links">
+                <li><a href="#calculators">Калькуляторы</a></li>
+                <li><a href="#features">Возможности</a></li>
+                <li><a href="#about">О нас</a></li>
+                <li><a href="#contact">Контакты</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Калькуляторы недвижимости</h1>
+            <p>Профессиональные инструменты для анализа инвестиций в недвижимость. Точные расчеты, детальная аналитика и экспорт отчетов для принятия обоснованных решений.</p>
+            
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <span class="stat-number">5</span>
+                    <span class="stat-label">Калькуляторов</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">50+</span>
+                    <span class="stat-label">Параметров</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">20+</span>
+                    <span class="stat-label">Типов отчетов</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">99.9%</span>
+                    <span class="stat-label">Точность</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Выберите калькулятор</h2>
+            <p class="section-subtitle">Каждый калькулятор разработан для конкретных задач анализа недвижимости с максимальной детализацией и функциональностью</p>
+        </div>
+
+        <div class="calculators-grid" id="calculatorsGrid">
+            <!-- Ипотечный калькулятор -->
+            <div class="calculator-card" onclick="openCalculator('mortgage')">
+                <div class="card-header">
+                    <div class="card-icon">🏠</div>
+                    <div>
+                        <div class="card-title">Ипотечный калькулятор</div>
+                        <span class="card-badge popular-badge">Популярный</span>
+                    </div>
+                </div>
+                <div class="card-description">
+                    Комплексный расчет ипотеки с учетом всех параметров: аннуитетные и дифференцированные платежи, материнский капитал, страхование, досрочные погашения.
+                </div>
+                <ul class="card-features">
+                    <li>Два типа платежей (аннуитетные/дифференцированные)</li>
+                    <li>Учет материнского капитала и льготных программ</li>
+                    <li>Расчет страхования и дополнительных расходов</li>
+                    <li>Детальный график платежей на весь срок</li>
+                    <li>Интерактивные графики и диаграммы</li>
+                    <li>Сравнение предложений банков</li>
+                </ul>
+                <div class="card-metrics">
+                    <div class="metric">
+                        <div class="metric-value">15+</div>
+                        <div class="metric-label">Параметров</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">5</div>
+                        <div class="metric-label">Типов отчетов</div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <a href="mortgage_calculator.html" class="use-calculator">Использовать</a>
+                    <div class="complexity-indicator">
+                        <div class="complexity-dot active"></div>
+                        <div class="complexity-dot active"></div>
+                        <div class="complexity-dot"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Досрочное погашение -->
+            <div class="calculator-card" onclick="openCalculator('prepayment')">
+                <div class="card-header">
+                    <div class="card-icon">💰</div>
+                    <div>
+                        <div class="card-title">Досрочное погашение</div>
+                        <span class="card-badge">Экономия</span>
+                    </div>
+                </div>
+                <div class="card-description">
+                    Анализ эффективности досрочного погашения ипотеки. Сравнение стратегий уменьшения срока или размера платежа, расчет оптимальных сценариев.
+                </div>
+                <ul class="card-features">
+                    <li>Сравнение стратегий погашения</li>
+                    <li>Расчет экономии по процентам</li>
+                    <li>Анализ альтернативных инвестиций</li>
+                    <li>Планирование регулярных доплат</li>
+                    <li>Моделирование разных сценариев</li>
+                    <li>ROI анализ досрочных платежей</li>
+                </ul>
+                <div class="card-metrics">
+                    <div class="metric">
+                        <div class="metric-value">12+</div>
+                        <div class="metric-label">Стратегий</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">8</div>
+                        <div class="metric-label">Сценариев</div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <a href="prepayment_calculator.html" class="use-calculator">Использовать</a>
+                    <div class="complexity-indicator">
+                        <div class="complexity-dot active"></div>
+                        <div class="complexity-dot active"></div>
+                        <div class="complexity-dot active"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Аренда vs Покупка -->
+            <div class="calculator-card" onclick="openCalculator('rent-vs-buy')">
+                <div class="card-header">
+                    <div class="card-icon">🤔</div>
+                    <div>
+                        <div class="card-title">Аренда vs Покупка</div>
+                        <span class="card-badge new-badge">Новый</span>
+                    </div>
+                </div>
+                <div class="card-description">
+                    Комплексное сравнение выгодности аренды и покупки недвижимости с учетом альтернативных инвестиций, роста цен и всех скрытых расходов.
+                </div>
+                <ul class="card-features">
+                    <li>Полная стоимость владения (TCO)</li>
+                    <li>Альтернативные инвестиции средств</li>
+                    <li>Прогнозы роста стоимости недвижимости</li>
+                    <li>Учет инфляции и налогов</li>
+                    <li>Анализ точки безубыточности</li>
+                    <li>Сценарное моделирование на 5-30 лет</li>
+                </ul>
+                <div class="card-metrics">
+                    <div class="metric">
+                        <div class="metric-value">20+</div>
+                        <div class="metric-label">Факторов</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">10</div>
+                        <div class="metric-label">Сценариев</div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <a href="rent_vs_buy_calculator.html" class="use-calculator">Использовать</a>
+                    <div class="complexity-indicator">
+                        <div class="complexity-dot active"></div>
+                        <div class="complexity-dot active"></div>
+                        <div class="complexity-dot active"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Доходность инвестиций -->
+            <div class="calculator-card" onclick="openCalculator('rental-roi')">
+                <div class="card-header">
+                    <div class="card-icon">📊</div>
+                    <div>
+                        <div class="card-title">Инвестиции в аренду</div>
+                        <span class="card-badge pro-badge">Pro</span>
+                    </div>
+                </div>
+                <div class="card-description">
+                    Профессиональный анализ доходности инвестиций в недвижимость для сдачи в аренду. Cash Flow, Cap Rate, IRR и другие ключевые метрики.
+                </div>
+                <ul class="card-features">
+                    <li>Cash Flow анализ по месяцам</li>
+                    <li>Cap Rate и валовая доходность</li>
+                    <li>IRR и NPV расчеты</li>
+                    <li>Анализ всех операционных расходов</li>
+                    <li>Прогноз роста арендных ставок</li>
+                    <li>Стресс-тестирование инвестиций</li>
+                </ul>
+                <div class="card-metrics">
+                    <div class="metric">
+                        <div class="metric-value">25+</div>
+                        <div class="metric-label">Метрик</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">15</div>
+                        <div class="metric-label">Отчетов</div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <a href="rental_roi_calculator.html" class="use-calculator">Использовать</a>
+                    <div class="complexity-indicator">
+                        <div class="complexity-dot active"></div>
+                        <div class="complexity-dot active"></div>
+                        <div class="complexity-dot active"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- M2.ru Integration -->
+            <div class="calculator-card" onclick="window.open('https://m2.ru/ipoteka/calculator/', '_blank')" style="border: 2px solid #0066cc;">
+                <div class="card-header">
+                    <div class="card-icon">🏢</div>
+                    <div>
+                        <div class="card-title">M2.ru Калькулятор</div>
+                        <span class="card-badge">Партнер</span>
+                    </div>
+                </div>
+                <div class="card-description">
+                    Профессиональный ипотечный калькулятор от M2.ru с актуальными предложениями банков и возможностью сравнения условий кредитования.
+                </div>
+                <ul class="card-features">
+                    <li>Актуальные ставки от 50+ банков</li>
+                    <li>Онлайн-заявки в банки</li>
+                    <li>Персональные предложения</li>
+                    <li>Консультации специалистов</li>
+                    <li>Помощь в оформлении документов</li>
+                    <li>Бесплатное сопровождение сделки</li>
+                </ul>
+                <div class="card-metrics">
+                    <div class="metric">
+                        <div class="metric-value">50+</div>
+                        <div class="metric-label">Банков</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">От 8.1%</div>
+                        <div class="metric-label">Ставка</div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <a href="https://m2.ru/ipoteka/calculator/" class="use-calculator" target="_blank">Перейти к M2</a>
+                    <div class="complexity-indicator">
+                        <div class="complexity-dot active"></div>
+                        <div class="complexity-dot active"></div>
+                        <div class="complexity-dot"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="features-section" id="features">
+            <div class="section-header">
+                <h2 class="section-title">Возможности наших калькуляторов</h2>
+                <p class="section-subtitle">Профессиональный уровень анализа для частных инвесторов и специалистов рынка</p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-item">
+                    <div class="feature-icon">📊</div>
+                    <div class="feature-title">Детальная аналитика</div>
+                    <div class="feature-desc">Более 50 параметров расчета и 20+ типов отчетов для глубокого анализа</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">📈</div>
+                    <div class="feature-title">Интерактивные графики</div>
+                    <div class="feature-desc">Визуализация данных с помощью современных диаграмм и графиков</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">💾</div>
+                    <div class="feature-title">Экспорт отчетов</div>
+                    <div class="feature-desc">Сохранение результатов в Excel, PDF и других форматах</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">🔍</div>
+                    <div class="feature-title">Сценарный анализ</div>
+                    <div class="feature-desc">Моделирование различных условий и прогнозов развития событий</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">⚡</div>
+                    <div class="feature-title">Мгновенные расчеты</div>
+                    <div class="feature-desc">Быстрые вычисления в реальном времени при изменении параметров</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">📱</div>
+                    <div class="feature-title">Мобильная версия</div>
+                    <div class="feature-desc">Полная функциональность на всех устройствах и экранах</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="comparison-section">
+            <div class="section-header">
+                <h2 class="section-title">Сравнение калькуляторов</h2>
+                <p class="section-subtitle">Выберите подходящий инструмент для ваших задач</p>
+            </div>
+            
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Калькулятор</th>
+                        <th>Сложность</th>
+                        <th>Время расчета</th>
+                        <th>Типы отчетов</th>
+                        <th>Основное назначение</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Ипотечный</td>
+                        <td>Средняя</td>
+                        <td>2-3 минуты</td>
+                        <td>5 типов</td>
+                        <td>Расчет кредита на покупку</td>
+                    </tr>
+                    <tr>
+                        <td>Досрочное погашение</td>
+                        <td>Высокая</td>
+                        <td>3-5 минут</td>
+                        <td>8 типов</td>
+                        <td>Оптимизация выплат</td>
+                    </tr>
+                    <tr>
+                        <td>Аренда vs Покупка</td>
+                        <td>Высокая</td>
+                        <td>5-7 минут</td>
+                        <td>10 типов</td>
+                        <td>Выбор стратегии</td>
+                    </tr>
+                    <tr>
+                        <td>Инвестиции в аренду</td>
+                        <td>Максимальная</td>
+                        <td>7-10 минут</td>
+                        <td>15 типов</td>
+                        <td>Анализ доходности</td>
+                    </tr>
+                    <tr>
+                        <td>M2.ru</td>
+                        <td>Средняя</td>
+                        <td>1-2 минуты</td>
+                        <td>3 типа</td>
+                        <td>Подбор банка</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="testimonials">
+            <div class="section-header">
+                <h2 class="section-title">Отзывы пользователей</h2>
+            </div>
+            
+            <div class="testimonial-item">
+                <div class="testimonial-text">
+                    "Калькуляторы помогли сэкономить более 2 миллионов рублей на досрочном погашении ипотеки. Очень детальные расчеты и понятная аналитика."
+                </div>
+                <div class="testimonial-author">— Алексей М., инвестор</div>
+            </div>
+            
+            <div class="testimonial-item">
+                <div class="testimonial-text">
+                    "Использую для анализа доходности арендной недвижимости. Профессиональный уровень расчетов, все ключевые метрики в одном месте."
+                </div>
+                <div class="testimonial-author">— Мария К., риэлтор</div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="#privacy">Политика конфиденциальности</a>
+                <a href="#terms">Условия использования</a>
+                <a href="#api">API для разработчиков</a>
+                <a href="#support">Поддержка</a>
+                <a href="#blog">Блог</a>
+            </div>
+            <p>&copy; 2024 RealEstate Calc. Профессиональные калькуляторы недвижимости для принятия обоснованных решений.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Функция для открытия калькуляторов
+        function openCalculator(calculatorType) {
+            const calculators = {
+                mortgage: 'mortgage_calculator.html',
+                prepayment: 'prepayment_calculator.html',
+                'rent-vs-buy': 'rent_vs_buy_calculator.html',
+                'rental-roi': 'rental_roi_calculator.html'
+            };
+
+            if (calculators[calculatorType]) {
+                window.open(calculators[calculatorType], '_blank');
+            } else {
+                alert('Этот калькулятор еще в разработке. Скоро будет доступен!');
+            }
+        }
+
+        // Плавная прокрутка к секциям
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Анимация появления элементов при прокрутке
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Применяем анимацию к карточкам
+        document.querySelectorAll('.calculator-card, .feature-item').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(card);
+        });
+
+        // Динамическое обновление статистики
+        function animateCounters() {
+            const counters = document.querySelectorAll('.stat-number');
+            const targets = ['5', '50+', '20+', '99.9%'];
+            
+            counters.forEach((counter, index) => {
+                const target = targets[index];
+                let current = 0;
+                
+                if (target.includes('%')) {
+                    const targetNum = parseFloat(target);
+                    const increment = targetNum / 100;
+                    
+                    const timer = setInterval(() => {
+                        current += increment;
+                        if (current >= targetNum) {
+                            counter.textContent = target;
+                            clearInterval(timer);
+                        } else {
+                            counter.textContent = current.toFixed(1) + '%';
+                        }
+                    }, 20);
+                } else if (target.includes('+')) {
+                    const targetNum = parseInt(target);
+                    const increment = targetNum / 50;
+                    
+                    const timer = setInterval(() => {
+                        current += increment;
+                        if (current >= targetNum) {
+                            counter.textContent = target;
+                            clearInterval(timer);
+                        } else {
+                            counter.textContent = Math.floor(current) + '+';
+                        }
+                    }, 30);
+                } else {
+                    counter.textContent = target;
+                }
+            });
+        }
+
+        // Запускаем анимацию при загрузке
+        window.addEventListener('load', () => {
+            setTimeout(animateCounters, 1000);
+        });
+    </script>
+</body>
+</html>

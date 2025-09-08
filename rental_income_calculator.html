@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор доходности от аренды - М2</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.5;
+            color: #333;
+            background-color: #f8f9fa;
+            font-size: 14px;
+        }
+
+        .header {
+            background: white;
+            border-bottom: 1px solid #e9ecef;
+            padding: 12px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 16px;
+        }
+
+        .logo {
+            font-size: 32px;
+            font-weight: 700;
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .back-link {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 16px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px 16px;
+        }
+
+        .page-header {
+            background: white;
+            border-radius: 8px;
+            padding: 32px;
+            margin-bottom: 24px;
+            text-align: center;
+            border: 1px solid #e6e6e6;
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 16px;
+        }
+
+        .page-subtitle {
+            font-size: 18px;
+            color: #666;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .calculator-layout {
+            display: grid;
+            grid-template-columns: 450px 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .calculator-form {
+            background: white;
+            border-radius: 8px;
+            padding: 32px;
+            border: 1px solid #e6e6e6;
+            height: fit-content;
+        }
+
+        .results-section {
+            background: white;
+            border-radius: 8px;
+            padding: 32px;
+            border: 1px solid #e6e6e6;
+        }
+
+        .form-section {
+            margin-bottom: 32px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #e6e6e6;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 500;
+            color: #555;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #e6e6e6;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.2s;
+            background: white;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+        }
+
+        .input-suffix {
+            position: relative;
+        }
+
+        .input-suffix::after {
+            content: attr(data-suffix);
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+            pointer-events: none;
+            font-size: 14px;
+        }
+
+        .calculate-btn {
+            width: 100%;
+            padding: 16px 24px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .yield-highlight {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            padding: 24px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .yield-main {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .yield-label {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .result-item {
+            padding: 16px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border-left: 4px solid #007bff;
+        }
+
+        .result-item.positive {
+            border-left-color: #28a745;
+        }
+
+        .result-item.negative {
+            border-left-color: #dc3545;
+        }
+
+        .result-value {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .result-desc {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .chart-container {
+            height: 400px;
+            margin: 24px 0;
+        }
+
+        .analysis-section {
+            background: white;
+            border-radius: 8px;
+            padding: 32px;
+            border: 1px solid #e6e6e6;
+            margin-bottom: 24px;
+        }
+
+        @media (max-width: 968px) {
+            .calculator-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <a href="m2-hub.html" class="logo">М2</a>
+            <a href="m2-hub.html" class="back-link">← К выбору расчётов</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">Калькулятор доходности от аренды</h1>
+            <p class="page-subtitle">Профессиональный анализ рентабельности инвестиций в недвижимость для сдачи в аренду</p>
+        </div>
+
+        <div class="calculator-layout">
+            <div class="calculator-form">
+                <form id="rentalIncomeForm">
+                    <div class="form-section">
+                        <h3 class="section-title">Стоимость приобретения</h3>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Цена недвижимости</label>
+                            <div class="input-suffix" data-suffix="₽">
+                                <input type="number" id="purchasePrice" class="form-input" value="6000000" min="500000" step="100000" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Расходы на покупку</label>
+                            <div class="input-suffix" data-suffix="₽">
+                                <input type="number" id="purchaseCosts" class="form-input" value="300000" min="0" step="10000">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Ремонт и подготовка</label>
+                            <div class="input-suffix" data-suffix="₽">
+                                <input type="number" id="renovationCosts" class="form-input" value="800000" min="0" step="50000">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Способ приобретения</label>
+                            <select id="purchaseMethod" class="form-select">
+                                <option value="cash">Собственные средства</option>
+                                <option value="mortgage">Ипотека</option>
+                                <option value="mixed">Смешанное финансирование</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-section" id="mortgageSection" style="display: none;">
+                        <h3 class="section-title">Параметры ипотеки</h3>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Размер кредита</label>
+                            <div class="input-suffix" data-suffix="₽">
+                                <input type="number" id="loanAmount" class="form-input" value="3000000" min="0" step="100000">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Процентная ставка</label>
+                            <div class="input-suffix" data-suffix="%">
+                                <input type="number" id="interestRate" class="form-input" value="10.5" min="1" max="30" step="0.1">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Срок кредита</label>
+                            <select id="loanTerm" class="form-select">
+                                <option value="10">10 лет</option>
+                                <option value="15">15 лет</option>
+                                <option value="20" selected>20 лет</option>
+                                <option value="25">25 лет</option>
+                                <option value="30">30 лет</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3 class="section-title">Доходы от аренды</h3>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Ежемесячная арендная плата</label>
+                            <div class="input-suffix" data-suffix="₽">
+                                <input type="number" id="monthlyRent" class="form-input" value="80000" min="10000" step="5000" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Заселённость</label>
+                            <div class="input-suffix" data-suffix="%">
+                                <input type="number" id="occupancyRate" class="form-input" value="95" min="70" max="100" step="1">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Рост арендной платы</label>
+                            <div class="input-suffix" data-suffix="% в год">
+                                <input type="number" id="rentGrowth" class="form-input" value="6" min="0" max="20" step="0.5">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3 class="section-title">Операционные расходы</h3>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Налог на имущество (в год)</label>
+                            <div class="input-suffix" data-suffix="₽">
+                                <input type="number" id="propertyTax" class="form-input" value="18000" min="0" step="1000">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Страхование (в год)</label>
+                            <div class="input-suffix" data-suffix="₽">
+                                <input type="number" id="insurance" class="form-input" value="12000" min="0" step="1000">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Управление и обслуживание</label>
+                            <div class="input-suffix" data-suffix="% от аренды">
+                                <input type="number" id="managementFee" class="form-input" value="8" min="0" max="30" step="1">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Ремонт и содержание (в год)</label>
+                            <div class="input-suffix" data-suffix="₽">
+                                <input type="number" id="maintenanceCosts" class="form-input" value="50000" min="0" step="5000">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Подоходный налог с аренды</label>
+                            <div class="input-suffix" data-suffix="%">
+                                <input type="number" id="incomeTax" class="form-input" value="13" min="0" max="50" step="1">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="button" class="calculate-btn" onclick="calculateRentalIncome()">
+                        Рассчитать доходность
+                    </button>
+                </form>
+            </div>
+
+            <div class="results-section" id="resultsSection">
+                <div id="resultsContent">
+                    <div style="text-align: center; color: #666; padding: 40px 20px;">
+                        <p>Заполните форму слева и нажмите "Рассчитать доходность" для получения подробного анализа рентабельности</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="analysis-section" id="analysisSection" style="display: none;">
+            <h3 class="section-title">Детальный анализ инвестиций</h3>
+            <div id="analysisContent"></div>
+        </div>
+
+        <div class="analysis-section" id="chartSection" style="display: none;">
+            <h3 class="section-title">График денежных потоков</h3>
+            <div class="chart-container">
+                <canvas id="cashFlowChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let cashFlowChart;
+
+        // Показать/скрыть поля ипотеки
+        document.getElementById('purchaseMethod').addEventListener('change', function() {
+            const mortgageSection = document.getElementById('mortgageSection');
+            mortgageSection.style.display = this.value === 'cash' ? 'none' : 'block';
+        });
+
+        function calculateRentalIncome() {
+            const params = getInputValues();
+            
+            if (!validateInputs(params)) {
+                alert('Пожалуйста, введите корректные значения');
+                return;
+            }
+
+            const results = performCalculations(params);
+            displayResults(results);
+            displayAnalysis(results);
+            createCashFlowChart(results);
+            
+            document.getElementById('analysisSection').style.display = 'block';
+            document.getElementById('chartSection').style.display = 'block';
+        }
+
+        function getInputValues() {
+            return {
+                purchasePrice: parseFloat(document.getElementById('purchasePrice').value),
+                purchaseCosts: parseFloat(document.getElementById('purchaseCosts').value),
+                renovationCosts: parseFloat(document.getElementById('renovationCosts').value),
+                purchaseMethod: document.getElementById('purchaseMethod').value,
+                loanAmount: parseFloat(document.getElementById('loanAmount').value) || 0,
+                interestRate: parseFloat(document.getElementById('interestRate').value) / 100 || 0,
+                loanTerm: parseInt(document.getElementById('loanTerm').value) || 0,
+                monthlyRent: parseFloat(document.getElementById('monthlyRent').value),
+                occupancyRate: parseFloat(document.getElementById('occupancyRate').value) / 100,
+                rentGrowth: parseFloat(document.getElementById('rentGrowth').value) / 100,
+                propertyTax: parseFloat(document.getElementById('propertyTax').value),
+                insurance: parseFloat(document.getElementById('insurance').value),
+                managementFee: parseFloat(document.getElementById('managementFee').value) / 100,
+                maintenanceCosts: parseFloat(document.getElementById('maintenanceCosts').value),
+                incomeTax: parseFloat(document.getElementById('incomeTax').value) / 100
+            };
+        }
+
+        function validateInputs(params) {
+            return params.purchasePrice > 0 && params.monthlyRent > 0;
+        }
+
+        function performCalculations(params) {
+            const totalInvestment = params.purchasePrice + params.purchaseCosts + params.renovationCosts;
+            const ownCapital = totalInvestment - params.loanAmount;
+            
+            // Расчёт ипотечного платежа
+            let monthlyMortgagePayment = 0;
+            if (params.loanAmount > 0 && params.interestRate > 0) {
+                const monthlyRate = params.interestRate / 12;
+                const totalPayments = params.loanTerm * 12;
+                monthlyMortgagePayment = params.loanAmount * 
+                    (monthlyRate * Math.pow(1 + monthlyRate, totalPayments)) / 
+                    (Math.pow(1 + monthlyRate, totalPayments) - 1);
+            }
+
+            // Годовые доходы и расходы
+            const yearlyRent = params.monthlyRent * 12 * params.occupancyRate;
+            const yearlyMortgagePayments = monthlyMortgagePayment * 12;
+            const yearlyManagementFee = yearlyRent * params.managementFee;
+            const yearlyOperatingCosts = params.propertyTax + params.insurance + params.maintenanceCosts + yearlyManagementFee;
+            
+            const grossIncome = yearlyRent;
+            const netOperatingIncome = grossIncome - yearlyOperatingCosts;
+            const beforeTaxCashFlow = netOperatingIncome - yearlyMortgagePayments;
+            const taxableIncome = Math.max(0, grossIncome - yearlyOperatingCosts - (params.loanAmount > 0 ? params.loanAmount * params.interestRate : 0));
+            const taxes = taxableIncome * params.incomeTax;
+            const afterTaxCashFlow = beforeTaxCashFlow - taxes;
+
+            // Показатели доходности
+            const grossYield = (grossIncome / totalInvestment) * 100;
+            const netYield = (netOperatingIncome / totalInvestment) * 100;
+            const cashOnCashReturn = ownCapital > 0 ? (afterTaxCashFlow / ownCapital) * 100 : 0;
+            const capRate = (netOperatingIncome / params.purchasePrice) * 100;
+
+            // Срок окупаемости
+            const paybackPeriod = ownCapital > 0 ? ownCapital / Math.max(afterTaxCashFlow, 1) : 0;
+
+            return {
+                params,
+                totalInvestment,
+                ownCapital,
+                monthlyMortgagePayment,
+                grossIncome,
+                netOperatingIncome,
+                beforeTaxCashFlow,
+                afterTaxCashFlow,
+                taxes,
+                grossYield,
+                netYield,
+                cashOnCashReturn,
+                capRate,
+                paybackPeriod,
+                yearlyOperatingCosts,
+                monthlyNetCashFlow: afterTaxCashFlow / 12
+            };
+        }
+
+        function displayResults(results) {
+            const isPositive = results.afterTaxCashFlow > 0;
+            
+            const resultsHTML = `
+                <div class="yield-highlight">
+                    <div class="yield-main">${results.cashOnCashReturn.toFixed(2)}%</div>
+                    <div class="yield-label">Доходность на собственный капитал</div>
+                </div>
+
+                <div class="results-grid">
+                    <div class="result-item ${isPositive ? 'positive' : 'negative'}">
+                        <div class="result-value">${formatCurrency(results.afterTaxCashFlow)}</div>
+                        <div class="result-desc">Чистый денежный поток в год</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-value">${formatCurrency(results.monthlyNetCashFlow)}</div>
+                        <div class="result-desc">Чистый денежный поток в месяц</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-value">${results.grossYield.toFixed(2)}%</div>
+                        <div class="result-desc">Валовая доходность</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-value">${results.netYield.toFixed(2)}%</div>
+                        <div class="result-desc">Чистая доходность</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-value">${results.capRate.toFixed(2)}%</div>
+                        <div class="result-desc">Капитализационная ставка</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-value">${results.paybackPeriod.toFixed(1)} лет</div>
+                        <div class="result-desc">Срок окупаемости</div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('resultsContent').innerHTML = resultsHTML;
+        }
+
+        function displayAnalysis(results) {
+            const operatingExpenseRatio = (results.yearlyOperatingCosts / results.grossIncome * 100).toFixed(1);
+            
+            const analysisHTML = `
+                <div class="results-grid">
+                    <div class="result-item">
+                        <div class="result-value">${formatCurrency(results.totalInvestment)}</div>
+                        <div class="result-desc">Общие инвестиции</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-value">${formatCurrency(results.ownCapital)}</div>
+                        <div class="result-desc">Собственный капитал</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-value">${formatCurrency(results.grossIncome)}</div>
+                        <div class="result-desc">Валовый доход в год</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-value">${formatCurrency(results.yearlyOperatingCosts)}</div>
+                        <div class="result-desc">Операционные расходы в год</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-value">${formatCurrency(results.netOperatingIncome)}</div>
+                        <div class="result-desc">Чистый операционный доход</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-value">${operatingExpenseRatio}%</div>
+                        <div class="result-desc">Коэффициент операционных расходов</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 24px; padding: 20px; background: ${results.cashOnCashReturn >= 8 ? '#d4edda' : results.cashOnCashReturn >= 5 ? '#fff3cd' : '#f8d7da'}; border-radius: 6px;">
+                    <h4 style="margin-bottom: 12px;">Инвестиционная привлекательность:</h4>
+                    <p>${getInvestmentRecommendation(results)}</p>
+                </div>
+
+                ${results.params.loanAmount > 0 ? `
+                <div style="margin-top: 16px; padding: 16px; background: #f8f9fa; border-radius: 6px;">
+                    <h4 style="margin-bottom: 8px;">Ипотечные параметры:</h4>
+                    <div class="results-grid">
+                        <div class="result-item">
+                            <div class="result-value">${formatCurrency(results.monthlyMortgagePayment)}</div>
+                            <div class="result-desc">Ежемесячный платёж</div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-value">${((results.params.loanAmount / results.totalInvestment) * 100).toFixed(1)}%</div>
+                            <div class="result-desc">Доля заёмных средств</div>
+                        </div>
+                    </div>
+                </div>
+                ` : ''}
+            `;
+
+            document.getElementById('analysisContent').innerHTML = analysisHTML;
+        }
+
+        function getInvestmentRecommendation(results) {
+            const cashReturn = results.cashOnCashReturn;
+            
+            if (cashReturn >= 12) {
+                return "🟢 Отличная инвестиция! Доходность значительно превышает альтернативные вложения.";
+            } else if (cashReturn >= 8) {
+                return "🟡 Хорошая инвестиция. Доходность выше банковских депозитов и многих других инструментов.";
+            } else if (cashReturn >= 5) {
+                return "🟠 Умеренная привлекательность. Сравните с альтернативными вложениями с учётом рисков.";
+            } else if (cashReturn > 0) {
+                return "🔴 Низкая доходность. Рассмотрите возможность улучшения условий или другие варианты.";
+            } else {
+                return "❌ Убыточная инвестиция. Требуется пересмотр параметров или отказ от проекта.";
+            }
+        }
+
+        function createCashFlowChart(results) {
+            const ctx = document.getElementById('cashFlowChart').getContext('2d');
+            
+            if (cashFlowChart) {
+                cashFlowChart.destroy();
+            }
+
+            const years = [];
+            const cashFlows = [];
+            const cumulativeFlows = [];
+            let cumulative = -results.ownCapital; // Начальные инвестиции
+
+            for (let year = 1; year <= 10; year++) {
+                const yearlyFlow = results.afterTaxCashFlow * Math.pow(1 + results.params.rentGrowth, year - 1);
+                cumulative += yearlyFlow;
+                
+                years.push(`Год ${year}`);
+                cashFlows.push(yearlyFlow);
+                cumulativeFlows.push(cumulative);
+            }
+
+            cashFlowChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: years,
+                    datasets: [
+                        {
+                            label: 'Годовой денежный поток',
+                            data: cashFlows,
+                            borderColor: '#28a745',
+                            backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Накопленный денежный поток',
+                            data: cumulativeFlows,
+                            borderColor: '#007bff',
+                            backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                            yAxisID: 'y1'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Прогноз денежных потоков'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            ticks: {
+                                callback: function(value) {
+                                    return formatCurrency(value);
+                                }
+                            }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            grid: {
+                                drawOnChartArea: false,
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return formatCurrency(value);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('ru-RU', {
+                style: 'currency',
+                currency: 'RUB',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(amount);
+        }
+
+        // Автоматический расчёт при загрузке
+        document.addEventListener('DOMContentLoaded', function() {
+            calculateRentalIncome();
+        });
+    </script>
+</body>
+</html>

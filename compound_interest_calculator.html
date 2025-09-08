@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор сложных процентов</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: bold;
+        }
+
+        input[type="number"], select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="number"]:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .calculate-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            display: none;
+        }
+
+        .result.show {
+            display: block;
+        }
+
+        .result h3 {
+            margin-top: 0;
+            color: #333;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+        }
+
+        .result-item .label {
+            font-weight: bold;
+            color: #555;
+        }
+
+        .result-item .value {
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .growth-chart {
+            margin-top: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📈 Калькулятор сложных процентов</h1>
+        
+        <form id="calculatorForm">
+            <div class="form-group">
+                <label for="principal">💰 Начальная сумма (₽):</label>
+                <input type="number" id="principal" min="0" step="0.01" value="100000" required>
+            </div>
+
+            <div class="form-group">
+                <label for="rate">📊 Годовая процентная ставка (%):</label>
+                <input type="number" id="rate" min="0" step="0.01" value="10" required>
+            </div>
+
+            <div class="form-group">
+                <label for="time">⏰ Срок инвестиций (лет):</label>
+                <input type="number" id="time" min="0" step="0.1" value="5" required>
+            </div>
+
+            <div class="form-group">
+                <label for="compound">🔄 Частота капитализации:</label>
+                <select id="compound">
+                    <option value="1">Ежегодно</option>
+                    <option value="2">Каждые 6 месяцев</option>
+                    <option value="4">Ежеквартально</option>
+                    <option value="12" selected>Ежемесячно</option>
+                    <option value="365">Ежедневно</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="monthly">➕ Ежемесячное пополнение (₽):</label>
+                <input type="number" id="monthly" min="0" step="0.01" value="0">
+            </div>
+
+            <button type="button" class="calculate-btn" onclick="calculateCompoundInterest()">
+                🧮 Рассчитать
+            </button>
+        </form>
+
+        <div id="result" class="result">
+            <h3>📋 Результаты расчета:</h3>
+            <div id="resultContent"></div>
+            <div class="growth-chart">
+                <h4>📈 Рост капитала по годам:</h4>
+                <div id="yearlyGrowth"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function calculateCompoundInterest() {
+            const principal = parseFloat(document.getElementById('principal').value);
+            const rate = parseFloat(document.getElementById('rate').value) / 100;
+            const time = parseFloat(document.getElementById('time').value);
+            const compound = parseInt(document.getElementById('compound').value);
+            const monthlyContribution = parseFloat(document.getElementById('monthly').value);
+
+            if (principal <= 0 || rate < 0 || time <= 0) {
+                alert('Пожалуйста, введите корректные значения');
+                return;
+            }
+
+            let amount = principal;
+            let totalContributions = principal;
+            let yearlyData = [];
+
+            for (let year = 1; year <= time; year++) {
+                for (let period = 1; period <= compound; period++) {
+                    amount = amount * (1 + rate / compound);
+                    
+                    if (monthlyContribution > 0 && compound >= 12) {
+                        const monthsInPeriod = 12 / compound;
+                        const contributionThisPeriod = monthlyContribution * monthsInPeriod;
+                        amount += contributionThisPeriod;
+                        totalContributions += contributionThisPeriod;
+                    }
+                }
+
+                if (monthlyContribution > 0 && compound < 12) {
+                    const yearlyContribution = monthlyContribution * 12;
+                    amount += yearlyContribution;
+                    totalContributions += yearlyContribution;
+                }
+
+                yearlyData.push({
+                    year: year,
+                    amount: amount,
+                    contributions: totalContributions
+                });
+            }
+
+            const finalAmount = amount;
+            const totalInterest = finalAmount - totalContributions;
+            const effectiveRate = Math.pow(finalAmount / principal, 1 / time) - 1;
+
+            displayResults(finalAmount, totalContributions, totalInterest, effectiveRate, yearlyData);
+        }
+
+        function displayResults(finalAmount, totalContributions, totalInterest, effectiveRate, yearlyData) {
+            const resultContent = document.getElementById('resultContent');
+            
+            resultContent.innerHTML = `
+                <div class="result-item">
+                    <span class="label">Итоговая сумма:</span>
+                    <span class="value">${formatCurrency(finalAmount)}</span>
+                </div>
+                <div class="result-item">
+                    <span class="label">Всего вложено:</span>
+                    <span class="value">${formatCurrency(totalContributions)}</span>
+                </div>
+                <div class="result-item">
+                    <span class="label">Заработано на процентах:</span>
+                    <span class="value">${formatCurrency(totalInterest)}</span>
+                </div>
+                <div class="result-item">
+                    <span class="label">Эффективная доходность:</span>
+                    <span class="value">${(effectiveRate * 100).toFixed(2)}% годовых</span>
+                </div>
+                <div class="result-item">
+                    <span class="label">Прирост капитала:</span>
+                    <span class="value">${((totalInterest / totalContributions) * 100).toFixed(2)}%</span>
+                </div>
+            `;
+
+            const yearlyGrowth = document.getElementById('yearlyGrowth');
+            let yearlyHtml = '';
+            
+            yearlyData.forEach(data => {
+                const barWidth = (data.amount / yearlyData[yearlyData.length - 1].amount) * 100;
+                yearlyHtml += `
+                    <div style="margin: 10px 0;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                            <span>Год ${data.year}</span>
+                            <span>${formatCurrency(data.amount)}</span>
+                        </div>
+                        <div style="background: #e9ecef; height: 20px; border-radius: 10px; overflow: hidden;">
+                            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); height: 100%; width: ${barWidth}%; transition: width 0.5s ease;"></div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            yearlyGrowth.innerHTML = yearlyHtml;
+            document.getElementById('result').classList.add('show');
+        }
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('ru-RU', {
+                style: 'currency',
+                currency: 'RUB',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(amount);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            calculateCompoundInterest();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор: Аренда или покупка - М2</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.5;
+            color: #333;
+            background-color: #f8f9fa;
+            font-size: 14px;
+        }
+
+        .header {
+            background: white;
+            border-bottom: 1px solid #e9ecef;
+            padding: 12px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 16px;
+        }
+
+        .logo {
+            font-size: 32px;
+            font-weight: 700;
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .back-link {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 16px;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px 16px;
+        }
+
+        .page-header {
+            background: white;
+            border-radius: 8px;
+            padding: 32px;
+            margin-bottom: 24px;
+            text-align: center;
+            border: 1px solid #e6e6e6;
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 16px;
+        }
+
+        .page-subtitle {
+            font-size: 18px;
+            color: #666;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .calculator-layout {
+            display: grid;
+            grid-template-columns: 450px 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .calculator-form {
+            background: white;
+            border-radius: 8px;
+            padding: 32px;
+            border: 1px solid #e6e6e6;
+            height: fit-content;
+        }
+
+        .results-section {
+            background: white;
+            border-radius: 8px;
+            padding: 32px;
+            border: 1px solid #e6e6e6;
+        }
+
+        .form-section {
+            margin-bottom: 32px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #e6e6e6;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 500;
+            color: #555;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #e6e6e6;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.2s;
+            background: white;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #e6e6e6;
+            border-radius: 6px;
+            font-size: 16px;
+            background: white;
+            cursor: pointer;
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+        }
+
+        .input-suffix {
+            position: relative;
+        }
+
+        .input-suffix::after {
+            content: attr(data-suffix);
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+            pointer-events: none;
+            font-size: 14px;
+        }
+
+        .calculate-btn {
+            width: 100%;
+            padding: 16px 24px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .calculate-btn:hover {
+            background: #0056b3;
+        }
+
+        .decision-highlight {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+            padding: 24px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .decision-main {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .decision-sub {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .decision-label {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .result-item {
+            padding: 16px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border-left: 4px solid #007bff;
+        }
+
+        .result-item.rent {
+            border-left-color: #17a2b8;
+        }
+
+        .result-item.buy {
+            border-left-color: #28a745;
+        }
+
+        .result-item.savings {
+            border-left-color: #ffc107;
+        }
+
+        .result-value {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .result-desc {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .chart-container {
+            height: 400px;
+            margin: 24px 0;
+        }
+
+        .comparison-section {
+            background: white;
+            border-radius: 8px;
+            padding: 32px;
+            border: 1px solid #e6e6e6;
+            margin-bottom: 24px;
+        }
+
+        .scenario-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 12px 20px;
+            background: white;
+            border: 1px solid #e6e6e6;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .tab-btn.active {
+            background: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+
+        .tab-btn:hover:not(.active) {
+            border-color: #007bff;
+            color: #007bff;
+        }
+
+        .scenario-content {
+            display: none;
+        }
+
+        .scenario-content.active {
+            display: block;
+        }
+
+        .breakeven-analysis {
+            background: linear-gradient(135deg, #28a745, #1e7e34);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            margin: 16px 0;
+        }
+
+        .breakeven-time {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .assumption-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #f1f3f4;
+        }
+
+        .assumption-item:last-child {
+            border-bottom: none;
+        }
+
+        .recommendation-box {
+            background: #e8f5e8;
+            border: 1px solid #c3e6cb;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .recommendation-box.rent {
+            background: #e1f5fe;
+            border-color: #b3e5fc;
+        }
+
+        .recommendation-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #155724;
+        }
+
+        .recommendation-box.rent .recommendation-title {
+            color: #0c5460;
+        }
+
+        .info-tooltip {
+            position: relative;
+            display: inline-block;
+            margin-left: 4px;
+            color: #007bff;
+            cursor: help;
+            font-size: 14px;
+        }
+
+        .info-tooltip::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s;
+            z-index: 1000;
+        }
+
+        .info-tooltip:hover::after {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        @media (max-width: 968px) {
+            .calculator-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page-title {
+                font-size: 24px;
+            }
+
+            .decision-sub {
+                font-size: 24px;
+            }
+
+            .scenario-tabs {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <a href="m2-hub.html" class="logo">М2</a>
+            <a href="m2-hub.html" class="back-link">← К выбору расчётов</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">Аренда или покупка недвижимости</h1>
+            <p class="page-subtitle">Комплексный анализ для принятия обоснованного решения о способе получения жилья с учётом всех факторов</p>
+        </div>
+
+        <div class="calculator-layout">
+            <div class="calculator-form">
+                <form id="rentVsBuyForm">
+                    <div class="form-section">
+                        <h3 class="section-title">Параметры недвижимости</h3>
+                        
+                        <div class="form-group">
+                            <label class="form-label">
+                                Стоимость недвижимости
+                                <span class="info-tooltip" data-tooltip="Рыночная стоимость квартиры для покупки">ℹ</span>
+                            </label>
+                            <div class="input-suffix" data-suffix="₽">
+                                <input type="number" id="propertyPrice" class="form-input" value="8000000" min="500000" step="100000" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                Ежемесячная аренда
+                                <span class="info-tooltip" data-tooltip="Стоимость аренды аналогичной недвижимости">ℹ</span>
+                            </label>
+                            <div class="input-suffix" data-suffix="₽">
+                                <input type="number" id="monthlyRent" class="form-input" value="60000" min="10000" step="5000" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Размер города</label>
+                            <select id="citySize" class="form-select">
+                                <option value="moscow">Москва</option>
+                                <option value="spb">Санкт-Петербург</option>
+                                <option value="million" selected>Город-миллионник</option>
+                                <option value="regional">Региональный центр</option>
+                                <option value="small">Малый город</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3 class="section-title">Условия покупки</h3>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Первоначальный взнос</label>
+                            <div class="input-suffix" data-suffix="₽">
+                                <input type="number" id="downPayment" class="form-input" value="2400000" min="0" step="100000">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Процентная ставка по ипотеке</label>
+                            <div class="input-suffix" data-suffix="%">
+                                <input type="number" id="mortgageRate" class="form-input" value="9.5" min="1" max="30" step="0.1">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Срок ипотеки</label>
+                            <select id="mortgageTerm" class="form-select">
+                                <option value="10">10 лет</option>
+                                <option value="15">15 лет</option>
+                                <option value="20" selected>20 лет</option>
+                                <option value="25">25 лет</option>
+                                <option value="30">30 лет</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                Расходы на покупку
+                                <span class="info-tooltip" data-tooltip="Оценка, регистрация, нотариус, агентство">ℹ</span>
+                            </label>
+                            <div class="input-suffix" data-suffix="₽">
+                                <input type="number" id="purchaseCosts" class="form-input" value="300000" min="0" step="10000">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3 class="section-title">Операционные расходы</h3>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Коммунальные услуги (в месяц)</label>
+                            <div class="input-suffix" data-suffix="₽">
+                                <input type="number" id="utilities" class="form-input" value="8000" min="1000" step="500">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Налог на имущество (в год)</label>
+                            <div class="input-suffix" data-suffix="₽">
+                                <input type="number" id="propertyTax" class="form-input" value="24000" min="0" step="1000">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Страхование недвижимости (в год)</label>
+                            <div class="input-suffix" data-suffix="₽">
+                                <input type="number" id="insurance" class="form-input" value="15000" min="0" step="1000">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Ремонт и обслуживание (в год)</label>
+                            <div class="input-suffix" data-suffix="₽">
+                                <input type="number" id="maintenance" class="form-input" value="50000" min="0" step="5000">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3 class="section-title">Прогнозы и альтернативы</h3>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Рост стоимости недвижимости</label>
+                            <div class="input-suffix" data-suffix="% в год">
+                                <input type="number" id="propertyAppreciation" class="form-input" value="4" min="0" max="20" step="0.5">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Рост арендной платы</label>
+                            <div class="input-suffix" data-suffix="% в год">
+                                <input type="number" id="rentGrowth" class="form-input" value="6" min="0" max="20" step="0.5">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                Доходность альтернативных вложений
+                                <span class="info-tooltip" data-tooltip="Депозиты, облигации, акции - что выберете вместо покупки">ℹ</span>
+                            </label>
+                            <div class="input-suffix" data-suffix="% в год">
+                                <input type="number" id="investmentReturn" class="form-input" value="8" min="0" max="30" step="0.5">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Инфляция</label>
+                            <div class="input-suffix" data-suffix="% в год">
+                                <input type="number" id="inflation" class="form-input" value="5" min="0" max="20" step="0.5">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Горизонт планирования</label>
+                            <select id="timeHorizon" class="form-select">
+                                <option value="5">5 лет</option>
+                                <option value="10" selected>10 лет</option>
+                                <option value="15">15 лет</option>
+                                <option value="20">20 лет</option>
+                                <option value="25">25 лет</option>
+                                <option value="30">30 лет</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button type="button" class="calculate-btn" onclick="calculateRentVsBuy()">
+                        Рассчитать выгодный вариант
+                    </button>
+                </form>
+            </div>
+
+            <div class="results-section" id="resultsSection">
+                <div id="resultsContent">
+                    <div style="text-align: center; color: #666; padding: 40px 20px;">
+                        <p>Заполните форму слева и нажмите "Рассчитать выгодный вариант" для получения детального анализа</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="scenario-tabs" id="scenarioTabs" style="display: none;">
+            <button class="tab-btn active" onclick="switchScenario('summary')">Итоговый анализ</button>
+            <button class="tab-btn" onclick="switchScenario('monthly')">Ежемесячные расходы</button>
+            <button class="tab-btn" onclick="switchScenario('longterm')">Долгосрочная перспектива</button>
+            <button class="tab-btn" onclick="switchScenario('breakeven')">Точка безубыточности</button>
+        </div>
+
+        <div class="comparison-section" id="scenarioContent" style="display: none;">
+            <div id="summaryScenario" class="scenario-content active">
+                <h3 class="section-title">Итоговый анализ решения</h3>
+                <div id="summaryContent"></div>
+            </div>
+
+            <div id="monthlyScenario" class="scenario-content">
+                <h3 class="section-title">Сравнение ежемесячных расходов</h3>
+                <div id="monthlyContent"></div>
+            </div>
+
+            <div id="longtermScenario" class="scenario-content">
+                <h3 class="section-title">Долгосрочная финансовая перспектива</h3>
+                <div id="longtermContent"></div>
+            </div>
+
+            <div id="breakevenScenario" class="scenario-content">
+                <h3 class="section-title">Анализ точки безубыточности</h3>
+                <div id="breakevenContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let comparisonChart;
+        let calculationData = {};
+
+        function calculateRentVsBuy() {
+            const params = getInputValues();
+            
+            if (!validateInputs(params)) {
+                alert('Пожалуйста, введите корректные значения');
+                return;
+            }
+
+            calculationData = {
+                params,
+                rent: calculateRentScenario(params),
+                buy: calculateBuyScenario(params),
+                breakeven: calculateBreakeven(params)
+            };
+
+            displayResults();
+            showScenarios();
+        }
+
+        function getInputValues() {
+            return {
+                propertyPrice: parseFloat(document.getElementById('propertyPrice').value),
+                monthlyRent: parseFloat(document.getElementById('monthlyRent').value),
+                citySize: document.getElementById('citySize').value,
+                downPayment: parseFloat(document.getElementById('downPayment').value),
+                mortgageRate: parseFloat(document.getElementById('mortgageRate').value) / 100,
+                mortgageTerm: parseInt(document.getElementById('mortgageTerm').value),
+                purchaseCosts: parseFloat(document.getElementById('purchaseCosts').value),
+                utilities: parseFloat(document.getElementById('utilities').value),
+                propertyTax: parseFloat(document.getElementById('propertyTax').value),
+                insurance: parseFloat(document.getElementById('insurance').value),
+                maintenance: parseFloat(document.getElementById('maintenance').value),
+                propertyAppreciation: parseFloat(document.getElementById('propertyAppreciation').value) / 100,
+                rentGrowth: parseFloat(document.getElementById('rentGrowth').value) / 100,
+                investmentReturn: parseFloat(document.getElementById('investmentReturn').value) / 100,
+                inflation: parseFloat(document.getElementById('inflation').value) / 100,
+                timeHorizon: parseInt(document.getElementById('timeHorizon').value)
+            };
+        }
+
+        function validateInputs(params) {
+            return params.propertyPrice > 0 && 
+                   params.monthlyRent > 0 && 
+                   params.timeHorizon > 0;
+        }
+
+        function calculateRentScenario(params) {
+            let totalCost = 0;
+            let monthlyRent = params.monthlyRent;
+            let investmentValue = params.downPayment + params.purchaseCosts;
+            
+            for (let year = 1; year <= params.timeHorizon; year++) {
+                // Арендная плата за год с ростом
+                const yearlyRent = monthlyRent * 12;
+                totalCost += yearlyRent;
+                
+                // Коммунальные услуги
+                totalCost += params.utilities * 12;
+                
+                // Рост арендной платы
+                monthlyRent *= (1 + params.rentGrowth);
+                
+                // Рост вложений
+                investmentValue *= (1 + params.investmentReturn);
+            }
+            
+            const totalInvestmentGain = investmentValue - (params.downPayment + params.purchaseCosts);
+            const netCost = totalCost - totalInvestmentGain;
+            
+            return {
+                totalCost,
+                investmentValue,
+                totalInvestmentGain,
+                netCost,
+                monthlyAverage: netCost / (params.timeHorizon * 12)
+            };
+        }
+
+        function calculateBuyScenario(params) {
+            const loanAmount = params.propertyPrice - params.downPayment;
+            const monthlyRate = params.mortgageRate / 12;
+            const totalPayments = params.mortgageTerm * 12;
+            
+            // Ежемесячный платёж по ипотеке
+            let monthlyPayment = 0;
+            if (loanAmount > 0) {
+                monthlyPayment = loanAmount * 
+                    (monthlyRate * Math.pow(1 + monthlyRate, totalPayments)) / 
+                    (Math.pow(1 + monthlyRate, totalPayments) - 1);
+            }
+            
+            let totalCost = params.downPayment + params.purchaseCosts;
+            let remainingLoan = loanAmount;
+            let propertyValue = params.propertyPrice;
+            
+            for (let year = 1; year <= params.timeHorizon; year++) {
+                if (year <= params.mortgageTerm) {
+                    // Платежи по ипотеке
+                    totalCost += monthlyPayment * 12;
+                    
+                    // Уменьшение долга (приблизительно)
+                    const yearlyPrincipal = loanAmount / params.mortgageTerm;
+                    remainingLoan = Math.max(0, remainingLoan - yearlyPrincipal);
+                }
+                
+                // Операционные расходы
+                totalCost += params.utilities * 12;
+                totalCost += params.propertyTax;
+                totalCost += params.insurance;
+                totalCost += params.maintenance;
+                
+                // Рост стоимости недвижимости
+                propertyValue *= (1 + params.propertyAppreciation);
+            }
+            
+            // Чистая стоимость недвижимости
+            const netPropertyValue = propertyValue - remainingLoan;
+            const netCost = totalCost - netPropertyValue;
+            
+            return {
+                totalCost,
+                monthlyPayment,
+                propertyValue,
+                remainingLoan,
+                netPropertyValue,
+                netCost,
+                monthlyAverage: netCost / (params.timeHorizon * 12)
+            };
+        }
+
+        function calculateBreakeven(params) {
+            // Поиск точки безубыточности методом итераций
+            for (let years = 1; years <= 30; years++) {
+                const tempParams = { ...params, timeHorizon: years };
+                const rentScenario = calculateRentScenario(tempParams);
+                const buyScenario = calculateBuyScenario(tempParams);
+                
+                if (buyScenario.netCost <= rentScenario.netCost) {
+                    return {
+                        years,
+                        rentCost: rentScenario.netCost,
+                        buyCost: buyScenario.netCost
+                    };
+                }
+            }
+            
+            return { years: 30, rentCost: 0, buyCost: 0 };
+        }
+
+        function displayResults() {
+            const rent = calculationData.rent;
+            const buy = calculationData.buy;
+            const isBuyBetter = buy.netCost < rent.netCost;
+            const savings = Math.abs(buy.netCost - rent.netCost);
+            
+            const resultsHTML = `
+                <div class="decision-highlight">
+                    <div class="decision-main">Рекомендация:</div>
+                    <div class="decision-sub">${isBuyBetter ? 'ПОКУПАТЬ' : 'АРЕНДОВАТЬ'}</div>
+                    <div class="decision-label">Экономия за ${calculationData.params.timeHorizon} лет: ${formatCurrency(savings)}</div>
+                </div>
+
+                <div class="results-grid">
+                    <div class="result-item rent">
+                        <div class="result-value">${formatCurrency(rent.netCost)}</div>
+                        <div class="result-desc">Итоговые расходы при аренде</div>
+                    </div>
+                    <div class="result-item buy">
+                        <div class="result-value">${formatCurrency(buy.netCost)}</div>
+                        <div class="result-desc">Итоговые расходы при покупке</div>
+                    </div>
+                    <div class="result-item rent">
+                        <div class="result-value">${formatCurrency(rent.monthlyAverage)}</div>
+                        <div class="result-desc">Средние месячные расходы (аренда)</div>
+                    </div>
+                    <div class="result-item buy">
+                        <div class="result-value">${formatCurrency(buy.monthlyAverage)}</div>
+                        <div class="result-desc">Средние месячные расходы (покупка)</div>
+                    </div>
+                </div>
+
+                <div class="breakeven-analysis">
+                    <div class="breakeven-time">${calculationData.breakeven.years} лет</div>
+                    <div>Точка безубыточности покупки</div>
+                </div>
+
+                <div class="chart-container">
+                    <canvas id="comparisonChart"></canvas>
+                </div>
+
+                <div class="${isBuyBetter ? 'recommendation-box' : 'recommendation-box rent'}">
+                    <div class="recommendation-title">
+                        ${isBuyBetter ? '✅ Рекомендуется покупка' : '✅ Рекомендуется аренда'}
+                    </div>
+                    <div>${getRecommendationText(isBuyBetter, calculationData)}</div>
+                </div>
+            `;
+
+            document.getElementById('resultsContent').innerHTML = resultsHTML;
+            createComparisonChart();
+        }
+
+        function getRecommendationText(isBuyBetter, data) {
+            const savings = Math.abs(data.buy.netCost - data.rent.netCost);
+            const savingsPercent = (savings / Math.max(data.buy.netCost, data.rent.netCost) * 100).toFixed(1);
+            
+            if (isBuyBetter) {
+                return `Покупка недвижимости будет выгоднее аренды на ${formatCurrency(savings)} (${savingsPercent}%) за ${data.params.timeHorizon} лет. 
+                        Основные преимущества: накопление собственности, защита от роста арендных ставок, возможность улучшения жилищных условий.`;
+            } else {
+                return `Аренда будет выгоднее покупки на ${formatCurrency(savings)} (${savingsPercent}%) за ${data.params.timeHorizon} лет. 
+                        Основные преимущества: большая мобильность, отсутствие крупных разовых трат, возможность инвестировать разницу в доходные активы.`;
+            }
+        }
+
+        function createComparisonChart() {
+            const ctx = document.getElementById('comparisonChart').getContext('2d');
+            
+            if (comparisonChart) {
+                comparisonChart.destroy();
+            }
+            
+            const years = [];
+            const rentCosts = [];
+            const buyCosts = [];
+            
+            for (let year = 1; year <= calculationData.params.timeHorizon; year++) {
+                const tempParams = { ...calculationData.params, timeHorizon: year };
+                const rentScenario = calculateRentScenario(tempParams);
+                const buyScenario = calculateBuyScenario(tempParams);
+                
+                years.push(year);
+                rentCosts.push(rentScenario.netCost);
+                buyCosts.push(buyScenario.netCost);
+            }
+
+            comparisonChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: years.map(y => `${y} лет`),
+                    datasets: [
+                        {
+                            label: 'Итоговые расходы при аренде',
+                            data: rentCosts,
+                            borderColor: '#17a2b8',
+                            backgroundColor: 'rgba(23, 162, 184, 0.1)',
+                            tension: 0.4
+                        },
+                        {
+                            label: 'Итоговые расходы при покупке',
+                            data: buyCosts,
+                            borderColor: '#28a745',
+                            backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Сравнение итоговых расходов по годам'
+                        },
+                        legend: {
+                            position: 'bottom'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return formatCurrency(value);
+                                }
+                            }
+                        }
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    }
+                }
+            });
+        }
+
+        function showScenarios() {
+            document.getElementById('scenarioTabs').style.display = 'flex';
+            document.getElementById('scenarioContent').style.display = 'block';
+            displayAllScenarios();
+        }
+
+        function switchScenario(scenario) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            document.querySelectorAll('.scenario-content').forEach(content => content.classList.remove('active'));
+            document.getElementById(scenario + 'Scenario').classList.add('active');
+        }
+
+        function displayAllScenarios() {
+            displaySummaryScenario();
+            displayMonthlyScenario();
+            displayLongtermScenario();
+            displayBreakevenScenario();
+        }
+
+        function displaySummaryScenario() {
+            const data = calculationData;
+            const isBuyBetter = data.buy.netCost < data.rent.netCost;
+            
+            document.getElementById('summaryContent').innerHTML = `
+                <div class="results-grid">
+                    <div class="result-item">
+                        <div class="result-value">${formatCurrency(data.rent.totalCost)}</div>
+                        <div class="result-desc">Общие расходы на аренду</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-value">${formatCurrency(data.buy.totalCost)}</div>
+                        <div class="result-desc">Общие расходы на покупку</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-value">${formatCurrency(data.rent.totalInvestmentGain)}</div>
+                        <div class="result-desc">Доход от альтернативных вложений</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-value">${formatCurrency(data.buy.netPropertyValue)}</div>
+                        <div class="result-desc">Стоимость недвижимости в конце</div>
+                    </div>
+                </div>
+                
+                <h4>Ключевые предположения:</h4>
+                <div style="background: #f8f9fa; padding: 16px; border-radius: 6px; margin: 16px 0;">
+                    <div class="assumption-item">
+                        <span>Рост стоимости недвижимости:</span>
+                        <span>${(data.params.propertyAppreciation * 100).toFixed(1)}% в год</span>
+                    </div>
+                    <div class="assumption-item">
+                        <span>Рост арендной платы:</span>
+                        <span>${(data.params.rentGrowth * 100).toFixed(1)}% в год</span>
+                    </div>
+                    <div class="assumption-item">
+                        <span>Доходность вложений:</span>
+                        <span>${(data.params.investmentReturn * 100).toFixed(1)}% в год</span>
+                    </div>
+                    <div class="assumption-item">
+                        <span>Период анализа:</span>
+                        <span>${data.params.timeHorizon} лет</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayMonthlyScenario() {
+            const data = calculationData;
+            const currentRent = data.params.monthlyRent + data.params.utilities;
+            const currentBuy = data.buy.monthlyPayment + data.params.utilities + 
+                              (data.params.propertyTax + data.params.insurance + data.params.maintenance) / 12;
+            
+            document.getElementById('monthlyContent').innerHTML = `
+                <div class="results-grid">
+                    <div class="result-item rent">
+                        <div class="result-value">${formatCurrency(currentRent)}</div>
+                        <div class="result-desc">Текущие расходы при аренде</div>
+                    </div>
+                    <div class="result-item buy">
+                        <div class="result-value">${formatCurrency(currentBuy)}</div>
+                        <div class="result-desc">Текущие расходы при покупке</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-value">${formatCurrency(Math.abs(currentBuy - currentRent))}</div>
+                        <div class="result-desc">Разница в месячных платежах</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-value">${data.params.downPayment > 0 ? formatCurrency(data.params.downPayment) : 'Нет'}</div>
+                        <div class="result-desc">Требуемый первоначальный взнос</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayLongtermScenario() {
+            const data = calculationData;
+            
+            document.getElementById('longtermContent').innerHTML = `
+                <div class="results-grid">
+                    <div class="result-item">
+                        <div class="result-value">${formatCurrency(data.buy.propertyValue)}</div>
+                        <div class="result-desc">Прогнозная стоимость недвижимости</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-value">${formatCurrency(data.rent.investmentValue)}</div>
+                        <div class="result-desc">Стоимость альтернативных вложений</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-value">${((data.buy.propertyValue / data.params.propertyPrice - 1) * 100).toFixed(1)}%</div>
+                        <div class="result-desc">Общий рост стоимости недвижимости</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-value">${((data.rent.investmentValue / (data.params.downPayment + data.params.purchaseCosts) - 1) * 100).toFixed(1)}%</div>
+                        <div class="result-desc">Общий рост альтернативных вложений</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayBreakevenScenario() {
+            const breakeven = calculationData.breakeven;
+            
+            document.getElementById('breakevenContent').innerHTML = `
+                <div class="breakeven-analysis">
+                    <div class="breakeven-time">${breakeven.years} лет</div>
+                    <div>Покупка становится выгоднее аренды</div>
+                </div>
+                
+                <p style="margin: 20px 0; color: #666;">
+                    ${breakeven.years <= calculationData.params.timeHorizon ? 
+                      `Поскольку ваш горизонт планирования (${calculationData.params.timeHorizon} лет) больше точки безубыточности, покупка может быть выгоднее.` :
+                      `Поскольку ваш горизонт планирования (${calculationData.params.timeHorizon} лет) меньше точки безубыточности, аренда может быть выгоднее.`}
+                </p>
+                
+                <h4>Факторы, влияющие на точку безубыточности:</h4>
+                <ul style="margin: 16px 0; padding-left: 20px; color: #666;">
+                    <li>Соотношение цены покупки к годовой аренде (сейчас: ${(calculationData.params.propertyPrice / (calculationData.params.monthlyRent * 12)).toFixed(1)})</li>
+                    <li>Размер первоначального взноса</li>
+                    <li>Процентная ставка по ипотеке</li>
+                    <li>Темпы роста цен на недвижимость и аренду</li>
+                    <li>Доходность альтернативных вложений</li>
+                </ul>
+            `;
+        }
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('ru-RU', {
+                style: 'currency',
+                currency: 'RUB',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(amount);
+        }
+
+        // Автоматическое обновление процента первоначального взноса
+        document.getElementById('propertyPrice').addEventListener('input', updateDownPaymentInfo);
+        document.getElementById('downPayment').addEventListener('input', updateDownPaymentInfo);
+
+        function updateDownPaymentInfo() {
+            const price = parseFloat(document.getElementById('propertyPrice').value) || 0;
+            const downPayment = parseFloat(document.getElementById('downPayment').value) || 0;
+            
+            if (price > 0) {
+                const percent = (downPayment / price * 100).toFixed(1);
+                // Можно добавить отображение процента где-то рядом с полем
+            }
+        }
+
+        // Автоматический расчёт при загрузке
+        document.addEventListener('DOMContentLoaded', function() {
+            calculateRentVsBuy();
+        });
+    </script>
+</body>
+</html>
