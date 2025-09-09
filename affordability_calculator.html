@@ -883,7 +883,8 @@
             updateResults(maxLoanAmount, maxPropertyPrice, recommendedDownPayment, maxMortgagePayment, availableIncome, actualDebtRatio * 100);
 
             if (currentMode === 'advanced') {
-                updateAdvancedFeatures(monthlyIncome, monthlyExpenses, maxMortgagePayment, availableIncome, actualDebtRatio);
+                const freeIncome = monthlyIncome - monthlyExpenses - maxMortgagePayment;
+                updateAdvancedFeatures(monthlyIncome, monthlyExpenses, maxMortgagePayment, freeIncome, actualDebtRatio);
                 updateRecommendations(actualDebtRatio, availableIncome, creditHistory, employmentType, familyMembers);
             }
 

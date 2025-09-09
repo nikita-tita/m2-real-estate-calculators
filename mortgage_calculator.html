@@ -237,6 +237,31 @@
             font-size: 18px;
             color: #666;
         }
+        
+        .basic-summary {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+        }
+        
+        .summary-label {
+            color: #666;
+        }
+        
+        .summary-value {
+            font-weight: 600;
+            color: #333;
+        }
 
         /* Advanced Mode Features */
         .advanced-features {
@@ -587,6 +612,17 @@
             <div class="basic-result" id="basicResult">
                 <div class="result-value" id="basicMonthlyPayment">52 756 ₽</div>
                 <div class="result-label">Ежемесячный платеж</div>
+                
+                <div class="basic-summary">
+                    <div class="summary-item">
+                        <span class="summary-label">Сумма кредита:</span>
+                        <span class="summary-value" id="basicLoanAmount">5 600 000 ₽</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Переплата банку:</span>
+                        <span class="summary-value" id="basicOverpayment">7 061 440 ₽</span>
+                    </div>
+                </div>
             </div>
 
             <!-- Advanced Mode Results -->
@@ -802,6 +838,8 @@
 
             // Update basic result
             document.getElementById('basicMonthlyPayment').textContent = formatNumber(monthlyPayment) + ' ₽';
+            document.getElementById('basicLoanAmount').textContent = formatNumber(loanAmount) + ' ₽';
+            document.getElementById('basicOverpayment').textContent = formatNumber(totalOverpayment) + ' ₽';
 
             // Update advanced results
             document.getElementById('monthlyPayment').textContent = formatNumber(monthlyPayment) + ' ₽';
