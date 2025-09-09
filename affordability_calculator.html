@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>М2 — Калькулятор доступности жилья</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8f9fa;
+            color: #333;
+            line-height: 1.4;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo {
+            font-size: 48px;
+            font-weight: 700;
+            color: #007bff;
+            margin-bottom: 12px;
+        }
+
+        .title {
+            font-size: 32px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 12px;
+        }
+
+        .subtitle {
+            font-size: 18px;
+            color: #666;
+        }
+
+        .back-link {
+            color: #007bff;
+            text-decoration: none;
+            font-size: 14px;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Mode Switch */
+        .mode-switch {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 40px;
+        }
+
+        .mode-toggle {
+            background: white;
+            border-radius: 12px;
+            padding: 4px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+            display: flex;
+            border: 1px solid #e9ecef;
+        }
+
+        .mode-btn {
+            padding: 12px 24px;
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #666;
+        }
+
+        .mode-btn.active {
+            background: #007bff;
+            color: white;
+            box-shadow: 0 2px 8px rgba(0,123,255,0.3);
+        }
+
+        /* Calculator Layout */
+        .calculator {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .calculator.basic-mode {
+            grid-template-columns: 1fr;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .inputs, .results {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            color: #333;
+        }
+
+        .input-group {
+            margin-bottom: 24px;
+        }
+
+        .input-label {
+            display: block;
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            font-size: 16px;
+            background: white;
+            transition: border-color 0.2s;
+            appearance: textfield;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+
+        .input-field::-webkit-outer-spin-button,
+        .input-field::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .quick-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+
+        .quick-btn {
+            padding: 8px 16px;
+            border: 1px solid #dee2e6;
+            background: white;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .quick-btn:hover {
+            border-color: #007bff;
+            color: #007bff;
+        }
+
+        .select-field {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            font-size: 16px;
+            background: white;
+            cursor: pointer;
+        }
+
+        .select-field:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+
+        /* Results */
+        .result-item {
+            margin-bottom: 24px;
+        }
+
+        .result-label {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+
+        .result-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .result-value.primary {
+            color: #007bff;
+            font-size: 36px;
+        }
+
+        .result-value.success {
+            color: #28a745;
+        }
+
+        .result-value.warning {
+            color: #ffc107;
+        }
+
+        .result-value.danger {
+            color: #dc3545;
+        }
+
+        /* Basic Mode Results */
+        .basic-result {
+            text-align: center;
+            padding: 40px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .basic-result .result-value {
+            font-size: 48px;
+            color: #007bff;
+            margin-bottom: 12px;
+        }
+
+        .basic-result .result-label {
+            font-size: 18px;
+            color: #666;
+        }
+
+        /* Advanced Mode Features */
+        .advanced-features {
+            display: none;
+        }
+
+        .advanced-features.active {
+            display: block;
+        }
+
+        /* Recommendations */
+        .recommendations {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            margin-bottom: 40px;
+        }
+
+        .recommendation-item {
+            padding: 20px;
+            margin-bottom: 16px;
+            border-radius: 12px;
+            border-left: 4px solid;
+        }
+
+        .recommendation-item.success {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+
+        .recommendation-item.warning {
+            background: #fff3cd;
+            border-color: #ffc107;
+            color: #856404;
+        }
+
+        .recommendation-item.danger {
+            background: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+
+        .recommendation-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .recommendation-text {
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* Chart Container */
+        .chart-container {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            margin-bottom: 40px;
+        }
+
+        .chart-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            text-align: center;
+            color: #333;
+        }
+
+        .bar-chart {
+            display: flex;
+            gap: 20px;
+            height: 300px;
+            align-items: end;
+            justify-content: center;
+            padding: 20px 0;
+        }
+
+        .bar {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            max-width: 120px;
+        }
+
+        .bar-column {
+            width: 60px;
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            border-radius: 8px 8px 0 0;
+            margin-bottom: 12px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .bar-column:hover {
+            transform: scale(1.05);
+        }
+
+        .bar-value {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            white-space: nowrap;
+        }
+
+        .bar-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #666;
+            text-align: center;
+            line-height: 1.3;
+        }
+
+        /* Debt Load Indicator */
+        .debt-indicator {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            margin-bottom: 40px;
+        }
+
+        .debt-gauge {
+            width: 200px;
+            height: 100px;
+            margin: 0 auto 20px;
+            position: relative;
+        }
+
+        .debt-gauge svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .gauge-bg {
+            fill: none;
+            stroke: #e9ecef;
+            stroke-width: 20;
+            stroke-linecap: round;
+        }
+
+        .gauge-fill {
+            fill: none;
+            stroke-width: 20;
+            stroke-linecap: round;
+            transition: stroke-dasharray 0.5s ease;
+        }
+
+        .gauge-text {
+            text-anchor: middle;
+            font-size: 24px;
+            font-weight: 700;
+            fill: #333;
+        }
+
+        .debt-legend {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            font-size: 14px;
+            margin-top: 20px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 8px;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0056b3;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #007bff;
+            border: 2px solid #007bff;
+        }
+
+        .btn-secondary:hover {
+            background: #007bff;
+            color: white;
+        }
+
+        /* Reverse Calculator */
+        .reverse-calculator {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            margin-bottom: 40px;
+        }
+
+        .toggle-section {
+            margin-bottom: 20px;
+        }
+
+        .toggle-btn {
+            background: #f8f9fa;
+            border: 2px solid #dee2e6;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .toggle-btn.active {
+            background: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+
+        @media (max-width: 768px) {
+            .calculator {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+
+            .calculator.basic-mode {
+                max-width: none;
+            }
+
+            .container {
+                padding: 24px 16px;
+            }
+
+            .inputs, .results, .recommendations, .chart-container, .debt-indicator, .reverse-calculator {
+                padding: 24px;
+            }
+
+            .basic-result .result-value {
+                font-size: 36px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .bar-chart {
+                height: 200px;
+                gap: 10px;
+            }
+
+            .bar-column {
+                width: 40px;
+            }
+
+            .debt-legend {
+                flex-direction: column;
+                align-items: center;
+                gap: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Вернуться к калькуляторам</a>
+        
+        <div class="header">
+            <div class="logo">М2</div>
+            <h1 class="title">Калькулятор доступности жилья</h1>
+            <p class="subtitle">Определите максимальную сумму ипотеки по вашему доходу</p>
+        </div>
+
+        <!-- Mode Switch -->
+        <div class="mode-switch">
+            <div class="mode-toggle">
+                <button class="mode-btn active" onclick="switchMode('basic')">Базовый</button>
+                <button class="mode-btn" onclick="switchMode('advanced')">Расширенный</button>
+            </div>
+        </div>
+
+        <div class="calculator basic-mode" id="calculatorContainer">
+            <div class="inputs">
+                <h2 class="section-title">Ваши доходы и расходы</h2>
+                
+                <div class="input-group">
+                    <label class="input-label" for="monthlyIncome">Ежемесячный доход (чистый)</label>
+                    <input type="number" id="monthlyIncome" class="input-field" value="120000" min="30000" max="5000000" step="5000">
+                    <div class="quick-buttons">
+                        <button class="quick-btn" onclick="setValue('monthlyIncome', 80000)">80 тыс</button>
+                        <button class="quick-btn" onclick="setValue('monthlyIncome', 120000)">120 тыс</button>
+                        <button class="quick-btn" onclick="setValue('monthlyIncome', 200000)">200 тыс</button>
+                        <button class="quick-btn" onclick="setValue('monthlyIncome', 300000)">300 тыс</button>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label" for="monthlyExpenses">Обязательные расходы</label>
+                    <input type="number" id="monthlyExpenses" class="input-field" value="40000" min="0" max="1000000" step="1000">
+                    <div class="quick-buttons">
+                        <button class="quick-btn" onclick="setValue('monthlyExpenses', 25000)">25 тыс</button>
+                        <button class="quick-btn" onclick="setValue('monthlyExpenses', 40000)">40 тыс</button>
+                        <button class="quick-btn" onclick="setValue('monthlyExpenses', 60000)">60 тыс</button>
+                        <button class="quick-btn" onclick="setValue('monthlyExpenses', 80000)">80 тыс</button>
+                    </div>
+                </div>
+
+                <!-- Advanced Mode Fields -->
+                <div class="advanced-features">
+                    <div class="input-group">
+                        <label class="input-label" for="existingLoans">Другие кредиты (ежемесячно)</label>
+                        <input type="number" id="existingLoans" class="input-field" value="0" min="0" step="1000">
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label" for="familyMembers">Количество иждивенцев</label>
+                        <input type="number" id="familyMembers" class="input-field" value="0" min="0" max="10" step="1">
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label" for="creditHistory">Кредитная история</label>
+                        <select id="creditHistory" class="select-field">
+                            <option value="excellent">Отличная</option>
+                            <option value="good" selected>Хорошая</option>
+                            <option value="fair">Удовлетворительная</option>
+                            <option value="poor">Плохая</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label" for="employmentType">Тип трудоустройства</label>
+                        <select id="employmentType" class="select-field">
+                            <option value="permanent" selected>Штатный сотрудник</option>
+                            <option value="entrepreneur">ИП/Предприниматель</option>
+                            <option value="freelancer">Фрилансер</option>
+                            <option value="contract">По договору</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label" for="interestRate">Ожидаемая ставка по ипотеке, %</label>
+                    <input type="number" id="interestRate" class="input-field" value="8.5" min="1" max="30" step="0.1">
+                    <div class="quick-buttons">
+                        <button class="quick-btn" onclick="setValue('interestRate', 7.5)">7.5%</button>
+                        <button class="quick-btn" onclick="setValue('interestRate', 8.5)">8.5%</button>
+                        <button class="quick-btn" onclick="setValue('interestRate', 9.5)">9.5%</button>
+                        <button class="quick-btn" onclick="setValue('interestRate', 12)">12%</button>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label" for="loanTerm">Срок кредита, лет</label>
+                    <input type="number" id="loanTerm" class="input-field" value="20" min="1" max="30" step="1">
+                    <div class="quick-buttons">
+                        <button class="quick-btn" onclick="setValue('loanTerm', 15)">15 лет</button>
+                        <button class="quick-btn" onclick="setValue('loanTerm', 20)">20 лет</button>
+                        <button class="quick-btn" onclick="setValue('loanTerm', 25)">25 лет</button>
+                        <button class="quick-btn" onclick="setValue('loanTerm', 30)">30 лет</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Basic Mode Result -->
+            <div class="basic-result" id="basicResult">
+                <div class="result-value" id="basicMaxLoan">4 200 000 ₽</div>
+                <div class="result-label">Максимальная сумма кредита</div>
+            </div>
+
+            <!-- Advanced Mode Results -->
+            <div class="results advanced-features">
+                <h2 class="section-title">Результаты расчета</h2>
+                
+                <div class="result-item">
+                    <div class="result-label">Максимальная сумма кредита</div>
+                    <div class="result-value primary" id="maxLoanAmount">4 200 000 ₽</div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-label">Максимальная стоимость жилья</div>
+                    <div class="result-value" id="maxPropertyPrice">5 250 000 ₽</div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-label">Рекомендуемый первый взнос</div>
+                    <div class="result-value" id="recommendedDownPayment">1 050 000 ₽</div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-label">Ежемесячный платеж</div>
+                    <div class="result-value" id="monthlyPayment">35 280 ₽</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Advanced Mode Additional Sections -->
+        <div class="advanced-features">
+            <!-- Debt Load Indicator -->
+            <div class="debt-indicator">
+                <h2 class="section-title">Показатель долговой нагрузки (ПДН)</h2>
+                <div class="debt-gauge">
+                    <svg viewBox="0 0 200 100">
+                        <path d="M 20 80 A 80 80 0 0 1 180 80" class="gauge-bg"/>
+                        <path d="M 20 80 A 80 80 0 0 1 180 80" class="gauge-fill" id="debtGauge" 
+                              stroke-dasharray="0 251.2" stroke="#28a745"/>
+                        <text x="100" y="70" class="gauge-text" id="debtPercentage">29.4%</text>
+                    </svg>
+                </div>
+                <div class="debt-legend">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #28a745;"></div>
+                        <span>Отличный (до 30%)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #ffc107;"></div>
+                        <span>Приемлемый (30-40%)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #dc3545;"></div>
+                        <span>Высокий (свыше 40%)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chart Container -->
+            <div class="chart-container">
+                <h2 class="chart-title">Разбивка ежемесячного бюджета</h2>
+                <div class="bar-chart">
+                    <div class="bar">
+                        <div class="bar-column" id="incomeBar" style="height: 100%;">
+                            <div class="bar-value" id="incomeValue">120 000 ₽</div>
+                        </div>
+                        <div class="bar-label">Доход</div>
+                    </div>
+                    <div class="bar">
+                        <div class="bar-column" id="expensesBar" style="height: 33.3%; background: linear-gradient(135deg, #dc3545, #c82333);">
+                            <div class="bar-value" id="expensesValue">40 000 ₽</div>
+                        </div>
+                        <div class="bar-label">Расходы</div>
+                    </div>
+                    <div class="bar">
+                        <div class="bar-column" id="mortgageBar" style="height: 29.4%; background: linear-gradient(135deg, #ffc107, #e0a800);">
+                            <div class="bar-value" id="mortgageValue">35 280 ₽</div>
+                        </div>
+                        <div class="bar-label">Ипотека</div>
+                    </div>
+                    <div class="bar">
+                        <div class="bar-column" id="freeBar" style="height: 37.3%; background: linear-gradient(135deg, #28a745, #20c997);">
+                            <div class="bar-value" id="freeValue">44 720 ₽</div>
+                        </div>
+                        <div class="bar-label">Свободно</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recommendations -->
+            <div class="recommendations">
+                <h2 class="section-title">Рекомендации</h2>
+                <div id="recommendationsContainer">
+                    <!-- Recommendations will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Reverse Calculator -->
+            <div class="reverse-calculator">
+                <div class="toggle-section">
+                    <button class="toggle-btn" onclick="toggleReverseCalculator()" id="reverseToggle">
+                        📊 Обратный расчет: какой доход нужен для желаемой суммы?
+                    </button>
+                </div>
+                <div id="reverseCalculatorContent" style="display: none;">
+                    <div class="input-group">
+                        <label class="input-label" for="desiredLoanAmount">Желаемая сумма кредита</label>
+                        <input type="number" id="desiredLoanAmount" class="input-field" value="5000000" min="500000" step="100000">
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">Необходимый ежемесячный доход</div>
+                        <div class="result-value primary" id="requiredIncome">105 000 ₽</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button class="btn btn-primary" onclick="exportToPDF()">
+                📄 Экспорт в PDF
+            </button>
+            <button class="btn btn-secondary" onclick="resetCalculator()">
+                🔄 Сбросить
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let currentMode = 'basic';
+        let reverseCalculatorOpen = false;
+
+        function formatNumber(num) {
+            return new Intl.NumberFormat('ru-RU').format(Math.round(num));
+        }
+
+        function setValue(inputId, value) {
+            document.getElementById(inputId).value = value;
+            calculateAffordability();
+        }
+
+        function switchMode(mode) {
+            currentMode = mode;
+            const calculatorContainer = document.getElementById('calculatorContainer');
+            const modeButtons = document.querySelectorAll('.mode-btn');
+            const advancedFeatures = document.querySelectorAll('.advanced-features');
+
+            // Update button states
+            modeButtons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Update layout
+            if (mode === 'basic') {
+                calculatorContainer.classList.add('basic-mode');
+                advancedFeatures.forEach(feature => feature.classList.remove('active'));
+            } else {
+                calculatorContainer.classList.remove('basic-mode');
+                advancedFeatures.forEach(feature => feature.classList.add('active'));
+            }
+
+            calculateAffordability();
+        }
+
+        function calculateAffordability() {
+            const monthlyIncome = parseFloat(document.getElementById('monthlyIncome').value) || 0;
+            const monthlyExpenses = parseFloat(document.getElementById('monthlyExpenses').value) || 0;
+            const existingLoans = parseFloat(document.getElementById('existingLoans').value) || 0;
+            const familyMembers = parseInt(document.getElementById('familyMembers').value) || 0;
+            const creditHistory = document.getElementById('creditHistory').value;
+            const employmentType = document.getElementById('employmentType').value;
+            const interestRate = parseFloat(document.getElementById('interestRate').value) || 0;
+            const loanTerm = parseFloat(document.getElementById('loanTerm').value) || 0;
+
+            if (monthlyIncome <= 0 || interestRate <= 0 || loanTerm <= 0) {
+                return;
+            }
+
+            // Calculate debt-to-income ratio factors
+            let maxDebtRatio = 0.40; // Base 40% DTI limit
+
+            // Adjust based on credit history
+            switch (creditHistory) {
+                case 'excellent': maxDebtRatio = 0.45; break;
+                case 'good': maxDebtRatio = 0.40; break;
+                case 'fair': maxDebtRatio = 0.35; break;
+                case 'poor': maxDebtRatio = 0.30; break;
+            }
+
+            // Adjust based on employment type
+            switch (employmentType) {
+                case 'permanent': break; // No adjustment
+                case 'entrepreneur': maxDebtRatio *= 0.9; break;
+                case 'freelancer': maxDebtRatio *= 0.85; break;
+                case 'contract': maxDebtRatio *= 0.9; break;
+            }
+
+            // Adjust for family members (reduce available income)
+            const familyAdjustment = familyMembers * 10000; // 10k per dependent
+
+            // Calculate available income for mortgage
+            const totalObligations = monthlyExpenses + existingLoans + familyAdjustment;
+            const availableIncome = monthlyIncome - totalObligations;
+            const maxMortgagePayment = Math.min(availableIncome, monthlyIncome * maxDebtRatio - existingLoans);
+
+            if (maxMortgagePayment <= 0) {
+                updateResults(0, 0, 0, 0, 0, 100);
+                return;
+            }
+
+            // Calculate maximum loan amount
+            const monthlyRate = interestRate / 100 / 12;
+            const numberOfPayments = loanTerm * 12;
+            
+            const maxLoanAmount = maxMortgagePayment * (Math.pow(1 + monthlyRate, numberOfPayments) - 1) / 
+                                  (monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments));
+
+            // Estimate property price (assuming 20% down payment)
+            const maxPropertyPrice = maxLoanAmount / 0.8;
+            const recommendedDownPayment = maxPropertyPrice * 0.2;
+
+            // Calculate actual debt-to-income ratio
+            const actualDebtRatio = (maxMortgagePayment + existingLoans) / monthlyIncome;
+
+            updateResults(maxLoanAmount, maxPropertyPrice, recommendedDownPayment, maxMortgagePayment, availableIncome, actualDebtRatio * 100);
+
+            if (currentMode === 'advanced') {
+                updateAdvancedFeatures(monthlyIncome, monthlyExpenses, maxMortgagePayment, availableIncome, actualDebtRatio);
+                updateRecommendations(actualDebtRatio, availableIncome, creditHistory, employmentType, familyMembers);
+            }
+
+            calculateReverseIncome();
+        }
+
+        function updateResults(maxLoan, maxProperty, downPayment, payment, free, debtRatio) {
+            // Update basic result
+            document.getElementById('basicMaxLoan').textContent = formatNumber(maxLoan) + ' ₽';
+
+            // Update advanced results
+            document.getElementById('maxLoanAmount').textContent = formatNumber(maxLoan) + ' ₽';
+            document.getElementById('maxPropertyPrice').textContent = formatNumber(maxProperty) + ' ₽';
+            document.getElementById('recommendedDownPayment').textContent = formatNumber(downPayment) + ' ₽';
+            document.getElementById('monthlyPayment').textContent = formatNumber(payment) + ' ₽';
+        }
+
+        function updateAdvancedFeatures(income, expenses, mortgage, free, debtRatio) {
+            // Update debt gauge
+            const debtPercentage = Math.min(debtRatio * 100, 100);
+            const gaugeColor = debtRatio <= 0.30 ? '#28a745' : debtRatio <= 0.40 ? '#ffc107' : '#dc3545';
+            
+            const circumference = Math.PI * 80;
+            const dashArray = (debtPercentage / 100) * circumference;
+            
+            document.getElementById('debtGauge').style.stroke = gaugeColor;
+            document.getElementById('debtGauge').setAttribute('stroke-dasharray', `${dashArray} ${circumference}`);
+            document.getElementById('debtPercentage').textContent = debtPercentage.toFixed(1) + '%';
+
+            // Update bar chart
+            const maxValue = income;
+            document.getElementById('incomeValue').textContent = formatNumber(income) + ' ₽';
+            document.getElementById('expensesValue').textContent = formatNumber(expenses) + ' ₽';
+            document.getElementById('mortgageValue').textContent = formatNumber(mortgage) + ' ₽';
+            document.getElementById('freeValue').textContent = formatNumber(free) + ' ₽';
+
+            document.getElementById('expensesBar').style.height = (expenses / maxValue * 100) + '%';
+            document.getElementById('mortgageBar').style.height = (mortgage / maxValue * 100) + '%';
+            document.getElementById('freeBar').style.height = (free / maxValue * 100) + '%';
+        }
+
+        function updateRecommendations(debtRatio, availableIncome, creditHistory, employmentType, familyMembers) {
+            const container = document.getElementById('recommendationsContainer');
+            container.innerHTML = '';
+
+            const recommendations = [];
+
+            // Debt ratio recommendations
+            if (debtRatio <= 0.30) {
+                recommendations.push({
+                    type: 'success',
+                    title: 'Отличный показатель долговой нагрузки',
+                    text: 'Ваш ПДН составляет ' + (debtRatio * 100).toFixed(1) + '%, что значительно ниже банковского лимита. У вас высокие шансы на одобрение ипотеки с выгодными условиями.'
+                });
+            } else if (debtRatio <= 0.40) {
+                recommendations.push({
+                    type: 'warning',
+                    title: 'Приемлемый уровень долговой нагрузки',
+                    text: 'ПДН ' + (debtRatio * 100).toFixed(1) + '% находится в допустимых пределах, но рекомендуется иметь финансовую подушку для непредвиденных расходов.'
+                });
+            } else {
+                recommendations.push({
+                    type: 'danger',
+                    title: 'Высокий уровень долговой нагрузки',
+                    text: 'ПДН ' + (debtRatio * 100).toFixed(1) + '% превышает рекомендуемые значения. Рассмотрите возможность увеличения дохода или уменьшения расходов.'
+                });
+            }
+
+            // Income recommendations
+            if (availableIncome < 30000) {
+                recommendations.push({
+                    type: 'warning',
+                    title: 'Ограниченная финансовая подушка',
+                    text: 'После всех платежей у вас остается менее 30 000 ₽. Рекомендуется увеличить доход или пересмотреть расходы.'
+                });
+            }
+
+            // Credit history recommendations
+            if (creditHistory === 'fair' || creditHistory === 'poor') {
+                recommendations.push({
+                    type: 'warning',
+                    title: 'Улучшите кредитную историю',
+                    text: 'Для получения лучших условий по ипотеке рекомендуется улучшить кредитную историю: вовремя платите по текущим кредитам, закройте просроченную задолженность.'
+                });
+            }
+
+            // Employment recommendations
+            if (employmentType !== 'permanent') {
+                recommendations.push({
+                    type: 'warning',
+                    title: 'Нестандартное трудоустройство',
+                    text: 'Банки могут предъявлять дополнительные требования к ИП и фрилансерам. Подготовьте справки о доходах за последние 2 года.'
+                });
+            }
+
+            recommendations.forEach(rec => {
+                const item = document.createElement('div');
+                item.className = `recommendation-item ${rec.type}`;
+                item.innerHTML = `
+                    <div class="recommendation-title">${rec.title}</div>
+                    <div class="recommendation-text">${rec.text}</div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function toggleReverseCalculator() {
+            reverseCalculatorOpen = !reverseCalculatorOpen;
+            const content = document.getElementById('reverseCalculatorContent');
+            const toggle = document.getElementById('reverseToggle');
+            
+            if (reverseCalculatorOpen) {
+                content.style.display = 'block';
+                toggle.textContent = '📊 Скрыть обратный расчет';
+                calculateReverseIncome();
+            } else {
+                content.style.display = 'none';
+                toggle.textContent = '📊 Обратный расчет: какой доход нужен для желаемой суммы?';
+            }
+        }
+
+        function calculateReverseIncome() {
+            if (!reverseCalculatorOpen) return;
+
+            const desiredLoan = parseFloat(document.getElementById('desiredLoanAmount').value) || 0;
+            const interestRate = parseFloat(document.getElementById('interestRate').value) || 0;
+            const loanTerm = parseFloat(document.getElementById('loanTerm').value) || 0;
+            const existingLoans = parseFloat(document.getElementById('existingLoans').value) || 0;
+
+            if (desiredLoan <= 0 || interestRate <= 0 || loanTerm <= 0) return;
+
+            const monthlyRate = interestRate / 100 / 12;
+            const numberOfPayments = loanTerm * 12;
+            
+            const requiredPayment = desiredLoan * (monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments)) / 
+                                   (Math.pow(1 + monthlyRate, numberOfPayments) - 1);
+
+            // Assuming 40% DTI ratio
+            const requiredIncome = (requiredPayment + existingLoans) / 0.40;
+
+            document.getElementById('requiredIncome').textContent = formatNumber(requiredIncome) + ' ₽';
+        }
+
+        function resetCalculator() {
+            document.getElementById('monthlyIncome').value = 120000;
+            document.getElementById('monthlyExpenses').value = 40000;
+            document.getElementById('existingLoans').value = 0;
+            document.getElementById('familyMembers').value = 0;
+            document.getElementById('creditHistory').value = 'good';
+            document.getElementById('employmentType').value = 'permanent';
+            document.getElementById('interestRate').value = 8.5;
+            document.getElementById('loanTerm').value = 20;
+            document.getElementById('desiredLoanAmount').value = 5000000;
+            
+            if (reverseCalculatorOpen) {
+                toggleReverseCalculator();
+            }
+            
+            calculateAffordability();
+        }
+
+        function exportToPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            // Title
+            doc.setFontSize(20);
+            doc.text('Расчет доступности жилья', 20, 30);
+
+            // Input parameters
+            doc.setFontSize(14);
+            doc.text('Исходные данные:', 20, 50);
+            
+            const monthlyIncome = document.getElementById('monthlyIncome').value;
+            const monthlyExpenses = document.getElementById('monthlyExpenses').value;
+            const interestRate = document.getElementById('interestRate').value;
+            const loanTerm = document.getElementById('loanTerm').value;
+            
+            doc.setFontSize(12);
+            doc.text(`Ежемесячный доход: ${formatNumber(monthlyIncome)} ₽`, 30, 65);
+            doc.text(`Обязательные расходы: ${formatNumber(monthlyExpenses)} ₽`, 30, 75);
+            doc.text(`Процентная ставка: ${interestRate}%`, 30, 85);
+            doc.text(`Срок кредита: ${loanTerm} лет`, 30, 95);
+
+            // Results
+            doc.setFontSize(14);
+            doc.text('Результаты:', 20, 115);
+            
+            doc.setFontSize(12);
+            const maxLoanText = document.getElementById('maxLoanAmount').textContent;
+            const maxPropertyText = document.getElementById('maxPropertyPrice').textContent;
+            const downPaymentText = document.getElementById('recommendedDownPayment').textContent;
+            const monthlyPaymentText = document.getElementById('monthlyPayment').textContent;
+            
+            doc.text(`Максимальная сумма кредита: ${maxLoanText}`, 30, 130);
+            doc.text(`Максимальная стоимость жилья: ${maxPropertyText}`, 30, 140);
+            doc.text(`Рекомендуемый первый взнос: ${downPaymentText}`, 30, 150);
+            doc.text(`Ежемесячный платеж: ${monthlyPaymentText}`, 30, 160);
+
+            // Footer
+            doc.setFontSize(10);
+            doc.text('Документ создан с помощью М2 Платформы калькуляторов недвижимости', 20, 180);
+            doc.text(`Дата создания: ${new Date().toLocaleDateString('ru-RU')}`, 20, 190);
+
+            doc.save('доступность-жилья.pdf');
+        }
+
+        // Event listeners
+        document.getElementById('monthlyIncome').addEventListener('input', calculateAffordability);
+        document.getElementById('monthlyExpenses').addEventListener('input', calculateAffordability);
+        document.getElementById('existingLoans').addEventListener('input', calculateAffordability);
+        document.getElementById('familyMembers').addEventListener('input', calculateAffordability);
+        document.getElementById('creditHistory').addEventListener('change', calculateAffordability);
+        document.getElementById('employmentType').addEventListener('change', calculateAffordability);
+        document.getElementById('interestRate').addEventListener('input', calculateAffordability);
+        document.getElementById('loanTerm').addEventListener('input', calculateAffordability);
+        document.getElementById('desiredLoanAmount').addEventListener('input', calculateReverseIncome);
+
+        // Initial calculation
+        calculateAffordability();
+    </script>
+</body>
+</html>

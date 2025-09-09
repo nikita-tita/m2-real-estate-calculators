@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>М2 — Калькулятор доходности инвестиций</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8f9fa;
+            color: #333;
+            line-height: 1.4;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo {
+            font-size: 48px;
+            font-weight: 700;
+            color: #007bff;
+            margin-bottom: 12px;
+        }
+
+        .title {
+            font-size: 32px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 12px;
+        }
+
+        .subtitle {
+            font-size: 18px;
+            color: #666;
+        }
+
+        .back-link {
+            color: #007bff;
+            text-decoration: none;
+            font-size: 14px;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Mode Switch */
+        .mode-switch {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 40px;
+        }
+
+        .mode-toggle {
+            background: white;
+            border-radius: 12px;
+            padding: 4px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+            display: flex;
+            border: 1px solid #e9ecef;
+        }
+
+        .mode-btn {
+            padding: 12px 24px;
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #666;
+        }
+
+        .mode-btn.active {
+            background: #007bff;
+            color: white;
+            box-shadow: 0 2px 8px rgba(0,123,255,0.3);
+        }
+
+        /* Calculator Layout */
+        .calculator {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .calculator.basic-mode {
+            grid-template-columns: 1fr;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .inputs, .results {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            color: #333;
+        }
+
+        .input-group {
+            margin-bottom: 24px;
+        }
+
+        .input-label {
+            display: block;
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            font-size: 16px;
+            background: white;
+            transition: border-color 0.2s;
+            appearance: textfield;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+
+        .input-field::-webkit-outer-spin-button,
+        .input-field::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .quick-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+
+        .quick-btn {
+            padding: 8px 16px;
+            border: 1px solid #dee2e6;
+            background: white;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .quick-btn:hover {
+            border-color: #007bff;
+            color: #007bff;
+        }
+
+        .select-field {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            font-size: 16px;
+            background: white;
+            cursor: pointer;
+        }
+
+        .select-field:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+
+        /* Results */
+        .result-item {
+            margin-bottom: 24px;
+        }
+
+        .result-label {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+
+        .result-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .result-value.primary {
+            color: #007bff;
+            font-size: 36px;
+        }
+
+        .result-value.success {
+            color: #28a745;
+        }
+
+        .result-value.warning {
+            color: #ffc107;
+        }
+
+        .result-value.danger {
+            color: #dc3545;
+        }
+
+        /* Basic Mode Results */
+        .basic-result {
+            text-align: center;
+            padding: 40px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .basic-result .result-value {
+            font-size: 48px;
+            color: #28a745;
+            margin-bottom: 12px;
+        }
+
+        .basic-result .result-label {
+            font-size: 18px;
+            color: #666;
+        }
+
+        /* Advanced Mode Features */
+        .advanced-features {
+            display: none;
+        }
+
+        .advanced-features.active {
+            display: block;
+        }
+
+        /* ROI Comparison */
+        .roi-comparison {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            margin-bottom: 40px;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-top: 24px;
+        }
+
+        .comparison-card {
+            padding: 24px;
+            border-radius: 12px;
+            text-align: center;
+            position: relative;
+        }
+
+        .comparison-card.property {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+        }
+
+        .comparison-card.deposit {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+        }
+
+        .comparison-card.stocks {
+            background: linear-gradient(135deg, #ffc107, #e0a800);
+            color: #333;
+        }
+
+        .comparison-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .comparison-yield {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .comparison-details {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* Cash Flow Chart */
+        .cashflow-chart {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            margin-bottom: 40px;
+        }
+
+        .chart-container {
+            height: 400px;
+            position: relative;
+            margin-top: 24px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .chart-years {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .cashflow-bars {
+            display: flex;
+            align-items: end;
+            height: 300px;
+            gap: 4px;
+            padding: 20px 0;
+        }
+
+        .cashflow-bar {
+            flex: 1;
+            background: linear-gradient(135deg, #28a745, #20c997);
+            border-radius: 4px 4px 0 0;
+            position: relative;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .cashflow-bar:hover {
+            transform: scale(1.05);
+            z-index: 10;
+        }
+
+        .bar-tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .cashflow-bar:hover .bar-tooltip {
+            opacity: 1;
+        }
+
+        /* Risk Assessment */
+        .risk-assessment {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            margin-bottom: 40px;
+        }
+
+        .risk-meter {
+            width: 300px;
+            height: 150px;
+            margin: 0 auto 20px;
+            position: relative;
+        }
+
+        .risk-meter svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .risk-bg {
+            fill: none;
+            stroke: #e9ecef;
+            stroke-width: 30;
+            stroke-linecap: round;
+        }
+
+        .risk-fill {
+            fill: none;
+            stroke-width: 30;
+            stroke-linecap: round;
+            transition: all 0.5s ease;
+        }
+
+        .risk-text {
+            text-anchor: middle;
+            font-size: 24px;
+            font-weight: 700;
+            fill: #333;
+        }
+
+        .risk-factors {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .risk-factor {
+            padding: 16px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid;
+        }
+
+        .risk-factor.low {
+            border-color: #28a745;
+        }
+
+        .risk-factor.medium {
+            border-color: #ffc107;
+        }
+
+        .risk-factor.high {
+            border-color: #dc3545;
+        }
+
+        .factor-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .factor-description {
+            font-size: 14px;
+            color: #666;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0056b3;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #007bff;
+            border: 2px solid #007bff;
+        }
+
+        .btn-secondary:hover {
+            background: #007bff;
+            color: white;
+        }
+
+        /* Expense Breakdown */
+        .expense-breakdown {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            margin-bottom: 40px;
+        }
+
+        .expense-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .expense-item {
+            padding: 16px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .expense-amount {
+            font-size: 20px;
+            font-weight: 700;
+            color: #dc3545;
+            margin-bottom: 8px;
+        }
+
+        .expense-label {
+            font-size: 14px;
+            color: #666;
+        }
+
+        @media (max-width: 768px) {
+            .calculator {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+
+            .calculator.basic-mode {
+                max-width: none;
+            }
+
+            .container {
+                padding: 24px 16px;
+            }
+
+            .inputs, .results, .roi-comparison, .cashflow-chart, .risk-assessment, .expense-breakdown {
+                padding: 24px;
+            }
+
+            .basic-result .result-value {
+                font-size: 36px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .chart-container {
+                height: 300px;
+            }
+
+            .risk-factors {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Вернуться к калькуляторам</a>
+        
+        <div class="header">
+            <div class="logo">М2</div>
+            <h1 class="title">Калькулятор доходности инвестиций</h1>
+            <p class="subtitle">Рассчитайте доходность от сдачи недвижимости в аренду</p>
+        </div>
+
+        <!-- Mode Switch -->
+        <div class="mode-switch">
+            <div class="mode-toggle">
+                <button class="mode-btn active" onclick="switchMode('basic')">Базовый</button>
+                <button class="mode-btn" onclick="switchMode('advanced')">Расширенный</button>
+            </div>
+        </div>
+
+        <div class="calculator basic-mode" id="calculatorContainer">
+            <div class="inputs">
+                <h2 class="section-title">Параметры инвестиций</h2>
+                
+                <div class="input-group">
+                    <label class="input-label" for="propertyPrice">Стоимость недвижимости</label>
+                    <input type="number" id="propertyPrice" class="input-field" value="8000000" min="500000" max="50000000" step="100000">
+                    <div class="quick-buttons">
+                        <button class="quick-btn" onclick="setValue('propertyPrice', 5000000)">5 млн</button>
+                        <button class="quick-btn" onclick="setValue('propertyPrice', 8000000)">8 млн</button>
+                        <button class="quick-btn" onclick="setValue('propertyPrice', 12000000)">12 млн</button>
+                        <button class="quick-btn" onclick="setValue('propertyPrice', 15000000)">15 млн</button>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label" for="monthlyRent">Ежемесячная арендная плата</label>
+                    <input type="number" id="monthlyRent" class="input-field" value="80000" min="10000" max="1000000" step="5000">
+                    <div class="quick-buttons">
+                        <button class="quick-btn" onclick="setValue('monthlyRent', 50000)">50 тыс</button>
+                        <button class="quick-btn" onclick="setValue('monthlyRent', 80000)">80 тыс</button>
+                        <button class="quick-btn" onclick="setValue('monthlyRent', 120000)">120 тыс</button>
+                        <button class="quick-btn" onclick="setValue('monthlyRent', 200000)">200 тыс</button>
+                    </div>
+                </div>
+
+                <!-- Advanced Mode Fields -->
+                <div class="advanced-features">
+                    <div class="input-group">
+                        <label class="input-label" for="managementFee">Управление недвижимостью, %</label>
+                        <input type="number" id="managementFee" class="input-field" value="8" min="0" max="20" step="0.5">
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label" for="maintenanceCost">Содержание и ремонт (в месяц)</label>
+                        <input type="number" id="maintenanceCost" class="input-field" value="15000" min="0" step="1000">
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label" for="vacancyRate">Процент незанятости, %</label>
+                        <input type="number" id="vacancyRate" class="input-field" value="5" min="0" max="50" step="1">
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label" for="propertyTax">Налог на имущество (в год)</label>
+                        <input type="number" id="propertyTax" class="input-field" value="20000" min="0" step="1000">
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label" for="incomeTax">Подоходный налог, %</label>
+                        <input type="number" id="incomeTax" class="input-field" value="13" min="0" max="50" step="1">
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label" for="appreciation">Рост стоимости недвижимости, % в год</label>
+                        <input type="number" id="appreciation" class="input-field" value="3" min="0" max="20" step="0.5">
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label" for="investmentPeriod">Период инвестирования, лет</label>
+                    <input type="number" id="investmentPeriod" class="input-field" value="10" min="1" max="30" step="1">
+                    <div class="quick-buttons">
+                        <button class="quick-btn" onclick="setValue('investmentPeriod', 5)">5 лет</button>
+                        <button class="quick-btn" onclick="setValue('investmentPeriod', 10)">10 лет</button>
+                        <button class="quick-btn" onclick="setValue('investmentPeriod', 15)">15 лет</button>
+                        <button class="quick-btn" onclick="setValue('investmentPeriod', 20)">20 лет</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Basic Mode Result -->
+            <div class="basic-result" id="basicResult">
+                <div class="result-value" id="basicNetYield">9.2%</div>
+                <div class="result-label">Чистая доходность в год</div>
+            </div>
+
+            <!-- Advanced Mode Results -->
+            <div class="results advanced-features">
+                <h2 class="section-title">Результаты расчета</h2>
+                
+                <div class="result-item">
+                    <div class="result-label">Валовая доходность</div>
+                    <div class="result-value primary" id="grossYield">12.0%</div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-label">Чистая доходность</div>
+                    <div class="result-value success" id="netYield">9.2%</div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-label">Чистый доход в месяц</div>
+                    <div class="result-value" id="monthlyNetIncome">61 333 ₽</div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-label">Срок окупаемости</div>
+                    <div class="result-value" id="paybackPeriod">10.9 лет</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Advanced Mode Additional Sections -->
+        <div class="advanced-features">
+            <!-- ROI Comparison -->
+            <div class="roi-comparison">
+                <h2 class="section-title">Сравнение с альтернативными инвестициями</h2>
+                <div class="comparison-grid">
+                    <div class="comparison-card property">
+                        <div class="comparison-title">Недвижимость</div>
+                        <div class="comparison-yield" id="propertyROI">9.2%</div>
+                        <div class="comparison-details">С учетом роста стоимости</div>
+                    </div>
+                    <div class="comparison-card deposit">
+                        <div class="comparison-title">Банковский депозит</div>
+                        <div class="comparison-yield">4.5%</div>
+                        <div class="comparison-details">Средняя ставка по РФ</div>
+                    </div>
+                    <div class="comparison-card stocks">
+                        <div class="comparison-title">Фондовый рынок</div>
+                        <div class="comparison-yield">8.0%</div>
+                        <div class="comparison-details">Исторический S&P 500</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Expense Breakdown -->
+            <div class="expense-breakdown">
+                <h2 class="section-title">Структура расходов (в месяц)</h2>
+                <div class="expense-grid">
+                    <div class="expense-item">
+                        <div class="expense-amount" id="managementCost">6 400 ₽</div>
+                        <div class="expense-label">Управление</div>
+                    </div>
+                    <div class="expense-item">
+                        <div class="expense-amount" id="maintenanceAmount">15 000 ₽</div>
+                        <div class="expense-label">Содержание</div>
+                    </div>
+                    <div class="expense-item">
+                        <div class="expense-amount" id="vacancyLoss">4 000 ₽</div>
+                        <div class="expense-label">Пустующие дни</div>
+                    </div>
+                    <div class="expense-item">
+                        <div class="expense-amount" id="taxAmount">8 667 ₽</div>
+                        <div class="expense-label">Налоги</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cash Flow Chart -->
+            <div class="cashflow-chart">
+                <h2 class="section-title">Прогноз денежного потока</h2>
+                <div class="chart-container">
+                    <div class="cashflow-bars" id="cashflowBars">
+                        <!-- Bars will be generated by JavaScript -->
+                    </div>
+                </div>
+                <div class="chart-years" id="chartYears">
+                    <!-- Years will be generated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Risk Assessment -->
+            <div class="risk-assessment">
+                <h2 class="section-title">Оценка рисков</h2>
+                <div class="risk-meter">
+                    <svg viewBox="0 0 300 150">
+                        <path d="M 30 120 A 120 120 0 0 1 270 120" class="risk-bg"/>
+                        <path d="M 30 120 A 120 120 0 0 1 270 120" class="risk-fill" id="riskMeter" 
+                              stroke-dasharray="0 377" stroke="#ffc107"/>
+                        <text x="150" y="110" class="risk-text" id="riskScore">Средний</text>
+                    </svg>
+                </div>
+                <div class="risk-factors" id="riskFactors">
+                    <!-- Risk factors will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button class="btn btn-primary" onclick="exportToPDF()">
+                📄 Экспорт в PDF
+            </button>
+            <button class="btn btn-secondary" onclick="resetCalculator()">
+                🔄 Сбросить
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let currentMode = 'basic';
+
+        function formatNumber(num) {
+            return new Intl.NumberFormat('ru-RU').format(Math.round(num));
+        }
+
+        function formatPercent(num) {
+            return num.toFixed(1) + '%';
+        }
+
+        function setValue(inputId, value) {
+            document.getElementById(inputId).value = value;
+            calculateROI();
+        }
+
+        function switchMode(mode) {
+            currentMode = mode;
+            const calculatorContainer = document.getElementById('calculatorContainer');
+            const modeButtons = document.querySelectorAll('.mode-btn');
+            const advancedFeatures = document.querySelectorAll('.advanced-features');
+
+            // Update button states
+            modeButtons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Update layout
+            if (mode === 'basic') {
+                calculatorContainer.classList.add('basic-mode');
+                advancedFeatures.forEach(feature => feature.classList.remove('active'));
+            } else {
+                calculatorContainer.classList.remove('basic-mode');
+                advancedFeatures.forEach(feature => feature.classList.add('active'));
+            }
+
+            calculateROI();
+        }
+
+        function calculateROI() {
+            const propertyPrice = parseFloat(document.getElementById('propertyPrice').value) || 0;
+            const monthlyRent = parseFloat(document.getElementById('monthlyRent').value) || 0;
+            const managementFee = parseFloat(document.getElementById('managementFee').value) || 0;
+            const maintenanceCost = parseFloat(document.getElementById('maintenanceCost').value) || 0;
+            const vacancyRate = parseFloat(document.getElementById('vacancyRate').value) || 0;
+            const propertyTax = parseFloat(document.getElementById('propertyTax').value) || 0;
+            const incomeTax = parseFloat(document.getElementById('incomeTax').value) || 0;
+            const appreciation = parseFloat(document.getElementById('appreciation').value) || 0;
+            const investmentPeriod = parseFloat(document.getElementById('investmentPeriod').value) || 0;
+
+            if (propertyPrice <= 0 || monthlyRent <= 0) {
+                return;
+            }
+
+            // Basic calculations
+            const annualRent = monthlyRent * 12;
+            const grossYield = (annualRent / propertyPrice) * 100;
+
+            // Advanced calculations
+            const managementCost = monthlyRent * (managementFee / 100);
+            const vacancyLoss = monthlyRent * (vacancyRate / 100);
+            const monthlyPropertyTax = propertyTax / 12;
+            
+            const grossMonthlyIncome = monthlyRent;
+            const totalMonthlyExpenses = managementCost + maintenanceCost + vacancyLoss + monthlyPropertyTax;
+            const monthlyNetIncomeBeforeTax = grossMonthlyIncome - totalMonthlyExpenses;
+            const monthlyTaxAmount = monthlyNetIncomeBeforeTax * (incomeTax / 100);
+            const monthlyNetIncome = monthlyNetIncomeBeforeTax - monthlyTaxAmount;
+            
+            const annualNetIncome = monthlyNetIncome * 12;
+            const netYield = (annualNetIncome / propertyPrice) * 100;
+            
+            // Calculate total return including appreciation
+            const totalReturn = netYield + appreciation;
+            
+            // Payback period
+            const paybackPeriod = propertyPrice / annualNetIncome;
+
+            // Update basic result
+            document.getElementById('basicNetYield').textContent = formatPercent(netYield);
+
+            // Update advanced results
+            document.getElementById('grossYield').textContent = formatPercent(grossYield);
+            document.getElementById('netYield').textContent = formatPercent(netYield);
+            document.getElementById('monthlyNetIncome').textContent = formatNumber(monthlyNetIncome) + ' ₽';
+            document.getElementById('paybackPeriod').textContent = paybackPeriod.toFixed(1) + ' лет';
+
+            if (currentMode === 'advanced') {
+                updateAdvancedFeatures(managementCost, maintenanceCost, vacancyLoss, monthlyTaxAmount, totalReturn, monthlyNetIncome, investmentPeriod);
+            }
+        }
+
+        function updateAdvancedFeatures(managementCost, maintenanceCost, vacancyLoss, taxAmount, totalReturn, monthlyNetIncome, years) {
+            // Update expense breakdown
+            document.getElementById('managementCost').textContent = formatNumber(managementCost) + ' ₽';
+            document.getElementById('maintenanceAmount').textContent = formatNumber(maintenanceCost) + ' ₽';
+            document.getElementById('vacancyLoss').textContent = formatNumber(vacancyLoss) + ' ₽';
+            document.getElementById('taxAmount').textContent = formatNumber(taxAmount) + ' ₽';
+
+            // Update ROI comparison
+            document.getElementById('propertyROI').textContent = formatPercent(totalReturn);
+
+            // Update cash flow chart
+            updateCashFlowChart(monthlyNetIncome, years);
+
+            // Update risk assessment
+            updateRiskAssessment(totalReturn);
+        }
+
+        function updateCashFlowChart(monthlyIncome, years) {
+            const barsContainer = document.getElementById('cashflowBars');
+            const yearsContainer = document.getElementById('chartYears');
+            
+            barsContainer.innerHTML = '';
+            yearsContainer.innerHTML = '';
+
+            const maxIncome = monthlyIncome * 12;
+            
+            for (let year = 1; year <= Math.min(years, 10); year++) {
+                // Calculate income with growth
+                const appreciation = parseFloat(document.getElementById('appreciation').value) || 0;
+                const yearlyIncome = (monthlyIncome * 12) * Math.pow(1 + appreciation / 100, year - 1);
+                const barHeight = Math.max((yearlyIncome / maxIncome) * 100, 5);
+
+                const bar = document.createElement('div');
+                bar.className = 'cashflow-bar';
+                bar.style.height = barHeight + '%';
+                bar.innerHTML = `<div class="bar-tooltip">Год ${year}: ${formatNumber(yearlyIncome)} ₽</div>`;
+                barsContainer.appendChild(bar);
+
+                const yearLabel = document.createElement('div');
+                yearLabel.textContent = year;
+                yearsContainer.appendChild(yearLabel);
+            }
+        }
+
+        function updateRiskAssessment(totalReturn) {
+            let riskScore = 'Низкий';
+            let riskColor = '#28a745';
+            let riskLevel = 0.3; // 0-1 scale
+
+            if (totalReturn < 5) {
+                riskScore = 'Высокий';
+                riskColor = '#dc3545';
+                riskLevel = 0.8;
+            } else if (totalReturn < 8) {
+                riskScore = 'Средний';
+                riskColor = '#ffc107';
+                riskLevel = 0.6;
+            } else if (totalReturn < 12) {
+                riskScore = 'Средний';
+                riskColor = '#ffc107';
+                riskLevel = 0.4;
+            } else {
+                riskScore = 'Низкий';
+                riskColor = '#28a745';
+                riskLevel = 0.3;
+            }
+
+            // Update risk meter
+            const circumference = Math.PI * 120;
+            const dashArray = riskLevel * circumference;
+            
+            document.getElementById('riskMeter').style.stroke = riskColor;
+            document.getElementById('riskMeter').setAttribute('stroke-dasharray', `${dashArray} ${circumference}`);
+            document.getElementById('riskScore').textContent = riskScore;
+
+            // Update risk factors
+            const riskFactors = document.getElementById('riskFactors');
+            riskFactors.innerHTML = '';
+
+            const factors = [
+                {
+                    title: 'Рыночный риск',
+                    description: 'Цены на недвижимость могут как расти, так и падать',
+                    level: 'medium'
+                },
+                {
+                    title: 'Риск незанятости',
+                    description: 'Периоды без арендаторов снижают доходность',
+                    level: 'medium'
+                },
+                {
+                    title: 'Ликвидность',
+                    description: 'Недвижимость сложнее продать быстро, чем акции',
+                    level: 'high'
+                },
+                {
+                    title: 'Расходы на содержание',
+                    description: 'Непредвиденный ремонт может снизить доходность',
+                    level: 'low'
+                }
+            ];
+
+            factors.forEach(factor => {
+                const item = document.createElement('div');
+                item.className = `risk-factor ${factor.level}`;
+                item.innerHTML = `
+                    <div class="factor-title">${factor.title}</div>
+                    <div class="factor-description">${factor.description}</div>
+                `;
+                riskFactors.appendChild(item);
+            });
+        }
+
+        function resetCalculator() {
+            document.getElementById('propertyPrice').value = 8000000;
+            document.getElementById('monthlyRent').value = 80000;
+            document.getElementById('managementFee').value = 8;
+            document.getElementById('maintenanceCost').value = 15000;
+            document.getElementById('vacancyRate').value = 5;
+            document.getElementById('propertyTax').value = 20000;
+            document.getElementById('incomeTax').value = 13;
+            document.getElementById('appreciation').value = 3;
+            document.getElementById('investmentPeriod').value = 10;
+            calculateROI();
+        }
+
+        function exportToPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            // Title
+            doc.setFontSize(20);
+            doc.text('Расчет доходности инвестиций в недвижимость', 20, 30);
+
+            // Input parameters
+            doc.setFontSize(14);
+            doc.text('Параметры инвестиций:', 20, 50);
+            
+            const propertyPrice = document.getElementById('propertyPrice').value;
+            const monthlyRent = document.getElementById('monthlyRent').value;
+            const investmentPeriod = document.getElementById('investmentPeriod').value;
+            
+            doc.setFontSize(12);
+            doc.text(`Стоимость недвижимости: ${formatNumber(propertyPrice)} ₽`, 30, 65);
+            doc.text(`Ежемесячная аренда: ${formatNumber(monthlyRent)} ₽`, 30, 75);
+            doc.text(`Период инвестирования: ${investmentPeriod} лет`, 30, 85);
+
+            // Results
+            doc.setFontSize(14);
+            doc.text('Результаты:', 20, 105);
+            
+            doc.setFontSize(12);
+            const grossYieldText = document.getElementById('grossYield').textContent;
+            const netYieldText = document.getElementById('netYield').textContent;
+            const monthlyNetIncomeText = document.getElementById('monthlyNetIncome').textContent;
+            const paybackPeriodText = document.getElementById('paybackPeriod').textContent;
+            
+            doc.text(`Валовая доходность: ${grossYieldText}`, 30, 120);
+            doc.text(`Чистая доходность: ${netYieldText}`, 30, 130);
+            doc.text(`Чистый доход в месяц: ${monthlyNetIncomeText}`, 30, 140);
+            doc.text(`Срок окупаемости: ${paybackPeriodText}`, 30, 150);
+
+            // Footer
+            doc.setFontSize(10);
+            doc.text('Документ создан с помощью М2 Платформы калькуляторов недвижимости', 20, 180);
+            doc.text(`Дата создания: ${new Date().toLocaleDateString('ru-RU')}`, 20, 190);
+
+            doc.save('доходность-инвестиций.pdf');
+        }
+
+        // Event listeners
+        document.getElementById('propertyPrice').addEventListener('input', calculateROI);
+        document.getElementById('monthlyRent').addEventListener('input', calculateROI);
+        document.getElementById('managementFee').addEventListener('input', calculateROI);
+        document.getElementById('maintenanceCost').addEventListener('input', calculateROI);
+        document.getElementById('vacancyRate').addEventListener('input', calculateROI);
+        document.getElementById('propertyTax').addEventListener('input', calculateROI);
+        document.getElementById('incomeTax').addEventListener('input', calculateROI);
+        document.getElementById('appreciation').addEventListener('input', calculateROI);
+        document.getElementById('investmentPeriod').addEventListener('input', calculateROI);
+
+        // Initial calculation
+        calculateROI();
+    </script>
+</body>
+</html>

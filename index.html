@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>М2 — Калькуляторы для недвижимости</title>
+    <title>М2 — Платформа калькуляторов недвижимости</title>
+    <meta name="description" content="Комплексная платформа калькуляторов для недвижимости: ипотека, доступность жилья, инвестиции, аренда vs покупка. Точные расчеты с экспортом в PDF.">
     <style>
         * {
             margin: 0;
@@ -15,79 +16,138 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: #f8f9fa;
             color: #333;
-            line-height: 1.4;
-        }
-
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 40px 20px;
+            line-height: 1.5;
         }
 
         .header {
+            background: white;
+            border-bottom: 1px solid #e9ecef;
+            padding: 20px 0;
             text-align: center;
-            margin-bottom: 60px;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
         }
 
         .logo {
-            font-size: 64px;
+            font-size: 48px;
             font-weight: 700;
             color: #007bff;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
         }
 
         .title {
-            font-size: 36px;
+            font-size: 32px;
             font-weight: 600;
             color: #333;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
         }
 
         .subtitle {
-            font-size: 20px;
+            font-size: 18px;
             color: #666;
-            max-width: 600px;
+            max-width: 800px;
             margin: 0 auto;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+
+        .section-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #333;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .section-subtitle {
+            font-size: 16px;
+            color: #666;
+            text-align: center;
+            margin-bottom: 48px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .calculators-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 24px;
-            margin-bottom: 60px;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 32px;
+            margin-bottom: 80px;
         }
 
         .calculator-card {
             background: white;
             border-radius: 16px;
             padding: 32px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
             text-decoration: none;
             color: inherit;
             transition: all 0.3s ease;
             border: 2px solid transparent;
+            position: relative;
         }
 
         .calculator-card:hover {
             text-decoration: none;
             color: inherit;
             transform: translateY(-4px);
-            box-shadow: 0 8px 40px rgba(0,0,0,0.12);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
             border-color: #007bff;
         }
 
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            margin-right: 16px;
+            font-size: 20px;
+        }
+
         .card-title {
-            font-size: 24px;
+            font-size: 20px;
             font-weight: 700;
             color: #333;
-            margin-bottom: 12px;
+            margin-bottom: 4px;
+        }
+
+        .card-badge {
+            display: inline-block;
+            background: #e8f4fd;
+            color: #007bff;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .card-description {
-            font-size: 16px;
+            font-size: 14px;
             color: #666;
             margin-bottom: 20px;
-            line-height: 1.5;
+            line-height: 1.6;
         }
 
         .card-features {
@@ -96,28 +156,37 @@
         }
 
         .card-features li {
-            font-size: 14px;
-            color: #666;
+            font-size: 13px;
+            color: #555;
             margin-bottom: 8px;
             padding-left: 20px;
             position: relative;
+            line-height: 1.4;
         }
 
         .card-features li::before {
-            content: '•';
+            content: '✓';
             position: absolute;
             left: 0;
-            color: #007bff;
+            color: #28a745;
             font-weight: bold;
         }
 
         .card-action {
             display: inline-flex;
             align-items: center;
-            font-size: 16px;
+            background: #007bff;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
             font-weight: 600;
-            color: #007bff;
             gap: 8px;
+            transition: background-color 0.2s;
+        }
+
+        .card-action:hover {
+            background: #0056b3;
         }
 
         .card-action::after {
@@ -129,155 +198,212 @@
             transform: translateX(4px);
         }
 
-        .m2-partner { 
-            background: linear-gradient(135deg, #17a2b8 0%, #138496 100%); 
-            color: white; 
-        }
-
-        .colored-card .card-title,
-        .colored-card .card-description,
-        .colored-card .card-features li,
-        .colored-card .card-action {
-            color: white;
-        }
-
-        .colored-card .card-features li::before {
-            color: rgba(255,255,255,0.8);
-        }
-
-        .about {
+        .features-section {
             background: white;
-            border-radius: 16px;
-            padding: 40px;
+            border-radius: 20px;
+            padding: 60px;
             text-align: center;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
         }
 
-        .about h2 {
-            font-size: 28px;
-            font-weight: 700;
-            color: #333;
-            margin-bottom: 20px;
-        }
-
-        .about p {
-            font-size: 18px;
-            color: #666;
-            max-width: 700px;
-            margin: 0 auto 32px;
-            line-height: 1.6;
-        }
-
-        .stats {
+        .features-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 32px;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
             margin-top: 40px;
         }
 
-        .stat {
+        .feature-item {
             text-align: center;
         }
 
-        .stat-number {
-            font-size: 36px;
-            font-weight: 700;
-            color: #007bff;
-            margin-bottom: 8px;
+        .feature-icon {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, #28a745, #20c997);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            margin: 0 auto 20px;
         }
 
-        .stat-label {
-            font-size: 16px;
+        .feature-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 12px;
+        }
+
+        .feature-text {
+            font-size: 14px;
             color: #666;
+            line-height: 1.6;
+        }
+
+        .footer {
+            background: #2c3e50;
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .footer p {
+            color: #bdc3c7;
+            font-size: 14px;
         }
 
         @media (max-width: 768px) {
             .container {
-                padding: 24px 16px;
+                padding: 40px 16px;
             }
 
             .header {
-                margin-bottom: 40px;
+                padding: 16px 0;
             }
 
             .logo {
-                font-size: 48px;
+                font-size: 36px;
             }
 
             .title {
-                font-size: 28px;
+                font-size: 24px;
             }
 
             .subtitle {
-                font-size: 18px;
+                font-size: 16px;
             }
 
             .calculators-grid {
                 grid-template-columns: 1fr;
-                gap: 20px;
+                gap: 24px;
             }
 
             .calculator-card {
                 padding: 24px;
             }
 
-            .about {
-                padding: 24px;
+            .features-section {
+                padding: 40px 24px;
             }
 
-            .stats {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 24px;
-            }
-
-            .stat-number {
-                font-size: 28px;
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: 32px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
+    <header class="header">
+        <div class="header-content">
             <div class="logo">М2</div>
-            <h1 class="title">Калькуляторы для недвижимости</h1>
-            <p class="subtitle">Быстрые и точные расчеты для принятия правильных решений по недвижимости</p>
+            <h1 class="title">Платформа калькуляторов недвижимости</h1>
+            <p class="subtitle">Профессиональные инструменты для расчетов по недвижимости с базовым и расширенным режимами</p>
         </div>
+    </header>
+
+    <div class="container">
+        <h2 class="section-title">Выберите калькулятор</h2>
+        <p class="section-subtitle">
+            Каждый инструмент имеет простой режим для быстрых расчетов и расширенный для детального анализа
+        </p>
 
         <div class="calculators-grid">
             <a href="mortgage_calculator.html" class="calculator-card">
-                <h2 class="card-title">Ипотечный калькулятор</h2>
-                <p class="card-description">Рассчитайте ежемесячный платеж и общую переплату по ипотеке</p>
+                <div class="card-header">
+                    <div class="card-icon">₽</div>
+                    <div>
+                        <h3 class="card-title">Ипотечный калькулятор</h3>
+                        <span class="card-badge">Популярный</span>
+                    </div>
+                </div>
+                <p class="card-description">
+                    Рассчитайте ежемесячный платеж, переплату и график выплат по ипотеке. 
+                    Поддержка аннуитетных и дифференцированных платежей, досрочного погашения.
+                </p>
                 <ul class="card-features">
-                    <li>Быстрые кнопки популярных сумм</li>
-                    <li>Автоматический пересчет</li>
-                    <li>Понятные результаты</li>
+                    <li>Базовый режим: платеж, переплата, общая сумма</li>
+                    <li>Расширенный: график погашения, досрочные платежи</li>
+                    <li>Экспорт детального отчета в PDF</li>
+                    <li>Валидация и проверка корректности данных</li>
                 </ul>
                 <div class="card-action">
-                    Рассчитать платеж
+                    Рассчитать ипотеку
                 </div>
             </a>
 
-            <a href="prepayment_calculator.html" class="calculator-card">
-                <h2 class="card-title">Досрочное погашение</h2>
-                <p class="card-description">Узнайте, сколько сэкономите при досрочном погашении ипотеки</p>
+            <a href="affordability_calculator.html" class="calculator-card">
+                <div class="card-header">
+                    <div class="card-icon">%</div>
+                    <div>
+                        <h3 class="card-title">Доступность жилья</h3>
+                        <span class="card-badge">По доходу</span>
+                    </div>
+                </div>
+                <p class="card-description">
+                    Определите максимальную сумму ипотеки и стоимость доступного жилья 
+                    исходя из вашего дохода и финансовых обязательств.
+                </p>
                 <ul class="card-features">
-                    <li>Экономия на процентах</li>
-                    <li>Сокращение срока кредита</li>
-                    <li>Разные стратегии погашения</li>
+                    <li>Расчет максимального платежа по доходу</li>
+                    <li>Учет коэффициента долговой нагрузки (ПДН)</li>
+                    <li>Обратный расчет: доход для желаемой суммы</li>
+                    <li>Рекомендации по оптимизации параметров</li>
                 </ul>
                 <div class="card-action">
-                    Посчитать экономию
+                    Рассчитать доступность
+                </div>
+            </a>
+
+            <a href="investment_calculator.html" class="calculator-card">
+                <div class="card-header">
+                    <div class="card-icon">$</div>
+                    <div>
+                        <h3 class="card-title">Доходность инвестиций</h3>
+                        <span class="card-badge">ROI</span>
+                    </div>
+                </div>
+                <p class="card-description">
+                    Рассчитайте доходность от сдачи недвижимости в аренду. 
+                    Валовая и чистая доходность, срок окупаемости, сравнение с альтернативами.
+                </p>
+                <ul class="card-features">
+                    <li>Валовая и чистая доходность</li>
+                    <li>Учет расходов на содержание и налоги</li>
+                    <li>Расчет срока окупаемости инвестиций</li>
+                    <li>Сравнение с банковскими депозитами</li>
+                </ul>
+                <div class="card-action">
+                    Рассчитать ROI
                 </div>
             </a>
 
             <a href="rent_vs_buy_calculator.html" class="calculator-card">
-                <h2 class="card-title">Аренда или покупка</h2>
-                <p class="card-description">Выясните, что выгоднее в вашей ситуации</p>
+                <div class="card-header">
+                    <div class="card-icon">VS</div>
+                    <div>
+                        <h3 class="card-title">Аренда vs Покупка</h3>
+                        <span class="card-badge">Сравнение</span>
+                    </div>
+                </div>
+                <p class="card-description">
+                    Сравните финансовую выгоду аренды жилья и покупки в ипотеку. 
+                    Учет роста цен, альтернативного инвестирования, точка безубыточности.
+                </p>
                 <ul class="card-features">
-                    <li>Сравнение всех расходов</li>
-                    <li>Расчет окупаемости</li>
-                    <li>Учет роста цен</li>
+                    <li>Сравнение затрат за заданный период</li>
+                    <li>Расчет точки безубыточности (break-even)</li>
+                    <li>Учет роста цен и арендных ставок</li>
+                    <li>Моделирование инвестирования разницы</li>
                 </ul>
                 <div class="card-action">
                     Сравнить варианты
@@ -285,59 +411,94 @@
             </a>
 
             <a href="rental_income_calculator.html" class="calculator-card">
-                <h2 class="card-title">Доходность аренды</h2>
-                <p class="card-description">Посчитайте прибыльность инвестиций в недвижимость</p>
+                <div class="card-header">
+                    <div class="card-icon">%</div>
+                    <div>
+                        <h3 class="card-title">Доходность от аренды</h3>
+                        <span class="card-badge">Рентабельность</span>
+                    </div>
+                </div>
+                <p class="card-description">
+                    Рассчитайте рентабельность инвестиций в недвижимость для сдачи в аренду. 
+                    Валовая и чистая доходность, окупаемость, учет всех расходов.
+                </p>
                 <ul class="card-features">
-                    <li>Годовая доходность</li>
-                    <li>Чистый денежный поток</li>
-                    <li>Срок окупаемости</li>
+                    <li>Расчет валовой и чистой доходности</li>
+                    <li>Учет расходов на управление и ремонт</li>
+                    <li>Анализ периода окупаемости</li>
+                    <li>Сравнение с альтернативными инвестициями</li>
                 </ul>
                 <div class="card-action">
                     Рассчитать доходность
                 </div>
             </a>
 
-            <a href="https://m2.ru/ipoteka/calculator/" class="calculator-card colored-card m2-partner" target="_blank">
-                <h2 class="card-title">Калькулятор М2</h2>
-                <p class="card-description">Официальный калькулятор с актуальными предложениями от 50+ банков</p>
+            <a href="https://m2.ru/ipoteka/calculator/" target="_blank" class="calculator-card">
+                <div class="card-header">
+                    <div class="card-icon">M2</div>
+                    <div>
+                        <h3 class="card-title">Ипотечный калькулятор M2</h3>
+                        <span class="card-badge">Интеграция</span>
+                    </div>
+                </div>
+                <p class="card-description">
+                    Профессиональный ипотечный калькулятор от портала M2.ru с актуальными ставками банков. 
+                    Подбор программ, сравнение условий, онлайн-заявка.
+                </p>
                 <ul class="card-features">
-                    <li>Реальные ставки банков</li>
-                    <li>Онлайн-заявки</li>
+                    <li>Актуальные ставки всех банков</li>
+                    <li>Подбор оптимальных программ</li>
+                    <li>Онлайн-заявка в банки</li>
                     <li>Персональные предложения</li>
                 </ul>
                 <div class="card-action">
-                    Перейти на M2.ru
+                    Перейти на M2
                 </div>
             </a>
         </div>
 
-        <div class="about">
-            <h2>Простые калькуляторы для сложных решений</h2>
-            <p>
-                Мы создали максимально простые и понятные калькуляторы для недвижимости. 
-                Никаких сложных форм — только нужная информация и быстрые результаты. 
-                Все расчеты происходят мгновенно, а результаты представлены в удобном для восприятия формате.
-            </p>
-            
-            <div class="stats">
-                <div class="stat">
-                    <div class="stat-number">5</div>
-                    <div class="stat-label">Калькуляторов</div>
+        <div class="features-section">
+            <h2 class="section-title">Почему наша платформа</h2>
+            <div class="features-grid">
+                <div class="feature-item">
+                    <div class="feature-icon">2</div>
+                    <h3 class="feature-title">Два режима работы</h3>
+                    <p class="feature-text">Базовый режим для быстрых расчетов и расширенный для детального анализа с дополнительными параметрами</p>
                 </div>
-                <div class="stat">
-                    <div class="stat-number">30 сек</div>
-                    <div class="stat-label">На расчет</div>
+                <div class="feature-item">
+                    <div class="feature-icon">M</div>
+                    <h3 class="feature-title">Адаптивный дизайн</h3>
+                    <p class="feature-text">Идеально работает на всех устройствах: смартфоны, планшеты, настольные компьютеры</p>
                 </div>
-                <div class="stat">
-                    <div class="stat-number">100%</div>
-                    <div class="stat-label">Бесплатно</div>
+                <div class="feature-item">
+                    <div class="feature-icon">PDF</div>
+                    <h3 class="feature-title">PDF отчеты</h3>
+                    <p class="feature-text">Сохраняйте результаты расчетов в виде подробных отчетов для дальнейшего использования</p>
                 </div>
-                <div class="stat">
-                    <div class="stat-number">0</div>
-                    <div class="stat-label">Регистраций</div>
+                <div class="feature-item">
+                    <div class="feature-icon">✓</div>
+                    <h3 class="feature-title">Точные формулы</h3>
+                    <p class="feature-text">Используем банковские алгоритмы и проверенные финансовые формулы для максимальной точности</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">0₽</div>
+                    <h3 class="feature-title">Полностью бесплатно</h3>
+                    <p class="feature-text">Все калькуляторы доступны без регистрации, подписок и скрытых платежей</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">RU</div>
+                    <h3 class="feature-title">Для России</h3>
+                    <p class="feature-text">Локализация под российские реалии: рубли, нормы ПДН, налоговое законодательство</p>
                 </div>
             </div>
         </div>
     </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2024 М2 Платформа калькуляторов недвижимости. Все расчеты носят справочный характер.</p>
+            <p style="margin-top: 8px; font-size: 13px;">Для принятия финансовых решений обращайтесь к специалистам</p>
+        </div>
+    </footer>
 </body>
 </html>

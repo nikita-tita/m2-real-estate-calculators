@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Аренда или покупка квартиры - М2</title>
+    <title>М2 — Аренда vs Покупка</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -19,9 +21,9 @@
         }
 
         .container {
-            max-width: 800px;
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 40px 20px;
         }
 
         .header {
@@ -29,11 +31,18 @@
             margin-bottom: 40px;
         }
 
-        .title {
-            font-size: 32px;
+        .logo {
+            font-size: 48px;
             font-weight: 700;
             color: #007bff;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
+        }
+
+        .title {
+            font-size: 32px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 12px;
         }
 
         .subtitle {
@@ -41,83 +50,130 @@
             color: #666;
         }
 
+        .back-link {
+            color: #007bff;
+            text-decoration: none;
+            font-size: 14px;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Mode Switch */
+        .mode-switch {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 40px;
+        }
+
+        .mode-toggle {
+            background: white;
+            border-radius: 12px;
+            padding: 4px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+            display: flex;
+            border: 1px solid #e9ecef;
+        }
+
+        .mode-btn {
+            padding: 12px 24px;
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #666;
+        }
+
+        .mode-btn.active {
+            background: #007bff;
+            color: white;
+            box-shadow: 0 2px 8px rgba(0,123,255,0.3);
+        }
+
+        /* Calculator Layout */
         .calculator {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .calculator.basic-mode {
+            grid-template-columns: 1fr;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .inputs, .results {
             background: white;
             border-radius: 16px;
-            padding: 40px;
+            padding: 32px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            margin-bottom: 30px;
         }
 
-        .form-group {
-            margin-bottom: 32px;
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            color: #333;
         }
 
-        .label {
+        .input-group {
+            margin-bottom: 24px;
+        }
+
+        .input-label {
             display: block;
             font-size: 16px;
             font-weight: 600;
             color: #333;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
         }
 
-        .input-container {
-            position: relative;
-        }
-
-        .input {
+        .input-field {
             width: 100%;
-            padding: 16px 60px 16px 16px;
+            padding: 16px;
             border: 2px solid #e9ecef;
             border-radius: 12px;
-            font-size: 18px;
-            font-weight: 600;
-            background: #f8f9fa;
-            transition: all 0.2s ease;
-            -webkit-appearance: textfield;
-            -moz-appearance: textfield;
+            font-size: 16px;
+            background: white;
+            transition: border-color 0.2s;
             appearance: textfield;
         }
 
-        .input::-webkit-outer-spin-button,
-        .input::-webkit-inner-spin-button {
+        .input-field:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+
+        .input-field::-webkit-outer-spin-button,
+        .input-field::-webkit-inner-spin-button {
             -webkit-appearance: none;
             margin: 0;
         }
 
-        .input:focus {
-            outline: none;
-            border-color: #007bff;
-            background: white;
-            box-shadow: 0 0 0 4px rgba(0,123,255,0.1);
-        }
-
-        .currency {
-            position: absolute;
-            right: 16px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 16px;
-            color: #666;
-            pointer-events: none;
-        }
-
-        .quick-values {
+        .quick-buttons {
             display: flex;
             gap: 8px;
-            margin-top: 12px;
+            margin-top: 8px;
             flex-wrap: wrap;
         }
 
         .quick-btn {
             padding: 8px 16px;
-            border: 1px solid #e9ecef;
-            border-radius: 20px;
+            border: 1px solid #dee2e6;
             background: white;
-            color: #666;
+            border-radius: 8px;
             font-size: 14px;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.2s;
         }
 
         .quick-btn:hover {
@@ -125,495 +181,739 @@
             color: #007bff;
         }
 
-        .quick-btn.active {
-            background: #007bff;
-            color: white;
-            border-color: #007bff;
-        }
-
-        .slider-container {
-            margin-top: 16px;
-        }
-
-        .slider {
-            width: 100%;
-            height: 8px;
-            border-radius: 4px;
-            background: #e9ecef;
-            outline: none;
-            -webkit-appearance: none;
-            appearance: none;
-            cursor: pointer;
-        }
-
-        .slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: #007bff;
-            cursor: pointer;
-            border: none;
-            box-shadow: 0 2px 8px rgba(0,123,255,0.3);
-        }
-
-        .slider-labels {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 8px;
-            font-size: 12px;
-            color: #666;
-        }
-
-        .result {
-            border-radius: 16px;
-            padding: 32px;
-            text-align: center;
-            color: white;
-            margin-top: 20px;
-            position: relative;
-        }
-
-        .result.buy {
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-        }
-
-        .result.rent {
-            background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
-        }
-
-        .result-main {
-            font-size: 48px;
-            font-weight: 700;
-            margin-bottom: 8px;
-            line-height: 1;
-        }
-
-        .result-label {
-            font-size: 18px;
-            opacity: 0.9;
+        /* Results */
+        .result-item {
             margin-bottom: 24px;
         }
 
-        .result-details {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 20px;
-            margin-top: 24px;
-            padding-top: 24px;
-            border-top: 1px solid rgba(255,255,255,0.2);
-        }
-
-        .result-item {
-            text-align: center;
-        }
-
-        .result-value {
-            font-size: 20px;
-            font-weight: 600;
+        .result-label {
+            font-size: 14px;
+            color: #666;
             margin-bottom: 4px;
         }
 
-        .result-desc {
-            font-size: 14px;
-            opacity: 0.8;
-        }
-
-        .comparison {
-            background: white;
-            border-radius: 16px;
-            padding: 24px;
-            margin-top: 24px;
-        }
-
-        .comparison h3 {
-            text-align: center;
-            margin-bottom: 20px;
+        .result-value {
+            font-size: 28px;
+            font-weight: 700;
             color: #333;
         }
 
-        .vs-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 16px 0;
-            border-bottom: 1px solid #e9ecef;
+        .result-value.primary {
+            color: #007bff;
+            font-size: 36px;
         }
 
-        .vs-item:last-child {
-            border-bottom: none;
-        }
-
-        .vs-label {
-            font-weight: 600;
-            color: #333;
-        }
-
-        .vs-values {
-            display: flex;
-            gap: 20px;
-        }
-
-        .vs-value {
-            text-align: right;
-        }
-
-        .vs-value.rent {
-            color: #fd7e14;
-        }
-
-        .vs-value.buy {
+        .result-value.success {
             color: #28a745;
         }
 
-        .back-link {
+        .result-value.warning {
+            color: #ffc107;
+        }
+
+        .result-value.danger {
+            color: #dc3545;
+        }
+
+        /* Basic Mode Results */
+        .basic-result {
             text-align: center;
+            padding: 40px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .basic-result .result-value {
+            font-size: 48px;
+            color: #28a745;
+            margin-bottom: 12px;
+        }
+
+        .basic-result .result-label {
+            font-size: 18px;
+            color: #666;
+        }
+
+        .basic-result .winner {
+            color: #28a745;
+        }
+
+        .basic-result .loser {
+            color: #dc3545;
+        }
+
+        /* Advanced Mode Features */
+        .advanced-features {
+            display: none;
+        }
+
+        .advanced-features.active {
+            display: block;
+        }
+
+        /* Comparison Results */
+        .comparison-results {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            margin-bottom: 40px;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
             margin-top: 24px;
         }
 
-        .back-link a {
+        .comparison-option {
+            padding: 32px;
+            border-radius: 16px;
+            text-align: center;
+            position: relative;
+        }
+
+        .comparison-option.rent {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+        }
+
+        .comparison-option.buy {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+        }
+
+        .comparison-option.winner {
+            border: 4px solid #ffd700;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+
+        .comparison-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .comparison-cost {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .comparison-savings {
+            font-size: 18px;
+            margin-bottom: 16px;
+            opacity: 0.9;
+        }
+
+        .comparison-details {
+            font-size: 14px;
+            opacity: 0.8;
+            line-height: 1.5;
+        }
+
+        /* Cost Breakdown */
+        .cost-breakdown {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            margin-bottom: 40px;
+        }
+
+        .breakdown-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+            margin-top: 24px;
+        }
+
+        .breakdown-column {
+            padding: 24px;
+            background: #f8f9fa;
+            border-radius: 12px;
+        }
+
+        .breakdown-column h3 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .breakdown-column.rent h3 {
             color: #007bff;
+        }
+
+        .breakdown-column.buy h3 {
+            color: #28a745;
+        }
+
+        .breakdown-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .breakdown-item:last-child {
+            border-bottom: none;
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .breakdown-label {
+            color: #666;
+        }
+
+        .breakdown-value {
+            font-weight: 600;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
             text-decoration: none;
-            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0056b3;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #007bff;
+            border: 2px solid #007bff;
+        }
+
+        .btn-secondary:hover {
+            background: #007bff;
+            color: white;
         }
 
         @media (max-width: 768px) {
-            .container {
-                padding: 16px;
+            .calculator {
+                grid-template-columns: 1fr;
+                gap: 24px;
             }
 
-            .calculator {
+            .calculator.basic-mode {
+                max-width: none;
+            }
+
+            .container {
+                padding: 24px 16px;
+            }
+
+            .inputs, .results, .comparison-results, .cost-breakdown {
                 padding: 24px;
             }
 
-            .title {
-                font-size: 28px;
-            }
-
-            .result-main {
+            .basic-result .result-value {
                 font-size: 36px;
             }
 
-            .result-details {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 16px;
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
             }
 
-            .vs-values {
-                flex-direction: column;
-                gap: 8px;
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .comparison-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .breakdown-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
+        <a href="index.html" class="back-link">← Вернуться к калькуляторам</a>
+        
         <div class="header">
-            <h1 class="title">Аренда или покупка</h1>
-            <p class="subtitle">Что выгоднее в вашей ситуации?</p>
+            <div class="logo">М2</div>
+            <h1 class="title">Аренда vs Покупка</h1>
+            <p class="subtitle">Сравните финансовую выгоду аренды и покупки недвижимости</p>
         </div>
 
-        <div class="calculator">
-            <div class="form-group">
-                <label class="label">Стоимость квартиры</label>
-                <div class="input-container">
-                    <input type="number" id="propertyPrice" class="input" value="8000000">
-                    <span class="currency">₽</span>
-                </div>
-                <div class="quick-values">
-                    <button class="quick-btn" onclick="setQuickValue('propertyPrice', 5000000)">5 млн</button>
-                    <button class="quick-btn active" onclick="setQuickValue('propertyPrice', 8000000)">8 млн</button>
-                    <button class="quick-btn" onclick="setQuickValue('propertyPrice', 12000000)">12 млн</button>
-                    <button class="quick-btn" onclick="setQuickValue('propertyPrice', 18000000)">18 млн</button>
-                </div>
-                <div class="slider-container">
-                    <input type="range" id="propertyPriceSlider" class="slider" 
-                           min="2000000" max="25000000" step="100000" value="8000000">
-                    <div class="slider-labels">
-                        <span>2 млн</span>
-                        <span>25 млн</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label class="label">Аренда похожей квартиры в месяц</label>
-                <div class="input-container">
-                    <input type="number" id="monthlyRent" class="input" value="60000">
-                    <span class="currency">₽</span>
-                </div>
-                <div class="quick-values">
-                    <button class="quick-btn" onclick="setQuickValue('monthlyRent', 40000)">40 тыс</button>
-                    <button class="quick-btn active" onclick="setQuickValue('monthlyRent', 60000)">60 тыс</button>
-                    <button class="quick-btn" onclick="setQuickValue('monthlyRent', 90000)">90 тыс</button>
-                    <button class="quick-btn" onclick="setQuickValue('monthlyRent', 150000)">150 тыс</button>
-                </div>
-                <div class="slider-container">
-                    <input type="range" id="monthlyRentSlider" class="slider" 
-                           min="20000" max="300000" step="5000" value="60000">
-                    <div class="slider-labels">
-                        <span>20 тыс</span>
-                        <span>300 тыс</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label class="label">Первоначальный взнос</label>
-                <div class="input-container">
-                    <input type="number" id="downPayment" class="input" value="2400000">
-                    <span class="currency">₽</span>
-                </div>
-                <div class="quick-values">
-                    <button class="quick-btn" onclick="setQuickValue('downPayment', 1600000)">1.6 млн</button>
-                    <button class="quick-btn active" onclick="setQuickValue('downPayment', 2400000)">2.4 млн</button>
-                    <button class="quick-btn" onclick="setQuickValue('downPayment', 4000000)">4 млн</button>
-                    <button class="quick-btn" onclick="setQuickValue('downPayment', 8000000)">Без кредита</button>
-                </div>
-                <div class="slider-container">
-                    <input type="range" id="downPaymentSlider" class="slider" 
-                           min="0" max="8000000" step="100000" value="2400000">
-                    <div class="slider-labels">
-                        <span>0 ₽</span>
-                        <span id="downPaymentMax">8 млн</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label class="label">Процентная ставка по ипотеке</label>
-                <div class="input-container">
-                    <input type="number" id="interestRate" class="input" value="9" step="0.1">
-                    <span class="currency">%</span>
-                </div>
-                <div class="quick-values">
-                    <button class="quick-btn" onclick="setQuickValue('interestRate', 7.5)">7.5%</button>
-                    <button class="quick-btn" onclick="setQuickValue('interestRate', 8.5)">8.5%</button>
-                    <button class="quick-btn active" onclick="setQuickValue('interestRate', 9)">9%</button>
-                    <button class="quick-btn" onclick="setQuickValue('interestRate', 11)">11%</button>
-                </div>
-                <div class="slider-container">
-                    <input type="range" id="interestRateSlider" class="slider" 
-                           min="3" max="20" step="0.1" value="9">
-                    <div class="slider-labels">
-                        <span>3%</span>
-                        <span>20%</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label class="label">Срок кредита</label>
-                <div class="input-container">
-                    <input type="number" id="loanTerm" class="input" value="20">
-                    <span class="currency">лет</span>
-                </div>
-                <div class="quick-values">
-                    <button class="quick-btn" onclick="setQuickValue('loanTerm', 15)">15 лет</button>
-                    <button class="quick-btn active" onclick="setQuickValue('loanTerm', 20)">20 лет</button>
-                    <button class="quick-btn" onclick="setQuickValue('loanTerm', 25)">25 лет</button>
-                    <button class="quick-btn" onclick="setQuickValue('loanTerm', 30)">30 лет</button>
-                </div>
-                <div class="slider-container">
-                    <input type="range" id="loanTermSlider" class="slider" 
-                           min="5" max="30" step="1" value="20">
-                    <div class="slider-labels">
-                        <span>5 лет</span>
-                        <span>30 лет</span>
-                    </div>
-                </div>
+        <!-- Mode Switch -->
+        <div class="mode-switch">
+            <div class="mode-toggle">
+                <button class="mode-btn active" onclick="switchMode('basic')">Базовый</button>
+                <button class="mode-btn" onclick="switchMode('advanced')">Расширенный</button>
             </div>
         </div>
 
-        <div class="result buy" id="result">
-            <div class="result-main" id="recommendation">Лучше купить</div>
-            <div class="result-label" id="resultLabel">Экономия за 20 лет: 8.2 млн ₽</div>
-            
-            <div class="result-details">
-                <div class="result-item">
-                    <div class="result-value" id="monthlyPayment">52 тыс ₽</div>
-                    <div class="result-desc">Ежемесячный платёж</div>
+        <div class="calculator basic-mode" id="calculatorContainer">
+            <div class="inputs">
+                <h2 class="section-title">Параметры сравнения</h2>
+                
+                <div class="input-group">
+                    <label class="input-label" for="propertyPrice">Стоимость недвижимости</label>
+                    <input type="number" id="propertyPrice" class="input-field" value="8000000" min="500000" max="50000000" step="100000">
+                    <div class="quick-buttons">
+                        <button class="quick-btn" onclick="setValue('propertyPrice', 5000000)">5 млн</button>
+                        <button class="quick-btn" onclick="setValue('propertyPrice', 8000000)">8 млн</button>
+                        <button class="quick-btn" onclick="setValue('propertyPrice', 12000000)">12 млн</button>
+                        <button class="quick-btn" onclick="setValue('propertyPrice', 15000000)">15 млн</button>
+                    </div>
                 </div>
-                <div class="result-item">
-                    <div class="result-value" id="totalCostBuy">14.8 млн ₽</div>
-                    <div class="result-desc">Стоимость покупки</div>
+
+                <div class="input-group">
+                    <label class="input-label" for="monthlyRent">Ежемесячная аренда</label>
+                    <input type="number" id="monthlyRent" class="input-field" value="80000" min="10000" max="1000000" step="5000">
+                    <div class="quick-buttons">
+                        <button class="quick-btn" onclick="setValue('monthlyRent', 60000)">60 тыс</button>
+                        <button class="quick-btn" onclick="setValue('monthlyRent', 80000)">80 тыс</button>
+                        <button class="quick-btn" onclick="setValue('monthlyRent', 120000)">120 тыс</button>
+                        <button class="quick-btn" onclick="setValue('monthlyRent', 150000)">150 тыс</button>
+                    </div>
                 </div>
-                <div class="result-item">
-                    <div class="result-value" id="totalCostRent">23.0 млн ₽</div>
-                    <div class="result-desc">Стоимость аренды</div>
+
+                <div class="input-group">
+                    <label class="input-label" for="downPayment">Первоначальный взнос</label>
+                    <input type="number" id="downPayment" class="input-field" value="2400000" min="0" step="100000">
+                    <div class="quick-buttons">
+                        <button class="quick-btn" onclick="setPercentage('downPayment', 20)">20%</button>
+                        <button class="quick-btn" onclick="setPercentage('downPayment', 30)">30%</button>
+                        <button class="quick-btn" onclick="setPercentage('downPayment', 50)">50%</button>
+                        <button class="quick-btn" onclick="setPercentage('downPayment', 100)">100%</button>
+                    </div>
                 </div>
+
+                <div class="input-group">
+                    <label class="input-label" for="mortgageRate">Ставка по ипотеке, %</label>
+                    <input type="number" id="mortgageRate" class="input-field" value="8.5" min="1" max="30" step="0.1">
+                    <div class="quick-buttons">
+                        <button class="quick-btn" onclick="setValue('mortgageRate', 7.5)">7.5%</button>
+                        <button class="quick-btn" onclick="setValue('mortgageRate', 8.5)">8.5%</button>
+                        <button class="quick-btn" onclick="setValue('mortgageRate', 9.5)">9.5%</button>
+                        <button class="quick-btn" onclick="setValue('mortgageRate', 11)">11%</button>
+                    </div>
+                </div>
+
+                <!-- Advanced Mode Fields -->
+                <div class="advanced-features">
+                    <div class="input-group">
+                        <label class="input-label" for="rentGrowth">Рост арендной платы, % в год</label>
+                        <input type="number" id="rentGrowth" class="input-field" value="4" min="0" max="20" step="0.5">
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label" for="propertyGrowth">Рост стоимости недвижимости, % в год</label>
+                        <input type="number" id="propertyGrowth" class="input-field" value="3" min="0" max="20" step="0.5">
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label" for="maintenanceCost">Расходы на содержание (в месяц)</label>
+                        <input type="number" id="maintenanceCost" class="input-field" value="20000" min="0" step="1000">
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label" for="investmentReturn">Доходность альтернативных инвестиций, %</label>
+                        <input type="number" id="investmentReturn" class="input-field" value="7" min="0" max="20" step="0.5">
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label" for="transactionCosts">Расходы на покупку (нотариус, риэлтор)</label>
+                        <input type="number" id="transactionCosts" class="input-field" value="400000" min="0" step="10000">
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label" for="comparisonPeriod">Период сравнения, лет</label>
+                    <input type="number" id="comparisonPeriod" class="input-field" value="10" min="1" max="30" step="1">
+                    <div class="quick-buttons">
+                        <button class="quick-btn" onclick="setValue('comparisonPeriod', 5)">5 лет</button>
+                        <button class="quick-btn" onclick="setValue('comparisonPeriod', 10)">10 лет</button>
+                        <button class="quick-btn" onclick="setValue('comparisonPeriod', 15)">15 лет</button>
+                        <button class="quick-btn" onclick="setValue('comparisonPeriod', 20)">20 лет</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Basic Mode Result -->
+            <div class="basic-result" id="basicResult">
+                <div class="result-value winner" id="basicWinner">Покупка выгоднее</div>
+                <div class="result-label">на <span id="basicSavings">2 450 000 ₽</span></div>
+            </div>
+
+            <!-- Advanced Mode Results -->
+            <div class="results advanced-features">
+                <h2 class="section-title">Результат сравнения</h2>
+                
                 <div class="result-item">
-                    <div class="result-value" id="breakEven">8.2 года</div>
-                    <div class="result-desc">Окупаемость</div>
+                    <div class="result-label">Общие затраты на аренду</div>
+                    <div class="result-value primary" id="totalRentCost">11 840 000 ₽</div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-label">Общие затраты на покупку</div>
+                    <div class="result-value" id="totalBuyCost">9 390 000 ₽</div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-label">Экономия при покупке</div>
+                    <div class="result-value success" id="totalSavings">2 450 000 ₽</div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-label">Точка безубыточности</div>
+                    <div class="result-value" id="breakevenPoint">6.2 года</div>
                 </div>
             </div>
         </div>
 
-        <div class="comparison">
-            <h3>Подробное сравнение</h3>
-            <div class="vs-item">
-                <div class="vs-label">Первоначальные затраты</div>
-                <div class="vs-values">
-                    <div class="vs-value rent">0 ₽</div>
-                    <div class="vs-value buy" id="initialCosts">2.4 млн ₽</div>
+        <!-- Advanced Mode Additional Sections -->
+        <div class="advanced-features">
+            <!-- Comparison Results -->
+            <div class="comparison-results">
+                <h2 class="section-title">Детальное сравнение</h2>
+                <div class="comparison-grid">
+                    <div class="comparison-option rent" id="rentOption">
+                        <div class="comparison-title">💰 Аренда</div>
+                        <div class="comparison-cost" id="rentTotalCost">11 840 000 ₽</div>
+                        <div class="comparison-savings" id="rentSavings"></div>
+                        <div class="comparison-details" id="rentDetails">
+                            Включает арендную плату, коммунальные услуги и рост стоимости аренды
+                        </div>
+                    </div>
+                    <div class="comparison-option buy winner" id="buyOption">
+                        <div class="comparison-title">🏠 Покупка</div>
+                        <div class="comparison-cost" id="buyTotalCost">9 390 000 ₽</div>
+                        <div class="comparison-savings" id="buySavings">Экономия: 2 450 000 ₽</div>
+                        <div class="comparison-details" id="buyDetails">
+                            Включает ипотеку, содержание, налоги за вычетом роста стоимости
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="vs-item">
-                <div class="vs-label">Ежемесячные расходы</div>
-                <div class="vs-values">
-                    <div class="vs-value rent" id="monthlyRentDisplay">60 тыс ₽</div>
-                    <div class="vs-value buy" id="monthlyPaymentDisplay">52 тыс ₽</div>
+
+            <!-- Cost Breakdown -->
+            <div class="cost-breakdown">
+                <h2 class="section-title">Разбивка расходов</h2>
+                <div class="breakdown-grid">
+                    <div class="breakdown-column rent">
+                        <h3>💰 Аренда</h3>
+                        <div class="breakdown-item">
+                            <span class="breakdown-label">Арендная плата</span>
+                            <span class="breakdown-value" id="rentPayments">9 600 000 ₽</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span class="breakdown-label">Коммунальные услуги</span>
+                            <span class="breakdown-value" id="rentUtilities">1 200 000 ₽</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span class="breakdown-label">Упущенная выгода*</span>
+                            <span class="breakdown-value" id="rentOpportunityCost">1 040 000 ₽</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span class="breakdown-label">Итого</span>
+                            <span class="breakdown-value" id="rentTotal">11 840 000 ₽</span>
+                        </div>
+                    </div>
+                    <div class="breakdown-column buy">
+                        <h3>🏠 Покупка</h3>
+                        <div class="breakdown-item">
+                            <span class="breakdown-label">Ипотечные платежи</span>
+                            <span class="breakdown-value" id="mortgagePayments">7 020 000 ₽</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span class="breakdown-label">Содержание и налоги</span>
+                            <span class="breakdown-value" id="maintenanceTotal">2 400 000 ₽</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span class="breakdown-label">Расходы на покупку</span>
+                            <span class="breakdown-value" id="transactionTotal">400 000 ₽</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span class="breakdown-label">Рост стоимости</span>
+                            <span class="breakdown-value" id="appreciationBenefit">-2 730 000 ₽</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span class="breakdown-label">Итого</span>
+                            <span class="breakdown-value" id="buyTotal">9 390 000 ₽</span>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="vs-item">
-                <div class="vs-label">Через 10 лет потрачено</div>
-                <div class="vs-values">
-                    <div class="vs-value rent" id="rentCost10">7.2 млн ₽</div>
-                    <div class="vs-value buy" id="buyCost10">8.6 млн ₽</div>
-                </div>
-            </div>
-            <div class="vs-item">
-                <div class="vs-label">Через 20 лет потрачено</div>
-                <div class="vs-values">
-                    <div class="vs-value rent" id="rentCost20">14.4 млн ₽</div>
-                    <div class="vs-value buy" id="buyCost20">14.8 млн ₽</div>
-                </div>
+                <p style="font-size: 12px; color: #666; margin-top: 16px; text-align: center;">
+                    *Упущенная выгода - доходность от инвестирования первоначального взноса
+                </p>
             </div>
         </div>
 
-        <div class="back-link">
-            <a href="index.html">← Все калькуляторы</a>
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button class="btn btn-primary" onclick="exportToPDF()">
+                📄 Экспорт в PDF
+            </button>
+            <button class="btn btn-secondary" onclick="resetCalculator()">
+                🔄 Сбросить
+            </button>
         </div>
     </div>
 
     <script>
-        function formatCurrency(amount) {
-            if (amount >= 1000000) {
-                return (amount / 1000000).toFixed(1).replace('.0', '') + ' млн ₽';
-            } else if (amount >= 1000) {
-                return (amount / 1000).toFixed(0) + ' тыс ₽';
-            }
-            return new Intl.NumberFormat('ru-RU').format(amount) + ' ₽';
+        let currentMode = 'basic';
+
+        function formatNumber(num) {
+            return new Intl.NumberFormat('ru-RU').format(Math.round(num));
         }
 
-        function setQuickValue(inputId, value) {
+        function setValue(inputId, value) {
             document.getElementById(inputId).value = value;
-            
-            const slider = document.getElementById(inputId + 'Slider');
-            if (slider) {
-                slider.value = value;
-            }
-            
-            const group = document.getElementById(inputId).closest('.form-group');
-            group.querySelectorAll('.quick-btn').forEach(btn => btn.classList.remove('active'));
+            calculateComparison();
+        }
+
+        function setPercentage(inputId, percent) {
+            const propertyPrice = parseFloat(document.getElementById('propertyPrice').value) || 0;
+            const value = Math.round(propertyPrice * percent / 100);
+            setValue(inputId, value);
+        }
+
+        function switchMode(mode) {
+            currentMode = mode;
+            const calculatorContainer = document.getElementById('calculatorContainer');
+            const modeButtons = document.querySelectorAll('.mode-btn');
+            const advancedFeatures = document.querySelectorAll('.advanced-features');
+
+            // Update button states
+            modeButtons.forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
-            
-            calculate();
+
+            // Update layout
+            if (mode === 'basic') {
+                calculatorContainer.classList.add('basic-mode');
+                advancedFeatures.forEach(feature => feature.classList.remove('active'));
+            } else {
+                calculatorContainer.classList.remove('basic-mode');
+                advancedFeatures.forEach(feature => feature.classList.add('active'));
+            }
+
+            calculateComparison();
         }
 
-        function syncInputs() {
-            const fields = ['propertyPrice', 'monthlyRent', 'downPayment', 'interestRate', 'loanTerm'];
-            
-            fields.forEach(field => {
-                const input = document.getElementById(field);
-                const slider = document.getElementById(field + 'Slider');
-                
-                input.addEventListener('input', () => {
-                    slider.value = input.value;
-                    calculate();
-                });
-                
-                slider.addEventListener('input', () => {
-                    input.value = slider.value;
-                    calculate();
-                });
-            });
-        }
-
-        function calculate() {
+        function calculateComparison() {
             const propertyPrice = parseFloat(document.getElementById('propertyPrice').value) || 0;
             const monthlyRent = parseFloat(document.getElementById('monthlyRent').value) || 0;
             const downPayment = parseFloat(document.getElementById('downPayment').value) || 0;
-            const interestRate = parseFloat(document.getElementById('interestRate').value) || 0;
-            const loanTerm = parseInt(document.getElementById('loanTerm').value) || 1;
+            const mortgageRate = parseFloat(document.getElementById('mortgageRate').value) || 0;
+            const rentGrowth = parseFloat(document.getElementById('rentGrowth').value) || 0;
+            const propertyGrowth = parseFloat(document.getElementById('propertyGrowth').value) || 0;
+            const maintenanceCost = parseFloat(document.getElementById('maintenanceCost').value) || 0;
+            const investmentReturn = parseFloat(document.getElementById('investmentReturn').value) || 0;
+            const transactionCosts = parseFloat(document.getElementById('transactionCosts').value) || 0;
+            const comparisonPeriod = parseFloat(document.getElementById('comparisonPeriod').value) || 0;
 
-            const loanAmount = propertyPrice - downPayment;
-            
-            if (propertyPrice <= 0 || monthlyRent <= 0) {
+            if (propertyPrice <= 0 || monthlyRent <= 0 || comparisonPeriod <= 0) {
                 return;
             }
 
-            // Расчет ипотеки
-            let monthlyPayment = 0;
-            if (loanAmount > 0 && interestRate > 0) {
-                const monthlyRate = interestRate / 100 / 12;
-                const totalMonths = loanTerm * 12;
-                monthlyPayment = loanAmount * (monthlyRate * Math.pow(1 + monthlyRate, totalMonths)) / 
-                                (Math.pow(1 + monthlyRate, totalMonths) - 1);
+            // Calculate rent costs
+            let totalRentCost = 0;
+            let currentRent = monthlyRent;
+            for (let year = 1; year <= comparisonPeriod; year++) {
+                totalRentCost += currentRent * 12;
+                currentRent *= (1 + rentGrowth / 100);
             }
 
-            // Дополнительные расходы покупки (примерно 3-5% от стоимости)
-            const buyingCosts = propertyPrice * 0.04;
-            const totalBuyingCosts = downPayment + buyingCosts;
+            // Add utility costs (estimate 15% of rent)
+            const utilityCost = totalRentCost * 0.15;
+            totalRentCost += utilityCost;
 
-            // Расчет затрат на 10 и 20 лет
-            const rentCost10Years = monthlyRent * 12 * 10;
-            const rentCost20Years = monthlyRent * 12 * 20;
+            // Add opportunity cost of down payment
+            const opportunityCost = downPayment * Math.pow(1 + investmentReturn / 100, comparisonPeriod) - downPayment;
+            totalRentCost += opportunityCost;
+
+            // Calculate buy costs
+            const loanAmount = propertyPrice - downPayment;
+            const monthlyRate = mortgageRate / 100 / 12;
+            const numberOfPayments = 30 * 12; // Assuming 30-year mortgage
             
-            const buyCost10Years = totalBuyingCosts + monthlyPayment * 12 * 10;
-            const buyCost20Years = totalBuyingCosts + monthlyPayment * 12 * loanTerm;
-
-            // Определяем что выгоднее
-            const savings20Years = Math.abs(rentCost20Years - buyCost20Years);
-            const isBuyBetter = buyCost20Years < rentCost20Years;
-
-            // Расчет окупаемости
-            let breakEvenYears = 0;
-            if (monthlyRent > monthlyPayment) {
-                const monthlySavings = monthlyRent - monthlyPayment;
-                if (monthlySavings > 0) {
-                    breakEvenYears = totalBuyingCosts / (monthlySavings * 12);
-                }
+            let monthlyPayment = 0;
+            if (loanAmount > 0 && monthlyRate > 0) {
+                monthlyPayment = loanAmount * (monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments)) / 
+                                (Math.pow(1 + monthlyRate, numberOfPayments) - 1);
             }
 
-            // Обновляем результат
-            const resultElement = document.getElementById('result');
-            if (isBuyBetter) {
-                resultElement.className = 'result buy';
-                document.getElementById('recommendation').textContent = 'Лучше купить';
-                document.getElementById('resultLabel').textContent = `Экономия за ${loanTerm} лет: ${formatCurrency(savings20Years)}`;
-            } else {
-                resultElement.className = 'result rent';
-                document.getElementById('recommendation').textContent = 'Лучше арендовать';
-                document.getElementById('resultLabel').textContent = `Переплата за покупку: ${formatCurrency(savings20Years)}`;
+            const mortgagePayments = Math.min(monthlyPayment * 12 * comparisonPeriod, loanAmount * 1.5); // Cap at reasonable total
+            const maintenanceTotal = maintenanceCost * 12 * comparisonPeriod;
+            
+            // Calculate property appreciation
+            const futurePropertyValue = propertyPrice * Math.pow(1 + propertyGrowth / 100, comparisonPeriod);
+            const appreciation = futurePropertyValue - propertyPrice;
+            
+            const totalBuyCost = downPayment + mortgagePayments + maintenanceTotal + transactionCosts - appreciation;
+
+            // Calculate savings and winner
+            const savings = totalRentCost - totalBuyCost;
+            const winner = savings > 0 ? 'buy' : 'rent';
+            const winnerText = savings > 0 ? 'Покупка выгоднее' : 'Аренда выгоднее';
+
+            // Find break-even point (simplified calculation)
+            const breakevenYear = Math.abs(savings) / (monthlyRent * 12) + 2; // Approximation
+
+            // Update basic results
+            document.getElementById('basicWinner').textContent = winnerText;
+            document.getElementById('basicWinner').className = `result-value ${winner === 'buy' ? 'winner' : 'loser'}`;
+            document.getElementById('basicSavings').textContent = formatNumber(Math.abs(savings)) + ' ₽';
+
+            // Update advanced results
+            document.getElementById('totalRentCost').textContent = formatNumber(totalRentCost) + ' ₽';
+            document.getElementById('totalBuyCost').textContent = formatNumber(totalBuyCost) + ' ₽';
+            document.getElementById('totalSavings').textContent = formatNumber(Math.abs(savings)) + ' ₽';
+            document.getElementById('breakevenPoint').textContent = breakevenYear.toFixed(1) + ' года';
+
+            if (currentMode === 'advanced') {
+                updateAdvancedResults(totalRentCost, totalBuyCost, savings, winner, mortgagePayments, maintenanceTotal, 
+                                    transactionCosts, appreciation, utilityCost, opportunityCost);
             }
-
-            // Обновляем детали
-            document.getElementById('monthlyPayment').textContent = formatCurrency(monthlyPayment);
-            document.getElementById('totalCostBuy').textContent = formatCurrency(buyCost20Years);
-            document.getElementById('totalCostRent').textContent = formatCurrency(rentCost20Years);
-            document.getElementById('breakEven').textContent = breakEvenYears > 0 ? breakEvenYears.toFixed(1) + ' лет' : 'Не окупится';
-
-            // Обновляем сравнение
-            document.getElementById('initialCosts').textContent = formatCurrency(totalBuyingCosts);
-            document.getElementById('monthlyRentDisplay').textContent = formatCurrency(monthlyRent);
-            document.getElementById('monthlyPaymentDisplay').textContent = formatCurrency(monthlyPayment);
-            document.getElementById('rentCost10').textContent = formatCurrency(rentCost10Years);
-            document.getElementById('buyCost10').textContent = formatCurrency(buyCost10Years);
-            document.getElementById('rentCost20').textContent = formatCurrency(rentCost20Years);
-            document.getElementById('buyCost20').textContent = formatCurrency(buyCost20Years);
-
-            // Обновляем максимум слайдера первоначального взноса
-            const downPaymentSlider = document.getElementById('downPaymentSlider');
-            downPaymentSlider.max = propertyPrice;
-            document.getElementById('downPaymentMax').textContent = formatCurrency(propertyPrice);
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
-            syncInputs();
-            calculate();
-        });
+        function updateAdvancedResults(totalRentCost, totalBuyCost, savings, winner, mortgagePayments, 
+                                     maintenanceTotal, transactionCosts, appreciation, utilityCost, opportunityCost) {
+            
+            // Update comparison cards
+            document.getElementById('rentTotalCost').textContent = formatNumber(totalRentCost) + ' ₽';
+            document.getElementById('buyTotalCost').textContent = formatNumber(totalBuyCost) + ' ₽';
+
+            const rentOption = document.getElementById('rentOption');
+            const buyOption = document.getElementById('buyOption');
+            
+            rentOption.classList.remove('winner');
+            buyOption.classList.remove('winner');
+            
+            if (winner === 'rent') {
+                rentOption.classList.add('winner');
+                document.getElementById('rentSavings').textContent = `Экономия: ${formatNumber(Math.abs(savings))} ₽`;
+                document.getElementById('buySavings').textContent = '';
+            } else {
+                buyOption.classList.add('winner');
+                document.getElementById('buySavings').textContent = `Экономия: ${formatNumber(Math.abs(savings))} ₽`;
+                document.getElementById('rentSavings').textContent = '';
+            }
+
+            // Update cost breakdown
+            const rentPayments = totalRentCost - utilityCost - opportunityCost;
+            document.getElementById('rentPayments').textContent = formatNumber(rentPayments) + ' ₽';
+            document.getElementById('rentUtilities').textContent = formatNumber(utilityCost) + ' ₽';
+            document.getElementById('rentOpportunityCost').textContent = formatNumber(opportunityCost) + ' ₽';
+            document.getElementById('rentTotal').textContent = formatNumber(totalRentCost) + ' ₽';
+
+            document.getElementById('mortgagePayments').textContent = formatNumber(mortgagePayments) + ' ₽';
+            document.getElementById('maintenanceTotal').textContent = formatNumber(maintenanceTotal) + ' ₽';
+            document.getElementById('transactionTotal').textContent = formatNumber(transactionCosts) + ' ₽';
+            document.getElementById('appreciationBenefit').textContent = formatNumber(-appreciation) + ' ₽';
+            document.getElementById('buyTotal').textContent = formatNumber(totalBuyCost) + ' ₽';
+        }
+
+        function resetCalculator() {
+            document.getElementById('propertyPrice').value = 8000000;
+            document.getElementById('monthlyRent').value = 80000;
+            document.getElementById('downPayment').value = 2400000;
+            document.getElementById('mortgageRate').value = 8.5;
+            document.getElementById('rentGrowth').value = 4;
+            document.getElementById('propertyGrowth').value = 3;
+            document.getElementById('maintenanceCost').value = 20000;
+            document.getElementById('investmentReturn').value = 7;
+            document.getElementById('transactionCosts').value = 400000;
+            document.getElementById('comparisonPeriod').value = 10;
+            calculateComparison();
+        }
+
+        function exportToPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            // Title
+            doc.setFontSize(20);
+            doc.text('Сравнение: Аренда vs Покупка', 20, 30);
+
+            // Input parameters
+            doc.setFontSize(14);
+            doc.text('Параметры сравнения:', 20, 50);
+            
+            const propertyPrice = document.getElementById('propertyPrice').value;
+            const monthlyRent = document.getElementById('monthlyRent').value;
+            const downPayment = document.getElementById('downPayment').value;
+            const comparisonPeriod = document.getElementById('comparisonPeriod').value;
+            
+            doc.setFontSize(12);
+            doc.text(`Стоимость недвижимости: ${formatNumber(propertyPrice)} ₽`, 30, 65);
+            doc.text(`Ежемесячная аренда: ${formatNumber(monthlyRent)} ₽`, 30, 75);
+            doc.text(`Первоначальный взнос: ${formatNumber(downPayment)} ₽`, 30, 85);
+            doc.text(`Период сравнения: ${comparisonPeriod} лет`, 30, 95);
+
+            // Results
+            doc.setFontSize(14);
+            doc.text('Результаты сравнения:', 20, 115);
+            
+            doc.setFontSize(12);
+            const totalRentText = document.getElementById('totalRentCost').textContent;
+            const totalBuyText = document.getElementById('totalBuyCost').textContent;
+            const savingsText = document.getElementById('totalSavings').textContent;
+            const breakevenText = document.getElementById('breakevenPoint').textContent;
+            
+            doc.text(`Общие затраты на аренду: ${totalRentText}`, 30, 130);
+            doc.text(`Общие затраты на покупку: ${totalBuyText}`, 30, 140);
+            doc.text(`Экономия: ${savingsText}`, 30, 150);
+            doc.text(`Точка безубыточности: ${breakevenText}`, 30, 160);
+
+            // Footer
+            doc.setFontSize(10);
+            doc.text('Документ создан с помощью М2 Платформы калькуляторов недвижимости', 20, 180);
+            doc.text(`Дата создания: ${new Date().toLocaleDateString('ru-RU')}`, 20, 190);
+
+            doc.save('аренда-vs-покупка.pdf');
+        }
+
+        // Event listeners
+        document.getElementById('propertyPrice').addEventListener('input', calculateComparison);
+        document.getElementById('monthlyRent').addEventListener('input', calculateComparison);
+        document.getElementById('downPayment').addEventListener('input', calculateComparison);
+        document.getElementById('mortgageRate').addEventListener('input', calculateComparison);
+        document.getElementById('rentGrowth').addEventListener('input', calculateComparison);
+        document.getElementById('propertyGrowth').addEventListener('input', calculateComparison);
+        document.getElementById('maintenanceCost').addEventListener('input', calculateComparison);
+        document.getElementById('investmentReturn').addEventListener('input', calculateComparison);
+        document.getElementById('transactionCosts').addEventListener('input', calculateComparison);
+        document.getElementById('comparisonPeriod').addEventListener('input', calculateComparison);
+
+        // Initial calculation
+        calculateComparison();
     </script>
 </body>
 </html>
