@@ -56,7 +56,7 @@
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 60px 20px;
+            padding: 40px 20px;
         }
 
         .section-title {
@@ -79,20 +79,20 @@
 
         .calculators-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 32px;
-            margin-bottom: 80px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 60px;
         }
 
         .calculator-card {
             background: white;
-            border-radius: 16px;
-            padding: 32px;
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 16px rgba(0, 0, 0, 0.08);
             text-decoration: none;
             color: inherit;
             transition: all 0.3s ease;
-            border: 2px solid transparent;
+            border: 1px solid #e9ecef;
             position: relative;
         }
 
@@ -200,10 +200,10 @@
 
         .features-section {
             background: white;
-            border-radius: 20px;
-            padding: 60px;
+            border-radius: 16px;
+            padding: 40px;
             text-align: center;
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 2px 16px rgba(0, 0, 0, 0.08);
         }
 
         .features-grid {
@@ -261,9 +261,20 @@
             font-size: 14px;
         }
 
+        @media (max-width: 1024px) {
+            .container {
+                padding: 32px 16px;
+            }
+            
+            .calculators-grid {
+                grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+                gap: 20px;
+            }
+        }
+
         @media (max-width: 768px) {
             .container {
-                padding: 40px 16px;
+                padding: 24px 16px;
             }
 
             .header {
@@ -271,33 +282,143 @@
             }
 
             .logo {
-                font-size: 36px;
+                font-size: 32px;
             }
 
             .title {
-                font-size: 24px;
+                font-size: 22px;
+                margin-bottom: 8px;
             }
 
             .subtitle {
-                font-size: 16px;
+                font-size: 15px;
+            }
+
+            .section-title {
+                font-size: 24px;
+                margin-bottom: 12px;
+            }
+
+            .section-subtitle {
+                font-size: 15px;
+                margin-bottom: 32px;
             }
 
             .calculators-grid {
                 grid-template-columns: 1fr;
-                gap: 24px;
+                gap: 20px;
+                margin-bottom: 40px;
             }
 
             .calculator-card {
-                padding: 24px;
+                padding: 20px;
+                border-radius: 12px;
+            }
+
+            .card-title {
+                font-size: 18px;
+            }
+
+            .card-description {
+                font-size: 14px;
+                margin-bottom: 16px;
             }
 
             .features-section {
-                padding: 40px 24px;
+                padding: 32px 20px;
+                border-radius: 12px;
             }
 
             .features-grid {
                 grid-template-columns: 1fr;
-                gap: 32px;
+                gap: 24px;
+                margin-top: 24px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px 12px;
+            }
+
+            .header-content {
+                padding: 0 12px;
+            }
+
+            .logo {
+                font-size: 28px;
+            }
+
+            .title {
+                font-size: 20px;
+                line-height: 1.3;
+            }
+
+            .subtitle {
+                font-size: 14px;
+                line-height: 1.4;
+            }
+
+            .calculator-card {
+                padding: 16px;
+            }
+
+            .card-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
+                margin-right: 12px;
+            }
+
+            .card-title {
+                font-size: 16px;
+            }
+
+            .card-description {
+                font-size: 13px;
+                line-height: 1.5;
+            }
+
+            .card-features li {
+                font-size: 12px;
+            }
+
+            .features-section {
+                padding: 24px 16px;
+            }
+
+            .feature-icon {
+                width: 48px;
+                height: 48px;
+                font-size: 18px;
+                margin-bottom: 16px;
+            }
+
+            .feature-title {
+                font-size: 16px;
+                margin-bottom: 8px;
+            }
+
+            .feature-text {
+                font-size: 13px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .container {
+                padding: 16px 8px;
+            }
+
+            .header-content {
+                padding: 0 8px;
+            }
+
+            .calculator-card {
+                padding: 14px;
+            }
+
+            .features-section {
+                padding: 20px 12px;
             }
         }
     </style>
@@ -306,15 +427,15 @@
     <header class="header">
         <div class="header-content">
             <div class="logo">М2</div>
-            <h1 class="title">Платформа калькуляторов недвижимости</h1>
-            <p class="subtitle">Профессиональные инструменты для расчетов по недвижимости с базовым и расширенным режимами</p>
+            <h1 class="title">Калькуляторы недвижимости</h1>
+            <p class="subtitle">Быстрые расчеты ипотеки, доходности и доступности жилья. Введите данные → получите результат</p>
         </div>
     </header>
 
     <div class="container">
-        <h2 class="section-title">Выберите калькулятор</h2>
+        <h2 class="section-title">Калькуляторы</h2>
         <p class="section-subtitle">
-            Каждый инструмент имеет простой режим для быстрых расчетов и расширенный для детального анализа
+            Нажмите на калькулятор, введите свои данные и получите точный расчет
         </p>
 
         <div class="calculators-grid">
@@ -327,8 +448,7 @@
                     </div>
                 </div>
                 <p class="card-description">
-                    Рассчитайте ежемесячный платеж, переплату и график выплат по ипотеке. 
-                    Поддержка аннуитетных и дифференцированных платежей, досрочного погашения.
+                    Введите: сумму кредита, ставку, срок. Получите: ежемесячный платеж, переплату, график платежей.
                 </p>
                 <ul class="card-features">
                     <li>Базовый режим: платеж, переплата, общая сумма</li>
@@ -350,8 +470,7 @@
                     </div>
                 </div>
                 <p class="card-description">
-                    Определите максимальную сумму ипотеки и стоимость доступного жилья 
-                    исходя из вашего дохода и финансовых обязательств.
+                    Введите: доход, первоначальный взнос, обязательства. Получите: максимальную сумму кредита и стоимость доступного жилья.
                 </p>
                 <ul class="card-features">
                     <li>Расчет максимального платежа по доходу</li>
@@ -373,8 +492,7 @@
                     </div>
                 </div>
                 <p class="card-description">
-                    Рассчитайте доходность от сдачи недвижимости в аренду. 
-                    Валовая и чистая доходность, срок окупаемости, сравнение с альтернативами.
+                    Введите: стоимость, арендная плата, расходы. Получите: доходность в год, срок окупаемости, сравнение с депозитом.
                 </p>
                 <ul class="card-features">
                     <li>Валовая и чистая доходность</li>
@@ -396,8 +514,7 @@
                     </div>
                 </div>
                 <p class="card-description">
-                    Сравните финансовую выгоду аренды жилья и покупки в ипотеку. 
-                    Учет роста цен, альтернативного инвестирования, точка безубыточности.
+                    Введите: стоимость жилья, аренду, параметры ипотеки. Получите: что выгоднее на выбранный период и когда окупится покупка.
                 </p>
                 <ul class="card-features">
                     <li>Сравнение затрат за заданный период</li>
@@ -419,8 +536,7 @@
                     </div>
                 </div>
                 <p class="card-description">
-                    Рассчитайте рентабельность инвестиций в недвижимость для сдачи в аренду. 
-                    Валовая и чистая доходность, окупаемость, учет всех расходов.
+                    Введите: стоимость квартиры, аренду в месяц, расходы. Получите: доходность в %, срок окупаемости, прогноз прибыли.
                 </p>
                 <ul class="card-features">
                     <li>Расчет валовой и чистой доходности</li>
@@ -442,8 +558,7 @@
                     </div>
                 </div>
                 <p class="card-description">
-                    Профессиональный ипотечный калькулятор от портала M2.ru с актуальными ставками банков. 
-                    Подбор программ, сравнение условий, онлайн-заявка.
+                    Калькулятор от M2.ru — актуальные ставки всех банков. Подбор лучших предложений, мгновенная онлайн-заявка в банк.
                 </p>
                 <ul class="card-features">
                     <li>Актуальные ставки всех банков</li>
@@ -458,37 +573,22 @@
         </div>
 
         <div class="features-section">
-            <h2 class="section-title">Почему наша платформа</h2>
+            <h2 class="section-title">Как пользоваться</h2>
             <div class="features-grid">
                 <div class="feature-item">
+                    <div class="feature-icon">1</div>
+                    <h3 class="feature-title">Выберите калькулятор</h3>
+                    <p class="feature-text">Нажмите на нужный калькулятор выше</p>
+                </div>
+                <div class="feature-item">
                     <div class="feature-icon">2</div>
-                    <h3 class="feature-title">Два режима работы</h3>
-                    <p class="feature-text">Базовый режим для быстрых расчетов и расширенный для детального анализа с дополнительными параметрами</p>
+                    <h3 class="feature-title">Введите данные</h3>
+                    <p class="feature-text">Заполните поля: сумма, ставка, срок</p>
                 </div>
                 <div class="feature-item">
-                    <div class="feature-icon">M</div>
-                    <h3 class="feature-title">Адаптивный дизайн</h3>
-                    <p class="feature-text">Идеально работает на всех устройствах: смартфоны, планшеты, настольные компьютеры</p>
-                </div>
-                <div class="feature-item">
-                    <div class="feature-icon">PDF</div>
-                    <h3 class="feature-title">PDF отчеты</h3>
-                    <p class="feature-text">Сохраняйте результаты расчетов в виде подробных отчетов для дальнейшего использования</p>
-                </div>
-                <div class="feature-item">
-                    <div class="feature-icon">✓</div>
-                    <h3 class="feature-title">Точные формулы</h3>
-                    <p class="feature-text">Используем банковские алгоритмы и проверенные финансовые формулы для максимальной точности</p>
-                </div>
-                <div class="feature-item">
-                    <div class="feature-icon">0₽</div>
-                    <h3 class="feature-title">Полностью бесплатно</h3>
-                    <p class="feature-text">Все калькуляторы доступны без регистрации, подписок и скрытых платежей</p>
-                </div>
-                <div class="feature-item">
-                    <div class="feature-icon">RU</div>
-                    <h3 class="feature-title">Для России</h3>
-                    <p class="feature-text">Локализация под российские реалии: рубли, нормы ПДН, налоговое законодательство</p>
+                    <div class="feature-icon">3</div>
+                    <h3 class="feature-title">Получите результат</h3>
+                    <p class="feature-text">Смотрите расчет и экспортируйте в PDF</p>
                 </div>
             </div>
         </div>
