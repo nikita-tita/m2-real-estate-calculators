@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Калькулятор досрочного погашения - М2</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Досрочное погашение ипотеки - М2</title>
     <style>
         * {
             margin: 0;
@@ -14,998 +13,496 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            line-height: 1.5;
+            background: #f8f9fa;
             color: #333;
-            background-color: #f8f9fa;
-            font-size: 14px;
-        }
-
-        .header {
-            background: white;
-            border-bottom: 1px solid #e9ecef;
-            padding: 12px 0;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
-
-        .header-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 16px;
-        }
-
-        .logo {
-            font-size: 32px;
-            font-weight: 700;
-            color: #007bff;
-            text-decoration: none;
-        }
-
-        .back-link {
-            color: #007bff;
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 16px;
-        }
-
-        .back-link:hover {
-            text-decoration: underline;
+            line-height: 1.4;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 800px;
             margin: 0 auto;
-            padding: 24px 16px;
+            padding: 20px;
         }
 
-        .page-header {
-            background: white;
-            border-radius: 8px;
-            padding: 32px;
-            margin-bottom: 24px;
+        .header {
             text-align: center;
-            border: 1px solid #e6e6e6;
+            margin-bottom: 40px;
         }
 
-        .page-title {
+        .title {
             font-size: 32px;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 16px;
+            font-weight: 700;
+            color: #007bff;
+            margin-bottom: 8px;
         }
 
-        .page-subtitle {
+        .subtitle {
             font-size: 18px;
             color: #666;
-            max-width: 600px;
-            margin: 0 auto;
         }
 
-        .calculator-layout {
-            display: grid;
-            grid-template-columns: 400px 1fr;
-            gap: 24px;
-            margin-bottom: 24px;
-        }
-
-        .calculator-form, .results-section {
+        .calculator {
             background: white;
-            border-radius: 8px;
-            padding: 32px;
-            border: 1px solid #e6e6e6;
-        }
-
-        .form-section {
-            margin-bottom: 32px;
-        }
-
-        .section-title {
-            font-size: 20px;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 16px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid #e6e6e6;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 32px;
         }
 
-        .form-label {
+        .label {
             display: block;
-            font-weight: 500;
-            color: #555;
-            margin-bottom: 8px;
-            font-size: 14px;
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 12px 16px;
-            border: 1px solid #e6e6e6;
-            border-radius: 6px;
             font-size: 16px;
-            transition: border-color 0.2s;
-            background: white;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 12px;
         }
 
-        .form-input:focus {
-            outline: none;
-            border-color: #007bff;
-            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
-        }
-
-        .form-select {
-            width: 100%;
-            padding: 12px 16px;
-            border: 1px solid #e6e6e6;
-            border-radius: 6px;
-            font-size: 16px;
-            background: white;
-            cursor: pointer;
-        }
-
-        .form-select:focus {
-            outline: none;
-            border-color: #007bff;
-            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
-        }
-
-        .input-suffix {
+        .input-container {
             position: relative;
         }
 
-        .input-suffix::after {
-            content: attr(data-suffix);
+        .input {
+            width: 100%;
+            padding: 16px 60px 16px 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            background: #f8f9fa;
+            transition: all 0.2s ease;
+            -webkit-appearance: textfield;
+            -moz-appearance: textfield;
+            appearance: textfield;
+        }
+
+        .input::-webkit-outer-spin-button,
+        .input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .input:focus {
+            outline: none;
+            border-color: #007bff;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(0,123,255,0.1);
+        }
+
+        .currency {
             position: absolute;
             right: 16px;
             top: 50%;
             transform: translateY(-50%);
+            font-size: 16px;
             color: #666;
             pointer-events: none;
-            font-size: 14px;
         }
 
-        .calculate-btn {
-            width: 100%;
-            padding: 16px 24px;
+        .quick-values {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+
+        .quick-btn {
+            padding: 8px 16px;
+            border: 1px solid #e9ecef;
+            border-radius: 20px;
+            background: white;
+            color: #666;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .quick-btn:hover {
+            border-color: #007bff;
+            color: #007bff;
+        }
+
+        .quick-btn.active {
             background: #007bff;
             color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 16px;
-            font-weight: 500;
+            border-color: #007bff;
+        }
+
+        .slider-container {
+            margin-top: 16px;
+        }
+
+        .slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: #e9ecef;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
             cursor: pointer;
-            transition: background-color 0.2s;
         }
 
-        .calculate-btn:hover {
-            background: #0056b3;
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #007bff;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 8px rgba(0,123,255,0.3);
         }
 
-        .result-highlight {
-            background: linear-gradient(135deg, #007bff, #0056b3);
-            color: white;
-            padding: 24px;
-            border-radius: 8px;
+        .slider-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .result {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            border-radius: 16px;
+            padding: 32px;
             text-align: center;
-            margin-bottom: 24px;
+            color: white;
+            margin-top: 20px;
         }
 
         .result-main {
-            font-size: 36px;
+            font-size: 48px;
             font-weight: 700;
             margin-bottom: 8px;
+            line-height: 1;
         }
 
         .result-label {
-            font-size: 16px;
+            font-size: 18px;
             opacity: 0.9;
-        }
-
-        .results-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
             margin-bottom: 24px;
         }
 
+        .result-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+        }
+
         .result-item {
-            padding: 16px;
-            background: #f8f9fa;
-            border-radius: 6px;
-            border-left: 4px solid #007bff;
+            text-align: center;
         }
 
         .result-value {
             font-size: 20px;
             font-weight: 600;
-            color: #333;
             margin-bottom: 4px;
         }
 
         .result-desc {
             font-size: 14px;
-            color: #666;
+            opacity: 0.8;
         }
 
-        .chart-container {
-            height: 400px;
-            margin: 24px 0;
-        }
-
-        .comparison-section {
-            background: white;
-            border-radius: 8px;
-            padding: 32px;
-            border: 1px solid #e6e6e6;
-            margin-bottom: 24px;
-        }
-
-        .comparison-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 16px;
-        }
-
-        .comparison-table th,
-        .comparison-table td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #e6e6e6;
-            font-size: 14px;
-        }
-
-        .comparison-table th {
-            background: #f8f9fa;
-            font-weight: 600;
-            color: #555;
-        }
-
-        .comparison-table tbody tr:hover {
-            background: #f8f9fa;
-        }
-
-        .strategy-tabs {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 24px;
-            flex-wrap: wrap;
-        }
-
-        .tab-btn {
-            padding: 12px 20px;
-            background: white;
-            border: 1px solid #e6e6e6;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        .tab-btn.active {
-            background: #007bff;
-            color: white;
-            border-color: #007bff;
-        }
-
-        .tab-btn:hover:not(.active) {
-            border-color: #007bff;
-            color: #007bff;
-        }
-
-        .export-buttons {
-            display: flex;
-            gap: 12px;
-            margin: 24px 0;
-            flex-wrap: wrap;
-        }
-
-        .export-btn {
-            padding: 12px 20px;
-            background: #28a745;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            transition: background 0.2s;
-        }
-
-        .export-btn:hover {
-            background: #218838;
-        }
-
-        .savings-highlight {
-            background: linear-gradient(135deg, #28a745, #1e7e34);
-            color: white;
-            padding: 20px;
-            border-radius: 8px;
+        .back-link {
             text-align: center;
-            margin: 16px 0;
+            margin-top: 24px;
         }
 
-        .savings-amount {
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
-
-        .info-tooltip {
-            position: relative;
-            display: inline-block;
-            margin-left: 4px;
+        .back-link a {
             color: #007bff;
-            cursor: help;
-            font-size: 14px;
-        }
-
-        .info-tooltip::after {
-            content: attr(data-tooltip);
-            position: absolute;
-            bottom: 125%;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #333;
-            color: white;
-            padding: 8px 12px;
-            border-radius: 4px;
-            font-size: 12px;
-            white-space: nowrap;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.2s;
-            z-index: 1000;
-        }
-
-        .info-tooltip:hover::after {
-            opacity: 1;
-            visibility: visible;
+            text-decoration: none;
+            font-weight: 500;
         }
 
         @media (max-width: 768px) {
-            .calculator-layout {
-                grid-template-columns: 1fr;
+            .container {
+                padding: 16px;
             }
 
-            .results-grid {
-                grid-template-columns: 1fr;
+            .calculator {
+                padding: 24px;
             }
 
-            .page-title {
-                font-size: 24px;
-            }
-
-            .result-main {
+            .title {
                 font-size: 28px;
             }
 
-            .strategy-tabs {
-                flex-direction: column;
+            .result-main {
+                font-size: 36px;
             }
 
-            .export-buttons {
-                flex-direction: column;
+            .result-details {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
             }
         }
     </style>
 </head>
 <body>
-    <header class="header">
-        <div class="header-content">
-            <a href="m2-hub.html" class="logo">М2</a>
-            <a href="m2-hub.html" class="back-link">← К выбору расчётов</a>
-        </div>
-    </header>
-
     <div class="container">
-        <div class="page-header">
-            <h1 class="page-title">Калькулятор досрочного погашения</h1>
-            <p class="page-subtitle">Рассчитайте выгоду от досрочного погашения ипотеки и выберите оптимальную стратегию экономии</p>
+        <div class="header">
+            <h1 class="title">Досрочное погашение ипотеки</h1>
+            <p class="subtitle">Посчитайте, сколько сэкономите на процентах</p>
         </div>
 
-        <div class="calculator-layout">
-            <div class="calculator-form">
-                <form id="prepaymentForm">
-                    <div class="form-section">
-                        <h3 class="section-title">Текущие условия ипотеки</h3>
-                        
-                        <div class="form-group">
-                            <label class="form-label">
-                                Остаток долга по ипотеке
-                                <span class="info-tooltip" data-tooltip="Текущая задолженность по кредиту">ℹ</span>
-                            </label>
-                            <div class="input-suffix" data-suffix="₽">
-                                <input type="number" id="remainingDebt" class="form-input" value="3000000" min="1000" step="10000" required>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Процентная ставка</label>
-                            <div class="input-suffix" data-suffix="%">
-                                <input type="number" id="interestRate" class="form-input" value="9.5" min="1" max="30" step="0.1" required>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Остаток срока кредита</label>
-                            <select id="remainingTerm" class="form-select" required>
-                                <option value="5">5 лет</option>
-                                <option value="10">10 лет</option>
-                                <option value="15" selected>15 лет</option>
-                                <option value="20">20 лет</option>
-                                <option value="25">25 лет</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Текущий ежемесячный платёж</label>
-                            <div class="input-suffix" data-suffix="₽">
-                                <input type="number" id="currentPayment" class="form-input" value="35000" min="1000" step="1000" required>
-                            </div>
-                        </div>
+        <div class="calculator">
+            <div class="form-group">
+                <label class="label">Остаток долга по ипотеке</label>
+                <div class="input-container">
+                    <input type="number" id="remainingDebt" class="input" value="3000000">
+                    <span class="currency">₽</span>
+                </div>
+                <div class="quick-values">
+                    <button class="quick-btn" onclick="setQuickValue('remainingDebt', 1500000)">1.5 млн</button>
+                    <button class="quick-btn active" onclick="setQuickValue('remainingDebt', 3000000)">3 млн</button>
+                    <button class="quick-btn" onclick="setQuickValue('remainingDebt', 5000000)">5 млн</button>
+                    <button class="quick-btn" onclick="setQuickValue('remainingDebt', 8000000)">8 млн</button>
+                </div>
+                <div class="slider-container">
+                    <input type="range" id="remainingDebtSlider" class="slider" 
+                           min="500000" max="10000000" step="100000" value="3000000">
+                    <div class="slider-labels">
+                        <span>500 тыс</span>
+                        <span>10 млн</span>
                     </div>
-
-                    <div class="form-section">
-                        <h3 class="section-title">Параметры досрочного погашения</h3>
-                        
-                        <div class="form-group">
-                            <label class="form-label">Стратегия досрочного погашения</label>
-                            <select id="prepaymentStrategy" class="form-select">
-                                <option value="reduce_term">Сокращение срока кредита</option>
-                                <option value="reduce_payment" selected>Уменьшение размера платежа</option>
-                                <option value="mixed">Смешанная стратегия</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">
-                                Сумма досрочного платежа
-                                <span class="info-tooltip" data-tooltip="Единоразовая сумма для досрочного погашения">ℹ</span>
-                            </label>
-                            <div class="input-suffix" data-suffix="₽">
-                                <input type="number" id="prepaymentAmount" class="form-input" value="500000" min="10000" step="10000">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">
-                                Регулярные доплаты
-                                <span class="info-tooltip" data-tooltip="Дополнительная сумма к обычному платежу каждый месяц">ℹ</span>
-                            </label>
-                            <div class="input-suffix" data-suffix="₽/мес">
-                                <input type="number" id="monthlyExtra" class="form-input" value="10000" min="0" step="1000">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Когда планируете досрочное погашение</label>
-                            <select id="prepaymentTiming" class="form-select">
-                                <option value="0" selected>Сразу</option>
-                                <option value="6">Через 6 месяцев</option>
-                                <option value="12">Через 1 год</option>
-                                <option value="24">Через 2 года</option>
-                                <option value="36">Через 3 года</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="form-section">
-                        <h3 class="section-title">Альтернативные вложения</h3>
-                        
-                        <div class="form-group">
-                            <label class="form-label">
-                                Доходность альтернативных вложений
-                                <span class="info-tooltip" data-tooltip="Например, депозит, облигации, инвестиции в акции">ℹ</span>
-                            </label>
-                            <div class="input-suffix" data-suffix="% годовых">
-                                <input type="number" id="alternativeYield" class="form-input" value="7.5" min="0" max="30" step="0.5">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Налог на доходы от вложений</label>
-                            <div class="input-suffix" data-suffix="%">
-                                <input type="number" id="investmentTax" class="form-input" value="13" min="0" max="50" step="1">
-                            </div>
-                        </div>
-                    </div>
-
-                    <button type="button" class="calculate-btn" onclick="calculatePrepayment()">
-                        Рассчитать досрочное погашение
-                    </button>
-                </form>
+                </div>
             </div>
 
-            <div class="results-section" id="resultsSection">
-                <div id="resultsContent">
-                    <div style="text-align: center; color: #666; padding: 40px 20px;">
-                        <p>Заполните форму слева и нажмите "Рассчитать досрочное погашение" для получения подробного анализа</p>
+            <div class="form-group">
+                <label class="label">Ваш текущий ежемесячный платёж</label>
+                <div class="input-container">
+                    <input type="number" id="currentPayment" class="input" value="35000">
+                    <span class="currency">₽</span>
+                </div>
+                <div class="quick-values">
+                    <button class="quick-btn" onclick="setQuickValue('currentPayment', 25000)">25 тыс</button>
+                    <button class="quick-btn active" onclick="setQuickValue('currentPayment', 35000)">35 тыс</button>
+                    <button class="quick-btn" onclick="setQuickValue('currentPayment', 50000)">50 тыс</button>
+                    <button class="quick-btn" onclick="setQuickValue('currentPayment', 75000)">75 тыс</button>
+                </div>
+                <div class="slider-container">
+                    <input type="range" id="currentPaymentSlider" class="slider" 
+                           min="10000" max="150000" step="5000" value="35000">
+                    <div class="slider-labels">
+                        <span>10 тыс</span>
+                        <span>150 тыс</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="label">Сколько добавите к обычному платежу</label>
+                <div class="input-container">
+                    <input type="number" id="extraPayment" class="input" value="20000">
+                    <span class="currency">₽</span>
+                </div>
+                <div class="quick-values">
+                    <button class="quick-btn" onclick="setQuickValue('extraPayment', 10000)">10 тыс</button>
+                    <button class="quick-btn active" onclick="setQuickValue('extraPayment', 20000)">20 тыс</button>
+                    <button class="quick-btn" onclick="setQuickValue('extraPayment', 50000)">50 тыс</button>
+                    <button class="quick-btn" onclick="setQuickValue('extraPayment', 0)">Ничего</button>
+                </div>
+                <div class="slider-container">
+                    <input type="range" id="extraPaymentSlider" class="slider" 
+                           min="0" max="100000" step="5000" value="20000">
+                    <div class="slider-labels">
+                        <span>0 ₽</span>
+                        <span>100 тыс</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="label">Единоразовая доплата сейчас</label>
+                <div class="input-container">
+                    <input type="number" id="lumpSum" class="input" value="500000">
+                    <span class="currency">₽</span>
+                </div>
+                <div class="quick-values">
+                    <button class="quick-btn" onclick="setQuickValue('lumpSum', 0)">Без доплаты</button>
+                    <button class="quick-btn" onclick="setQuickValue('lumpSum', 300000)">300 тыс</button>
+                    <button class="quick-btn active" onclick="setQuickValue('lumpSum', 500000)">500 тыс</button>
+                    <button class="quick-btn" onclick="setQuickValue('lumpSum', 1000000)">1 млн</button>
+                </div>
+                <div class="slider-container">
+                    <input type="range" id="lumpSumSlider" class="slider" 
+                           min="0" max="2000000" step="50000" value="500000">
+                    <div class="slider-labels">
+                        <span>0 ₽</span>
+                        <span>2 млн</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="label">Процентная ставка по кредиту</label>
+                <div class="input-container">
+                    <input type="number" id="interestRate" class="input" value="9.5" step="0.1">
+                    <span class="currency">%</span>
+                </div>
+                <div class="quick-values">
+                    <button class="quick-btn" onclick="setQuickValue('interestRate', 7.5)">7.5%</button>
+                    <button class="quick-btn" onclick="setQuickValue('interestRate', 8.5)">8.5%</button>
+                    <button class="quick-btn active" onclick="setQuickValue('interestRate', 9.5)">9.5%</button>
+                    <button class="quick-btn" onclick="setQuickValue('interestRate', 12.5)">12.5%</button>
+                </div>
+                <div class="slider-container">
+                    <input type="range" id="interestRateSlider" class="slider" 
+                           min="3" max="20" step="0.1" value="9.5">
+                    <div class="slider-labels">
+                        <span>3%</span>
+                        <span>20%</span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="strategy-tabs" id="strategyTabs" style="display: none;">
-            <button class="tab-btn active" onclick="switchStrategy('reduce_term')">Сокращение срока</button>
-            <button class="tab-btn" onclick="switchStrategy('reduce_payment')">Уменьшение платежа</button>
-            <button class="tab-btn" onclick="switchStrategy('mixed')">Смешанная стратегия</button>
-        </div>
-
-        <div class="comparison-section" id="comparisonSection" style="display: none;">
-            <h3 class="section-title">Сравнение стратегий</h3>
-            <div id="comparisonContent"></div>
-        </div>
-
-        <div class="comparison-section" id="chartSection" style="display: none;">
-            <h3 class="section-title">График погашения</h3>
-            <div class="chart-container">
-                <canvas id="prepaymentChart"></canvas>
+        <div class="result" id="result">
+            <div class="result-main" id="savings">1.2 млн ₽</div>
+            <div class="result-label">Экономия на процентах</div>
+            
+            <div class="result-details">
+                <div class="result-item">
+                    <div class="result-value" id="newPayment">55 тыс ₽</div>
+                    <div class="result-desc">Новый платёж</div>
+                </div>
+                <div class="result-item">
+                    <div class="result-value" id="timeSaved">4.2 года</div>
+                    <div class="result-desc">Сократите срок</div>
+                </div>
+                <div class="result-item">
+                    <div class="result-value" id="totalSaved">1.8 млн ₽</div>
+                    <div class="result-desc">Общая выгода</div>
+                </div>
+                <div class="result-item">
+                    <div class="result-value" id="payoffTime">12.3 года</div>
+                    <div class="result-desc">Погасите за</div>
+                </div>
             </div>
         </div>
 
-        <div class="comparison-section" id="alternativeSection" style="display: none;">
-            <h3 class="section-title">Анализ альтернативных вложений</h3>
-            <div id="alternativeContent"></div>
+        <div class="back-link">
+            <a href="index.html">← Все калькуляторы</a>
         </div>
     </div>
 
     <script>
-        let prepaymentChart;
-        let calculationData = {};
+        function formatCurrency(amount) {
+            if (amount >= 1000000) {
+                return (amount / 1000000).toFixed(1).replace('.0', '') + ' млн ₽';
+            } else if (amount >= 1000) {
+                return (amount / 1000).toFixed(0) + ' тыс ₽';
+            }
+            return new Intl.NumberFormat('ru-RU').format(amount) + ' ₽';
+        }
 
-        function calculatePrepayment() {
-            const params = getInputValues();
+        function formatNumber(num) {
+            return new Intl.NumberFormat('ru-RU').format(Math.round(num));
+        }
+
+        function setQuickValue(inputId, value) {
+            document.getElementById(inputId).value = value;
             
-            if (!validateInputs(params)) {
-                alert('Пожалуйста, введите корректные значения');
+            const slider = document.getElementById(inputId + 'Slider');
+            if (slider) {
+                slider.value = value;
+            }
+            
+            const group = document.getElementById(inputId).closest('.form-group');
+            group.querySelectorAll('.quick-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            calculate();
+        }
+
+        function syncInputs() {
+            const fields = ['remainingDebt', 'currentPayment', 'extraPayment', 'lumpSum', 'interestRate'];
+            
+            fields.forEach(field => {
+                const input = document.getElementById(field);
+                const slider = document.getElementById(field + 'Slider');
+                
+                input.addEventListener('input', () => {
+                    slider.value = input.value;
+                    calculate();
+                });
+                
+                slider.addEventListener('input', () => {
+                    input.value = slider.value;
+                    calculate();
+                });
+            });
+        }
+
+        function calculate() {
+            const remainingDebt = parseFloat(document.getElementById('remainingDebt').value) || 0;
+            const currentPayment = parseFloat(document.getElementById('currentPayment').value) || 0;
+            const extraPayment = parseFloat(document.getElementById('extraPayment').value) || 0;
+            const lumpSum = parseFloat(document.getElementById('lumpSum').value) || 0;
+            const interestRate = parseFloat(document.getElementById('interestRate').value) || 0;
+
+            if (remainingDebt <= 0 || currentPayment <= 0 || interestRate <= 0) {
                 return;
             }
 
-            calculationData = {
-                withoutPrepayment: calculateWithoutPrepayment(params),
-                reduceTerm: calculateReduceTerm(params),
-                reducePayment: calculateReducePayment(params),
-                mixed: calculateMixed(params),
-                alternative: calculateAlternative(params)
-            };
-
-            displayResults();
-            showSections();
-        }
-
-        function getInputValues() {
-            return {
-                remainingDebt: parseFloat(document.getElementById('remainingDebt').value),
-                interestRate: parseFloat(document.getElementById('interestRate').value) / 100,
-                remainingTerm: parseInt(document.getElementById('remainingTerm').value),
-                currentPayment: parseFloat(document.getElementById('currentPayment').value),
-                prepaymentAmount: parseFloat(document.getElementById('prepaymentAmount').value) || 0,
-                monthlyExtra: parseFloat(document.getElementById('monthlyExtra').value) || 0,
-                prepaymentTiming: parseInt(document.getElementById('prepaymentTiming').value),
-                alternativeYield: parseFloat(document.getElementById('alternativeYield').value) / 100,
-                investmentTax: parseFloat(document.getElementById('investmentTax').value) / 100
-            };
-        }
-
-        function validateInputs(params) {
-            return params.remainingDebt > 0 && 
-                   params.interestRate >= 0 && 
-                   params.remainingTerm > 0 && 
-                   params.currentPayment > 0;
-        }
-
-        function calculateWithoutPrepayment(params) {
-            const monthlyRate = params.interestRate / 12;
-            const totalMonths = params.remainingTerm * 12;
+            const monthlyRate = interestRate / 100 / 12;
             
-            const monthlyPayment = params.remainingDebt * 
-                (monthlyRate * Math.pow(1 + monthlyRate, totalMonths)) / 
-                (Math.pow(1 + monthlyRate, totalMonths) - 1);
+            // Базовый расчет без досрочного погашения
+            let baseDebt = remainingDebt;
+            let baseMonths = 0;
+            let baseTotalInterest = 0;
+            
+            while (baseDebt > 0 && baseMonths < 600) {
+                const interestPayment = baseDebt * monthlyRate;
+                const principalPayment = Math.min(currentPayment - interestPayment, baseDebt);
+                if (principalPayment <= 0) break;
                 
-            const totalPayment = monthlyPayment * totalMonths;
-            const totalInterest = totalPayment - params.remainingDebt;
-            
-            return {
-                monthlyPayment,
-                totalPayment,
-                totalInterest,
-                termMonths: totalMonths,
-                termYears: params.remainingTerm
-            };
-        }
-
-        function calculateReduceTerm(params) {
-            return calculatePrepaymentScenario(params, 'reduce_term');
-        }
-
-        function calculateReducePayment(params) {
-            return calculatePrepaymentScenario(params, 'reduce_payment');
-        }
-
-        function calculateMixed(params) {
-            return calculatePrepaymentScenario(params, 'mixed');
-        }
-
-        function calculatePrepaymentScenario(params, strategy) {
-            let balance = params.remainingDebt;
-            let totalPayment = 0;
-            let month = 0;
-            const monthlyRate = params.interestRate / 12;
-            let currentMonthlyPayment = params.currentPayment;
-            const schedule = [];
-
-            // Досрочный платёж через указанное время
-            while (balance > 0 && month < params.remainingTerm * 12) {
-                month++;
-                
-                const interestPayment = balance * monthlyRate;
-                let principalPayment = currentMonthlyPayment - interestPayment;
-                
-                // Добавляем регулярные доплаты
-                if (params.monthlyExtra > 0) {
-                    principalPayment += params.monthlyExtra;
-                }
-                
-                // Добавляем единоразовый досрочный платёж
-                if (month === params.prepaymentTiming + 1 && params.prepaymentAmount > 0) {
-                    principalPayment += params.prepaymentAmount;
-                }
-                
-                if (principalPayment > balance) {
-                    principalPayment = balance;
-                }
-                
-                const payment = interestPayment + principalPayment;
-                balance -= principalPayment;
-                totalPayment += payment;
-                
-                if (month <= 12 || month % 12 === 0) {
-                    schedule.push({
-                        month,
-                        payment,
-                        principal: principalPayment,
-                        interest: interestPayment,
-                        balance: Math.max(balance, 0)
-                    });
-                }
-                
-                // Пересчёт платежа для разных стратегий
-                if (month === params.prepaymentTiming + 1 && params.prepaymentAmount > 0) {
-                    if (strategy === 'reduce_payment' && balance > 0) {
-                        const remainingMonths = params.remainingTerm * 12 - month;
-                        currentMonthlyPayment = balance * 
-                            (monthlyRate * Math.pow(1 + monthlyRate, remainingMonths)) / 
-                            (Math.pow(1 + monthlyRate, remainingMonths) - 1);
-                    }
-                }
-                
-                if (balance <= 0) break;
-            }
-            
-            const totalInterest = totalPayment - params.remainingDebt;
-            const savedInterest = calculationData.withoutPrepayment ? 
-                calculationData.withoutPrepayment.totalInterest - totalInterest : 0;
-            
-            return {
-                monthlyPayment: currentMonthlyPayment,
-                totalPayment,
-                totalInterest,
-                savedInterest,
-                termMonths: month,
-                termYears: Math.ceil(month / 12),
-                schedule
-            };
-        }
-
-        function calculateAlternative(params) {
-            const investmentAmount = params.prepaymentAmount;
-            const monthlyInvestment = params.monthlyExtra;
-            const netYield = params.alternativeYield * (1 - params.investmentTax);
-            
-            // Рассчитываем доход от альтернативных вложений
-            const years = params.remainingTerm;
-            let totalInvestment = investmentAmount;
-            let futureValue = investmentAmount;
-            
-            // Компаундирование основной суммы
-            futureValue *= Math.pow(1 + netYield, years);
-            
-            // Добавляем ежемесячные вложения
-            if (monthlyInvestment > 0) {
-                const monthlyYield = netYield / 12;
-                const months = years * 12;
-                const monthlyFV = monthlyInvestment * 
-                    ((Math.pow(1 + monthlyYield, months) - 1) / monthlyYield);
-                futureValue += monthlyFV;
-                totalInvestment += monthlyInvestment * months;
-            }
-            
-            const investmentProfit = futureValue - totalInvestment;
-            
-            return {
-                totalInvestment,
-                futureValue,
-                investmentProfit,
-                netYield: netYield * 100
-            };
-        }
-
-        function displayResults() {
-            const base = calculationData.withoutPrepayment;
-            const optimal = findOptimalStrategy();
-            
-            const resultsHTML = `
-                <div class="result-highlight">
-                    <div class="result-main">${formatCurrency(optimal.savedInterest)}</div>
-                    <div class="result-label">Экономия на процентах</div>
-                </div>
-
-                <div class="results-grid">
-                    <div class="result-item">
-                        <div class="result-value">${formatCurrency(optimal.monthlyPayment)}</div>
-                        <div class="result-desc">Новый ежемесячный платёж</div>
-                    </div>
-                    <div class="result-item">
-                        <div class="result-value">${optimal.termYears} лет</div>
-                        <div class="result-desc">Новый срок кредита</div>
-                    </div>
-                    <div class="result-item">
-                        <div class="result-value">${formatCurrency(base.totalInterest - optimal.totalInterest)}</div>
-                        <div class="result-desc">Экономия на переплате</div>
-                    </div>
-                    <div class="result-item">
-                        <div class="result-value">${((base.termYears - optimal.termYears) * 12).toFixed(0)} мес</div>
-                        <div class="result-desc">Сокращение срока</div>
-                    </div>
-                </div>
-
-                <div class="savings-highlight">
-                    <div class="savings-amount">${formatCurrency(optimal.savedInterest)}</div>
-                    <div>Общая выгода от досрочного погашения</div>
-                </div>
-
-                <div class="export-buttons">
-                    <button class="export-btn" onclick="exportToExcel()">📊 Экспорт в Excel</button>
-                    <button class="export-btn" onclick="exportToPDF()">📄 Экспорт в PDF</button>
-                    <button class="export-btn" onclick="saveCalculation()">💾 Сохранить расчёт</button>
-                </div>
-
-                <div class="chart-container">
-                    <canvas id="savingsChart"></canvas>
-                </div>
-            `;
-
-            document.getElementById('resultsContent').innerHTML = resultsHTML;
-            createSavingsChart();
-        }
-
-        function findOptimalStrategy() {
-            const strategies = [
-                calculationData.reduceTerm,
-                calculationData.reducePayment,
-                calculationData.mixed
-            ];
-            
-            return strategies.reduce((best, current) => 
-                current.savedInterest > best.savedInterest ? current : best
-            );
-        }
-
-        function displayComparison() {
-            const strategies = [
-                { name: 'Без досрочного погашения', data: calculationData.withoutPrepayment },
-                { name: 'Сокращение срока', data: calculationData.reduceTerm },
-                { name: 'Уменьшение платежа', data: calculationData.reducePayment },
-                { name: 'Смешанная стратегия', data: calculationData.mixed }
-            ];
-
-            let tableHTML = `
-                <table class="comparison-table">
-                    <thead>
-                        <tr>
-                            <th>Стратегия</th>
-                            <th>Ежемесячный платёж</th>
-                            <th>Срок кредита</th>
-                            <th>Общая переплата</th>
-                            <th>Экономия</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            `;
-
-            strategies.forEach(strategy => {
-                const savings = strategy.data.savedInterest || 0;
-                tableHTML += `
-                    <tr>
-                        <td>${strategy.name}</td>
-                        <td>${formatCurrency(strategy.data.monthlyPayment)}</td>
-                        <td>${strategy.data.termYears} лет</td>
-                        <td>${formatCurrency(strategy.data.totalInterest)}</td>
-                        <td style="color: ${savings > 0 ? '#28a745' : '#333'}">${formatCurrency(savings)}</td>
-                    </tr>
-                `;
-            });
-
-            tableHTML += '</tbody></table>';
-            
-            // Добавляем анализ альтернативных вложений
-            const alt = calculationData.alternative;
-            tableHTML += `
-                <h4 style="margin-top: 32px; margin-bottom: 16px;">Альтернативные вложения</h4>
-                <div class="results-grid">
-                    <div class="result-item">
-                        <div class="result-value">${formatCurrency(alt.futureValue)}</div>
-                        <div class="result-desc">Стоимость вложений через ${getInputValues().remainingTerm} лет</div>
-                    </div>
-                    <div class="result-item">
-                        <div class="result-value">${formatCurrency(alt.investmentProfit)}</div>
-                        <div class="result-desc">Прибыль от альтернативных вложений</div>
-                    </div>
-                </div>
-                
-                <div style="margin-top: 16px; padding: 16px; background: #fff3cd; border-radius: 6px; border-left: 4px solid #ffc107;">
-                    <strong>Рекомендация:</strong> ${alt.investmentProfit > findOptimalStrategy().savedInterest ? 
-                        'Выгоднее инвестировать свободные средства, чем досрочно погашать ипотеку' : 
-                        'Досрочное погашение ипотеки выгоднее альтернативных вложений'}
-                </div>
-            `;
-
-            document.getElementById('comparisonContent').innerHTML = tableHTML;
-        }
-
-        function createSavingsChart() {
-            const ctx = document.getElementById('savingsChart').getContext('2d');
-            
-            if (window.savingsChartInstance) {
-                window.savingsChartInstance.destroy();
+                baseDebt -= principalPayment;
+                baseTotalInterest += interestPayment;
+                baseMonths++;
             }
 
-            const base = calculationData.withoutPrepayment;
-            const optimal = findOptimalStrategy();
+            // Расчет с досрочным погашением
+            let newDebt = remainingDebt - lumpSum;
+            let newMonths = 0;
+            let newTotalInterest = 0;
+            const newPayment = currentPayment + extraPayment;
             
-            window.savingsChartInstance = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Сэкономлено', 'К доплате'],
-                    datasets: [{
-                        data: [optimal.savedInterest, optimal.totalInterest],
-                        backgroundColor: ['#28a745', '#007bff'],
-                        borderWidth: 2,
-                        borderColor: '#fff'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return context.label + ': ' + formatCurrency(context.raw);
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        function createPrepaymentChart() {
-            const ctx = document.getElementById('prepaymentChart').getContext('2d');
-            
-            if (prepaymentChart) {
-                prepaymentChart.destroy();
+            while (newDebt > 0 && newMonths < 600) {
+                const interestPayment = newDebt * monthlyRate;
+                const principalPayment = Math.min(newPayment - interestPayment, newDebt);
+                if (principalPayment <= 0) break;
+                
+                newDebt -= principalPayment;
+                newTotalInterest += interestPayment;
+                newMonths++;
             }
 
-            const base = calculationData.withoutPrepayment.schedule || [];
-            const optimal = findOptimalStrategy().schedule || [];
-            
-            prepaymentChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: optimal.map(d => `Месяц ${d.month}`),
-                    datasets: [
-                        {
-                            label: 'Остаток долга с досрочным погашением',
-                            data: optimal.map(d => d.balance),
-                            borderColor: '#28a745',
-                            backgroundColor: 'transparent',
-                            tension: 0.4
-                        },
-                        {
-                            label: 'Остаток долга без досрочного погашения',
-                            data: base.map(d => d.balance),
-                            borderColor: '#dc3545',
-                            backgroundColor: 'transparent',
-                            borderDash: [5, 5],
-                            tension: 0.4
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: 'Динамика погашения задолженности'
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function(value) {
-                                    return formatCurrency(value);
-                                }
-                            }
-                        }
-                    }
-                }
-            });
+            const savings = baseTotalInterest - newTotalInterest;
+            const timeSaved = (baseMonths - newMonths) / 12;
+            const totalSaved = savings + (extraPayment * newMonths);
+            const payoffYears = newMonths / 12;
+
+            // Обновляем отображение
+            document.getElementById('savings').textContent = formatCurrency(savings);
+            document.getElementById('newPayment').textContent = formatCurrency(newPayment);
+            document.getElementById('timeSaved').textContent = timeSaved.toFixed(1) + ' года';
+            document.getElementById('totalSaved').textContent = formatCurrency(savings);
+            document.getElementById('payoffTime').textContent = payoffYears.toFixed(1) + ' года';
         }
 
-        function showSections() {
-            document.getElementById('strategyTabs').style.display = 'flex';
-            document.getElementById('comparisonSection').style.display = 'block';
-            document.getElementById('chartSection').style.display = 'block';
-            document.getElementById('alternativeSection').style.display = 'block';
-            
-            displayComparison();
-            createPrepaymentChart();
-        }
-
-        function switchStrategy(strategy) {
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-            
-            // Можно добавить переключение между различными стратегиями
-            displayComparison();
-        }
-
-        function formatCurrency(amount) {
-            return new Intl.NumberFormat('ru-RU', {
-                style: 'currency',
-                currency: 'RUB',
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0
-            }).format(amount);
-        }
-
-        function exportToExcel() {
-            alert('Функция экспорта в Excel будет добавлена в следующей версии');
-        }
-
-        function exportToPDF() {
-            alert('Функция экспорта в PDF будет добавлена в следующей версии');
-        }
-
-        function saveCalculation() {
-            const data = {
-                inputs: getInputValues(),
-                results: calculationData,
-                timestamp: new Date().toISOString()
-            };
-            
-            localStorage.setItem('prepaymentCalculation', JSON.stringify(data));
-            alert('Расчёт сохранён в браузере');
-        }
-
-        // Автоматический расчёт при загрузке
         document.addEventListener('DOMContentLoaded', function() {
-            calculatePrepayment();
+            syncInputs();
+            calculate();
         });
     </script>
 </body>
