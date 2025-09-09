@@ -128,20 +128,20 @@
 
         .calculator-layout {
             display: grid;
-            grid-template-columns: 1fr 400px;
-            gap: 40px;
-            margin-bottom: 60px;
+            grid-template-columns: 1fr 350px;
+            gap: 32px;
+            margin-bottom: 40px;
         }
 
         .calculator-form {
             background: white;
             border-radius: 16px;
-            padding: 40px;
+            padding: 32px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.08);
         }
 
         .form-group {
-            margin-bottom: 32px;
+            margin-bottom: 24px;
         }
 
         .label-container {
@@ -277,14 +277,14 @@
         .result-card {
             background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
             border-radius: 16px;
-            padding: 32px;
+            padding: 24px;
             text-align: center;
             color: white;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
         }
 
         .result-main {
-            font-size: 42px;
+            font-size: 36px;
             font-weight: 700;
             margin-bottom: 8px;
             line-height: 1;
@@ -320,21 +320,31 @@
             font-weight: 600;
         }
 
-        .info-card {
+        .info-card, .tip-card {
             background: white;
             border-radius: 12px;
-            padding: 24px;
+            padding: 20px;
             border-left: 4px solid #007bff;
+            margin-bottom: 16px;
+        }
+        
+        .tip-card {
+            border-left-color: #28a745;
+            background: linear-gradient(135deg, #f8fff9 0%, #e8f5e8 100%);
         }
 
-        .info-title {
+        .info-title, .tip-title {
             font-size: 16px;
             font-weight: 600;
             color: #333;
             margin-bottom: 8px;
         }
+        
+        .tip-title {
+            color: #28a745;
+        }
 
-        .info-text {
+        .info-text, .tip-text {
             font-size: 14px;
             color: #666;
             line-height: 1.5;
@@ -434,6 +444,13 @@
             padding-top: 40px;
             border-top: 1px solid #34495e;
             color: #95a5a6;
+        }
+
+        @media (max-width: 1024px) {
+            .calculator-layout {
+                grid-template-columns: 1fr 300px;
+                gap: 24px;
+            }
         }
 
         @media (max-width: 768px) {
@@ -638,6 +655,14 @@
                     <div class="info-text">
                         Минимальный доход: <strong id="requiredIncome">84 573 ₽</strong><br>
                         <small>Учитывается правило банков: платёж не должен превышать 45% от дохода</small>
+                    </div>
+                </div>
+
+                <div class="tip-card">
+                    <div class="tip-title">Экономьте на процентах</div>
+                    <div class="tip-text">
+                        Досрочное погашение на <strong>10 000 ₽/месяц</strong> сэкономит:<br>
+                        <strong>3,2 млн ₽</strong> переплаты и <strong>8 лет</strong> выплат
                     </div>
                 </div>
             </div>
