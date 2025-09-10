@@ -16,21 +16,24 @@ function createHeader() {
                 <div class="nav-section">
                     <a href="https://m2.ru/" class="nav-title">Частным лицам</a>
                     <div class="nav-dropdown">
-                        <a href="https://m2.ru/new-buildings/">Новостройки</a>
+                        <a href="https://m2.ru/moskva/novostroyki/">Новостройки</a>
                         <a href="https://m2.ru/ipoteka/">Ипотека</a>
                         <a href="https://m2.ru/ipoteka/calculator/">Ипотечный калькулятор</a>
-                        <a href="https://m2.ru/sdelka/">Сделка</a>
+                        <a href="https://m2.ru/services/deal/">Сделка</a>
+                        <a href="https://m2.ru/services/guaranteed-deal/">Защита сделки</a>
+                        <a href="https://m2.ru/services/proverka-yuridicheskoy-chistoty-kvartiry/">Проверка недвижимости</a>
                     </div>
                 </div>
                 
                 <div class="nav-section">
-                    <a href="https://m2.ru/realtors/" class="nav-title">Риелторам и агентствам</a>
+                    <a href="https://m2.ru/rieltoram/" class="nav-title">Риелторам и агентствам</a>
                     <div class="nav-dropdown">
-                        <a href="https://m2.ru/realtors/new-buildings/">Новостройки</a>
-                        <a href="https://m2.ru/realtors/ipoteka/">Ипотека</a>
-                        <a href="https://m2.ru/realtors/sdelka/">Сделка</a>
-                        <a href="https://m2.ru/realtors/safe-calculations/">Сервис безопасных расчётов</a>
-                        <a href="https://m2.ru/realtors/electronic-registration/">Электронная регистрация</a>
+                        <a href="https://m2.ru/rieltoram/m2pro-novostroyki/">М2Pro Новостройки</a>
+                        <a href="https://m2.ru/rieltoram/ipoteka/">Ипотека</a>
+                        <a href="https://m2.ru/rieltoram/online-sdelka/">Онлайн-сделка</a>
+                        <a href="https://m2.ru/rieltoram/sbr/">Сервис безопасных расчётов</a>
+                        <a href="https://m2.ru/rieltoram/elreg/">Электронная регистрация</a>
+                        <a href="https://m2.ru/rieltoram/proverka/">Проверка недвижимости</a>
                     </div>
                 </div>
             </nav>
@@ -50,23 +53,37 @@ function createFooter() {
                 <div class="footer-section">
                     <h4>Частным лицам</h4>
                     <ul>
-                        <li><a href="https://m2.ru/new-buildings/">Новостройки</a></li>
+                        <li><a href="https://m2.ru/moskva/novostroyki/">Новостройки</a></li>
                         <li><a href="https://m2.ru/ipoteka/">Ипотека</a></li>
                         <li><a href="https://m2.ru/ipoteka/calculator/">Ипотечный калькулятор</a></li>
-                        <li><a href="https://m2.ru/sdelka/">Сделка</a></li>
-                        <li><a href="https://m2.ru/sdelka/protection/">Защита сделки</a></li>
-                        <li><a href="https://m2.ru/sdelka/property-check/">Проверка недвижимости</a></li>
+                        <li><a href="https://m2.ru/services/deal/">Сделка</a></li>
+                        <li><a href="https://m2.ru/services/guaranteed-deal/">Защита сделки</a></li>
+                        <li><a href="https://m2.ru/services/proverka-yuridicheskoy-chistoty-kvartiry/">Проверка недвижимости</a></li>
                     </ul>
                 </div>
                 
                 <div class="footer-section">
-                    <h4>Риелторам</h4>
+                    <h4>Риелторам и агентствам</h4>
                     <ul>
-                        <li><a href="https://m2.ru/realtors/new-buildings/">Новостройки</a></li>
-                        <li><a href="https://m2.ru/realtors/ipoteka/">Ипотека</a></li>
-                        <li><a href="https://m2.ru/realtors/sdelka/">Сделка</a></li>
-                        <li><a href="https://m2.ru/realtors/safe-calculations/">Сервис безопасных расчётов</a></li>
-                        <li><a href="https://m2.ru/realtors/electronic-registration/">Электронная регистрация</a></li>
+                        <li><a href="https://m2.ru/rieltoram/m2pro-novostroyki/">М2Pro Новостройки</a></li>
+                        <li><a href="https://m2.ru/rieltoram/ipoteka/">Ипотека</a></li>
+                        <li><a href="https://m2.ru/rieltoram/online-sdelka/">Онлайн-сделка</a></li>
+                        <li><a href="https://m2.ru/rieltoram/sbr/">Сервис безопасных расчётов</a></li>
+                        <li><a href="https://m2.ru/rieltoram/elreg/">Электронная регистрация</a></li>
+                        <li><a href="https://m2.ru/rieltoram/proverka/">Проверка недвижимости</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>О компании</h4>
+                    <ul>
+                        <li><a href="https://m2.ru/about/">О компании</a></li>
+                        <li><a href="https://m2.ru/vacancies/">Вакансии</a></li>
+                        <li><a href="https://m2.ru/it/">ИТ-деятельность</a></li>
+                        <li><a href="https://m2.ru/support/">Помощь</a></li>
+                        <li><a href="https://m2.ru/partners/">Наши партнёры</a></li>
+                        <li><a href="https://m2.ru/media/">М2 Медиа</a></li>
+                        <li><a href="https://m2.ru/pr/">Новости М2</a></li>
                     </ul>
                 </div>
                 
@@ -90,13 +107,13 @@ function createFooter() {
                     </div>
                     
                     <div class="social-links">
-                        <a href="https://vk.com/m2ru" target="_blank" class="social-link vk">ВКонтакте</a>
-                        <a href="https://t.me/m2ru" target="_blank" class="social-link telegram">Telegram</a>
+                        <a href="https://vk.com/metr_kvadratnyy" target="_blank" class="social-link vk">ВКонтакте</a>
+                        <a href="https://t.me/metrkvadratny/" target="_blank" class="social-link telegram">Telegram</a>
                     </div>
                     
                     <div class="app-links">
                         <a href="https://apps.rustore.ru/app/ru.m2" target="_blank" class="app-link">RuStore</a>
-                        <a href="https://apps.apple.com/ru/app/m2/id1234567890" target="_blank" class="app-link">App Store</a>
+                        <a href="https://apps.apple.com/ru/app/m2" target="_blank" class="app-link">App Store</a>
                         <a href="https://play.google.com/store/apps/details?id=ru.m2" target="_blank" class="app-link">Google Play</a>
                     </div>
                 </div>
@@ -111,8 +128,10 @@ function createFooter() {
                 </div>
                 
                 <div class="footer-links">
-                    <a href="https://m2.ru/privacy/">Политика конфиденциальности</a>
-                    <a href="https://m2.ru/terms/">Пользовательское соглашение</a>
+                    <a href="https://m2.ru/data-security/">Безопасность данных</a>
+                    <a href="https://m2.ru/docs/clients/">Клиентские документы</a>
+                    <a href="https://m2.ru/about/">О компании</a>
+                    <a href="https://m2.ru/support/">Помощь</a>
                 </div>
                 
                 <div class="footer-copy">
