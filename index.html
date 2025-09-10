@@ -187,9 +187,20 @@
         }
 
         .calculator-icon {
-            font-size: 48px;
+            width: 64px;
+            height: 64px;
             margin-bottom: 20px;
-            display: block;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #3416b6, #4726d6);
+            border-radius: 16px;
+            color: white;
+        }
+        
+        .calculator-icon svg {
+            width: 32px;
+            height: 32px;
         }
 
         .calculator-title {
@@ -265,9 +276,21 @@
         }
 
         .feature-icon {
-            font-size: 60px;
-            margin-bottom: 20px;
-            display: block;
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 20px;
+            color: #3416b6;
+            border: 2px solid #f0f0f0;
+        }
+        
+        .feature-icon svg {
+            width: 32px;
+            height: 32px;
         }
 
         .feature-title {
@@ -415,7 +438,12 @@
             <div class="calculators-grid">
                 <!-- Ипотечный калькулятор -->
                 <div class="calculator-card">
-                    <span class="calculator-icon">🏠</span>
+                    <div class="calculator-icon home-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                            <polyline points="9,22 9,12 15,12 15,22"/>
+                        </svg>
+                    </div>
                     <h3 class="calculator-title">Ипотечный калькулятор</h3>
                     <p class="calculator-description">
                         Рассчитайте ежемесячный платеж, переплату и оптимальные условия кредита. 
@@ -434,7 +462,14 @@
 
                 <!-- Доступность жилья -->
                 <div class="calculator-card">
-                    <span class="calculator-icon">💰</span>
+                    <div class="calculator-icon money-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="m15 9-6 6"/>
+                            <path d="m9 9h.01"/>
+                            <path d="m15 15h.01"/>
+                        </svg>
+                    </div>
                     <h3 class="calculator-title">Доступность жилья</h3>
                     <p class="calculator-description">
                         Определите максимальную сумму ипотеки на основе доходов, расходов и кредитной истории. 
@@ -453,7 +488,12 @@
 
                 <!-- Доходность недвижимости -->
                 <div class="calculator-card">
-                    <span class="calculator-icon">📈</span>
+                    <div class="calculator-icon chart-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="22,6 13.5,15.5 8.5,10.5 2,17"/>
+                            <polyline points="16,6 22,6 22,12"/>
+                        </svg>
+                    </div>
                     <h3 class="calculator-title">Доходность недвижимости</h3>
                     <p class="calculator-description">
                         Анализ инвестиций в недвижимость: валовая и чистая доходность, 
@@ -472,7 +512,13 @@
 
                 <!-- Airbnb калькулятор -->
                 <div class="calculator-card">
-                    <span class="calculator-icon">🏨</span>
+                    <div class="calculator-icon airbnb-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                            <polyline points="9,22 9,12 15,12 15,22"/>
+                            <circle cx="12" cy="8" r="2"/>
+                        </svg>
+                    </div>
                     <h3 class="calculator-title">Краткосрочная аренда</h3>
                     <p class="calculator-description">
                         Специализированный калькулятор для Airbnb и посуточной аренды. 
@@ -491,7 +537,13 @@
 
                 <!-- Аренда vs Покупка -->
                 <div class="calculator-card">
-                    <span class="calculator-icon">⚖️</span>
+                    <div class="calculator-icon comparison-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+                            <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+                            <path d="m9 14 2 2 4-4"/>
+                        </svg>
+                    </div>
                     <h3 class="calculator-title">Аренда vs Покупка</h3>
                     <p class="calculator-description">
                         Комплексное сравнение аренды и покупки недвижимости с учетом налогов, 
@@ -510,7 +562,16 @@
 
                 <!-- Новостройка vs Вторичка -->
                 <div class="calculator-card">
-                    <span class="calculator-icon">🏗️</span>
+                    <div class="calculator-icon building-comparison-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/>
+                            <path d="M6 12H4a2 2 0 0 0-2 2v8h20v-8a2 2 0 0 0-2-2h-2"/>
+                            <path d="M10 6h4"/>
+                            <path d="M10 10h4"/>
+                            <path d="M10 14h4"/>
+                            <path d="M10 18h4"/>
+                        </svg>
+                    </div>
                     <h3 class="calculator-title">Новостройка vs Вторичка</h3>
                     <p class="calculator-description">
                         Инновационный калькулятор с конструктором параметров. 
@@ -539,7 +600,13 @@
 
                 <div class="features-grid">
                     <div class="feature-item">
-                        <span class="feature-icon">🎯</span>
+                        <div class="feature-icon target-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <circle cx="12" cy="12" r="6"/>
+                                <circle cx="12" cy="12" r="2"/>
+                            </svg>
+                        </div>
                         <h3 class="feature-title">Точные расчеты</h3>
                         <p class="feature-description">
                             Все формулы проверены и соответствуют российскому законодательству. 
@@ -548,7 +615,11 @@
                     </div>
 
                     <div class="feature-item">
-                        <span class="feature-icon">🔧</span>
+                        <div class="feature-icon tool-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+                            </svg>
+                        </div>
                         <h3 class="feature-title">Гибкие настройки</h3>
                         <p class="feature-description">
                             Конструктор параметров позволяет добавлять собственные критерии 
@@ -566,7 +637,15 @@
                     </div>
 
                     <div class="feature-item">
-                        <span class="feature-icon">📄</span>
+                        <div class="feature-icon pdf-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14,2 14,8 20,8"/>
+                                <line x1="16" y1="13" x2="8" y2="13"/>
+                                <line x1="16" y1="17" x2="8" y2="17"/>
+                                <polyline points="10,9 9,9 8,9"/>
+                            </svg>
+                        </div>
                         <h3 class="feature-title">Экспорт в PDF</h3>
                         <p class="feature-description">
                             Все результаты можно экспортировать в PDF с поддержкой 
@@ -575,7 +654,12 @@
                     </div>
 
                     <div class="feature-item">
-                        <span class="feature-icon">📱</span>
+                        <div class="feature-icon mobile-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+                                <line x1="12" y1="18" x2="12.01" y2="18"/>
+                            </svg>
+                        </div>
                         <h3 class="feature-title">Адаптивный дизайн</h3>
                         <p class="feature-description">
                             Все калькуляторы работают на любых устройствах: 
@@ -584,7 +668,13 @@
                     </div>
 
                     <div class="feature-item">
-                        <span class="feature-icon">🏛️</span>
+                        <div class="feature-icon building-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                                <line x1="3" y1="6" x2="21" y2="6"/>
+                                <path d="M16 10a4 4 0 0 1-8 0"/>
+                            </svg>
+                        </div>
                         <h3 class="feature-title">Российские реалии</h3>
                         <p class="feature-description">
                             Учтены особенности российского рынка: ПДН 50%, 
@@ -604,13 +694,13 @@
                 </p>
                 <div class="cta-buttons">
                     <a href="mortgage_calculator.html" class="cta-button">
-                        🏠 Ипотечный калькулятор
+                        Ипотечный калькулятор
                     </a>
                     <a href="rental_profitability_calculator.html" class="cta-button">
-                        📈 Доходность аренды
+                        Доходность аренды
                     </a>
                     <a href="new_vs_secondary_calculator.html" class="cta-button">
-                        🏗️ Сравнить варианты
+                        Сравнить варианты
                     </a>
                 </div>
             </div>
