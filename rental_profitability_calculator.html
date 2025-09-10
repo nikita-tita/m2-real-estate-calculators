@@ -25,6 +25,7 @@
     <script src="tooltip-system.js"></script>
     <script src="pdf-export.js"></script>
     <script src="components.js"></script>
+    <script src="ux-enhancements.js"></script>
     <script src="analytics.js"></script>
     <style>
         * {
@@ -1132,32 +1133,52 @@
                 if (slider) {
                     input.addEventListener('input', () => {
                         slider.value = input.value;
-                        calculateProfitability();
+                        debouncedCalculateProfitability();
                     });
                     
                     slider.addEventListener('input', () => {
                         input.value = slider.value;
-                        calculateProfitability();
+                        debouncedCalculateProfitability();
                     });
                 }
             });
         }
 
+        // Debounced calculation functions
+        let calculationTimeout = null;
+        
+        function debouncedCalculateProfitability() {
+            clearTimeout(calculationTimeout);
+            calculationTimeout = setTimeout(() => {
+                calculateProfitability();
+            }, 150); // Doherty Threshold compliance - under 400ms
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('propertyPrice').addEventListener('input', calculateProfitability);
-            document.getElementById('monthlyRent').addEventListener('input', calculateProfitability);
-            document.getElementById('monthlyExpenses').addEventListener('input', calculateProfitability);
-            document.getElementById('downPayment').addEventListener('input', calculateProfitability);
-            document.getElementById('interestRate').addEventListener('input', calculateProfitability);
-            document.getElementById('loanTerm').addEventListener('input', calculateProfitability);
-            document.getElementById('vacancyRate').addEventListener('input', calculateProfitability);
-            document.getElementById('propertyTax').addEventListener('input', calculateProfitability);
-            document.getElementById('incomeTax').addEventListener('input', calculateProfitability);
-            document.getElementById('appreciation').addEventListener('input', calculateProfitability);
-            document.getElementById('investmentPeriod').addEventListener('input', calculateProfitability);
+            // Debounced event listeners for better performance
+            document.getElementById('propertyPrice').addEventListener('input', debouncedCalculateProfitability);
+            document.getElementById('monthlyRent').addEventListener('input', debouncedCalculateProfitability);
+            document.getElementById('monthlyExpenses').addEventListener('input', debouncedCalculateProfitability);
+            document.getElementById('downPayment').addEventListener('input', debouncedCalculateProfitability);
+            document.getElementById('interestRate').addEventListener('input', debouncedCalculateProfitability);
+            document.getElementById('loanTerm').addEventListener('input', debouncedCalculateProfitability);
+            document.getElementById('vacancyRate').addEventListener('input', debouncedCalculateProfitability);
+            document.getElementById('propertyTax').addEventListener('input', debouncedCalculateProfitability);
+            document.getElementById('incomeTax').addEventListener('input', debouncedCalculateProfitability);
+            document.getElementById('appreciation').addEventListener('input', debouncedCalculateProfitability);
+            document.getElementById('investmentPeriod').addEventListener('input', debouncedCalculateProfitability);
 
             syncSliders();
             calculateProfitability();
+            
+            // Initialize UX enhancements
+            if (window.uxEnhancer) {
+                // Highlight main results
+                setTimeout(() => {
+                    window.uxEnhancer.highlightMainResult('.result-value.primary');
+                    window.uxEnhancer.groupResults(['.result-item', '.metrics-grid']);
+                }, 100);
+            }
         });
     </script>
 </body>

@@ -24,6 +24,7 @@
     <script src="tooltip-system.js"></script>
     <script src="pdf-export.js"></script>
     <script src="components.js"></script>
+    <script src="ux-enhancements.js"></script>
     <script src="analytics.js"></script>
     <style>
         * {
@@ -408,7 +409,14 @@
                 <!-- Группа доходов -->
                 <div class="parameter-group">
                     <div class="group-header">
-                        <h3>💰 Доходы от аренды</h3>
+                        <h3>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 8px;">
+                                <line x1="12" y1="1" x2="12" y2="23"></line>
+                                <path d="m17 5-5 5-5-5"></path>
+                                <path d="m17 13-5 5-5-5"></path>
+                            </svg>
+                            Доходы от аренды
+                        </h3>
                         <div class="group-description">Основные параметры получения дохода</div>
                     </div>
                 
@@ -485,7 +493,13 @@
                 <!-- Группа сравнения -->
                 <div class="parameter-group">
                     <div class="group-header">
-                        <h3>📊 Параметры сравнения</h3>
+                        <h3>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 8px;">
+                                <path d="M3 3v18h18"></path>
+                                <path d="m19 9-5 5-4-4-3 3"></path>
+                            </svg>
+                            Параметры сравнения
+                        </h3>
                         <div class="group-description">Данные для анализа альтернативных вложений</div>
                     </div>
 
@@ -554,7 +568,13 @@
         <!-- Детализация расчетов -->
         <div class="calculation-details" style="margin: 40px 0; background: white; border-radius: 12px; padding: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
             <div class="details-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 2px solid #f0f0f0; padding-bottom: 15px;">
-                <h3 style="margin: 0; color: #3416b6; font-size: 24px;">📊 Как мы считаем</h3>
+                <h3 style="margin: 0; color: #3416b6; font-size: 24px;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 8px;">
+                        <path d="M3 3v18h18"></path>
+                        <path d="m19 9-5 5-4-4-3 3"></path>
+                    </svg>
+                    Как мы считаем
+                </h3>
                 <button type="button" onclick="toggleCalculationDetails()" style="background: #3416b6; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 14px;">
                     Показать расчеты
                 </button>
@@ -749,7 +769,13 @@
             stepsContainer.innerHTML = `
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 20px;">
                     <div style="background: #f8f9fa; padding: 25px; border-radius: 12px; border-left: 4px solid #28a745;">
-                        <h4 style="color: #28a745; margin-bottom: 20px; font-size: 18px;">🏠 Краткосрочная аренда (Airbnb)</h4>
+                        <h4 style="color: #28a745; margin-bottom: 20px; font-size: 18px;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 8px;">
+                                <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                <polyline points="9,22 9,12 15,12 15,22"></polyline>
+                            </svg>
+                            Краткосрочная аренда (Airbnb)
+                        </h4>
                         
                         <div style="margin-bottom: 15px;">
                             <strong>1. Занятость объекта:</strong><br>
@@ -838,7 +864,13 @@
                 </div>
                 
                 <div style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, ${advantage > 0 ? '#e8f5e8' : '#fff3e0'}, ${advantage > 0 ? '#f0f9f0' : '#ffeaa7'}); border-radius: 12px; text-align: center;">
-                    <h4 style="color: ${advantage > 0 ? '#2e7d32' : '#f57c00'}; margin-bottom: 15px;">💡 Итоговое сравнение</h4>
+                    <h4 style="color: ${advantage > 0 ? '#2e7d32' : '#f57c00'}; margin-bottom: 15px;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 8px;">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="m9 12 2 2 4-4"></path>
+                        </svg>
+                        Итоговое сравнение
+                    </h4>
                     <p style="margin: 10px 0; color: #333; font-size: 18px;">
                         <strong>${advantage > 0 ? 'Airbnb выгоднее' : 'Долгосрочная аренда выгоднее'} на ${formatNumber(Math.abs(advantage))} ₽ в месяц</strong>
                     </p>
@@ -852,17 +884,38 @@
             `;
         }
 
-        // Event listeners
-        document.getElementById('propertyPrice').addEventListener('input', calculateAirbnb);
-        document.getElementById('dailyRate').addEventListener('input', calculateAirbnb);
-        document.getElementById('occupancyRate').addEventListener('input', calculateAirbnb);
-        document.getElementById('cleaningFee').addEventListener('input', calculateAirbnb);
-        document.getElementById('platformCommission').addEventListener('input', calculateAirbnb);
-        document.getElementById('operatingExpenses').addEventListener('input', calculateAirbnb);
-        document.getElementById('longTermRate').addEventListener('input', calculateAirbnb);
+        // Debounced calculation functions
+        let calculationTimeout = null;
+        
+        function debouncedCalculateAirbnb() {
+            clearTimeout(calculationTimeout);
+            calculationTimeout = setTimeout(() => {
+                calculateAirbnb();
+            }, 150); // Doherty Threshold compliance - under 400ms
+        }
+
+        // Event listeners with debouncing
+        document.getElementById('propertyPrice').addEventListener('input', debouncedCalculateAirbnb);
+        document.getElementById('dailyRate').addEventListener('input', debouncedCalculateAirbnb);
+        document.getElementById('occupancyRate').addEventListener('input', debouncedCalculateAirbnb);
+        document.getElementById('cleaningFee').addEventListener('input', debouncedCalculateAirbnb);
+        document.getElementById('platformCommission').addEventListener('input', debouncedCalculateAirbnb);
+        document.getElementById('operatingExpenses').addEventListener('input', debouncedCalculateAirbnb);
+        document.getElementById('longTermRate').addEventListener('input', debouncedCalculateAirbnb);
 
         // Initial calculation
         calculateAirbnb();
+        
+        // Initialize UX enhancements
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.uxEnhancer) {
+                // Highlight main comparison results
+                setTimeout(() => {
+                    window.uxEnhancer.highlightMainResult('.comparison-card.airbnb');
+                    window.uxEnhancer.groupResults(['.comparison-card', '.seasonal-analysis']);
+                }, 100);
+            }
+        });
     </script>
 </body>
 </html>
