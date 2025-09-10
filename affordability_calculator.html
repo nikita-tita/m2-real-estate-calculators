@@ -1024,14 +1024,14 @@
             }
 
             // Calculate debt-to-income ratio factors
-            let maxDebtRatio = 0.40; // Base 40% DTI limit
+            let maxDebtRatio = 0.50; // Base 50% DTI limit (российское законодательство по ПДН)
 
             // Adjust based on credit history
             switch (creditHistory) {
-                case 'excellent': maxDebtRatio = 0.45; break;
-                case 'good': maxDebtRatio = 0.40; break;
-                case 'fair': maxDebtRatio = 0.35; break;
-                case 'poor': maxDebtRatio = 0.30; break;
+                case 'excellent': maxDebtRatio = 0.60; break; // Для отличной истории может быть выше
+                case 'good': maxDebtRatio = 0.50; break;
+                case 'fair': maxDebtRatio = 0.45; break;
+                case 'poor': maxDebtRatio = 0.40; break;
             }
 
             // Adjust based on employment type

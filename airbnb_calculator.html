@@ -597,7 +597,10 @@
             const daysInMonth = 30;
             const occupiedDays = (daysInMonth * occupancyRate) / 100;
             
-            const grossRevenue = (dailyRate * occupiedDays) + (cleaningFee * occupiedDays * 0.5); // уборка не каждый день
+            // Предполагаем среднюю продолжительность аренды 2.5 дня (количество заселений = дни / 2.5)
+            const averageStayLength = 2.5;
+            const numberOfBookings = occupiedDays / averageStayLength;
+            const grossRevenue = (dailyRate * occupiedDays) + (cleaningFee * numberOfBookings);
             const platformFee = grossRevenue * (platformCommission / 100);
             const netRevenue = grossRevenue - platformFee;
             const monthlyProfit = netRevenue - operatingExpenses;
@@ -712,7 +715,8 @@
             // Расчеты
             const daysInMonth = 30;
             const occupiedDays = (daysInMonth * occupancyRate) / 100;
-            const grossRevenue = (dailyRate * occupiedDays) + (cleaningFee * occupiedDays * 0.5);
+            const numberOfBookings = occupiedDays / 2.5; // средняя продолжительность аренды 2.5 дня
+            const grossRevenue = (dailyRate * occupiedDays) + (cleaningFee * numberOfBookings);
             const platformFee = grossRevenue * (platformCommission / 100);
             const netRevenue = grossRevenue - platformFee;
             const monthlyProfit = netRevenue - operatingExpenses;
@@ -738,7 +742,7 @@
                         <div style="margin-bottom: 15px;">
                             <strong>2. Валовый доход:</strong><br>
                             • Проживание: ${formatNumber(dailyRate)} × ${occupiedDays.toFixed(1)} = ${formatNumber(dailyRate * occupiedDays)} ₽<br>
-                            • Уборка: ${formatNumber(cleaningFee)} × ${(occupiedDays * 0.5).toFixed(1)} = ${formatNumber(cleaningFee * occupiedDays * 0.5)} ₽<br>
+                            • Уборка: ${formatNumber(cleaningFee)} × ${numberOfBookings.toFixed(1)} заселений = ${formatNumber(cleaningFee * numberOfBookings)} ₽<br>
                             = ${formatNumber(grossRevenue)} ₽
                         </div>
                         

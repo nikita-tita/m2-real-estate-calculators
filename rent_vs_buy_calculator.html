@@ -606,6 +606,11 @@
                     </div>
 
                     <div class="input-group">
+                        <label class="input-label" for="propertyTax">Налог на недвижимость (в год)</label>
+                        <input type="number" id="propertyTax" class="input-field" value="15000" min="0" step="1000">
+                    </div>
+
+                    <div class="input-group">
                         <label class="input-label" for="investmentReturn">Доходность альтернативных инвестиций, %</label>
                         <input type="number" id="investmentReturn" class="input-field" value="7" min="0" max="20" step="0.5">
                     </div>
@@ -812,6 +817,7 @@
             const rentGrowth = parseFloat(document.getElementById('rentGrowth').value) || 0;
             const propertyGrowth = parseFloat(document.getElementById('propertyGrowth').value) || 0;
             const maintenanceCost = parseFloat(document.getElementById('maintenanceCost').value) || 0;
+            const propertyTax = parseFloat(document.getElementById('propertyTax').value) || 0;
             const investmentReturn = parseFloat(document.getElementById('investmentReturn').value) || 0;
             const transactionCosts = parseFloat(document.getElementById('transactionCosts').value) || 0;
             const comparisonPeriod = parseFloat(document.getElementById('comparisonPeriod').value) || 0;
@@ -849,12 +855,20 @@
 
             const mortgagePayments = Math.min(monthlyPayment * 12 * comparisonPeriod, loanAmount * 1.5); // Cap at reasonable total
             const maintenanceTotal = maintenanceCost * 12 * comparisonPeriod;
+            const propertyTaxTotal = propertyTax * comparisonPeriod;
             
             // Calculate property appreciation
             const futurePropertyValue = propertyPrice * Math.pow(1 + propertyGrowth / 100, comparisonPeriod);
-            const appreciation = futurePropertyValue - propertyPrice;
+            const grossAppreciation = futurePropertyValue - propertyPrice;
             
-            const totalBuyCost = downPayment + mortgagePayments + maintenanceTotal + transactionCosts - appreciation;
+            // Calculate capital gains tax (13% if owned less than 5 years)
+            let capitalGainsTax = 0;
+            if (comparisonPeriod < 5 && grossAppreciation > 0) {
+                capitalGainsTax = grossAppreciation * 0.13; // 13% подоходный налог
+            }
+            const netAppreciation = grossAppreciation - capitalGainsTax;
+            
+            const totalBuyCost = downPayment + mortgagePayments + maintenanceTotal + propertyTaxTotal + transactionCosts - netAppreciation;
 
             // Calculate savings and winner
             const savings = totalRentCost - totalBuyCost;
@@ -929,6 +943,7 @@
             document.getElementById('rentGrowth').value = 4;
             document.getElementById('propertyGrowth').value = 3;
             document.getElementById('maintenanceCost').value = 20000;
+            document.getElementById('propertyTax').value = 15000;
             document.getElementById('investmentReturn').value = 7;
             document.getElementById('transactionCosts').value = 400000;
             document.getElementById('comparisonPeriod').value = 10;
@@ -948,6 +963,7 @@
         document.getElementById('rentGrowth').addEventListener('input', calculateComparison);
         document.getElementById('propertyGrowth').addEventListener('input', calculateComparison);
         document.getElementById('maintenanceCost').addEventListener('input', calculateComparison);
+        document.getElementById('propertyTax').addEventListener('input', calculateComparison);
         document.getElementById('investmentReturn').addEventListener('input', calculateComparison);
         document.getElementById('transactionCosts').addEventListener('input', calculateComparison);
         document.getElementById('comparisonPeriod').addEventListener('input', calculateComparison);
@@ -975,6 +991,7 @@
             const rentGrowth = parseFloat(document.getElementById('rentGrowth').value) || 0;
             const propertyGrowth = parseFloat(document.getElementById('propertyGrowth').value) || 0;
             const maintenanceCost = parseFloat(document.getElementById('maintenanceCost').value) || 0;
+            const propertyTax = parseFloat(document.getElementById('propertyTax').value) || 0;
             const investmentReturn = parseFloat(document.getElementById('investmentReturn').value) || 0;
             const transactionCosts = parseFloat(document.getElementById('transactionCosts').value) || 0;
             const comparisonPeriod = parseFloat(document.getElementById('comparisonPeriod').value) || 0;
@@ -1005,9 +1022,17 @@
             }
             const mortgagePayments = Math.min(monthlyPayment * 12 * comparisonPeriod, loanAmount * 1.5);
             const maintenanceTotal = maintenanceCost * 12 * comparisonPeriod;
+            const propertyTaxTotal = propertyTax * comparisonPeriod;
             const futurePropertyValue = propertyPrice * Math.pow(1 + propertyGrowth / 100, comparisonPeriod);
-            const appreciation = futurePropertyValue - propertyPrice;
-            const totalBuyCost = downPayment + mortgagePayments + maintenanceTotal + transactionCosts - appreciation;
+            const grossAppreciation = futurePropertyValue - propertyPrice;
+            
+            // Calculate capital gains tax
+            let capitalGainsTax = 0;
+            if (comparisonPeriod < 5 && grossAppreciation > 0) {
+                capitalGainsTax = grossAppreciation * 0.13;
+            }
+            const netAppreciation = grossAppreciation - capitalGainsTax;
+            const totalBuyCost = downPayment + mortgagePayments + maintenanceTotal + propertyTaxTotal + transactionCosts - netAppreciation;
 
             const savings = totalRentCost - totalBuyCost;
             const winner = savings > 0 ? 'buy' : 'rent';
@@ -1070,15 +1095,24 @@
                         </div>
                         
                         <div style="margin-bottom: 15px;">
-                            <strong>4. Расходы на покупку:</strong><br>
+                            <strong>4. Налог на недвижимость:</strong><br>
+                            ${formatNumber(propertyTax)} ₽/год × ${comparisonPeriod} лет = ${formatNumber(propertyTaxTotal)} ₽
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <strong>5. Расходы на покупку:</strong><br>
                             Нотариус, риэлтор: ${formatNumber(transactionCosts)} ₽
                         </div>
                         
                         <div style="margin-bottom: 15px;">
-                            <strong>5. Рост стоимости недвижимости:</strong><br>
+                            <strong>6. Рост стоимости недвижимости:</strong><br>
                             ${propertyGrowth}% в год за ${comparisonPeriod} лет<br>
-                            Прирост: ${formatNumber(appreciation)} ₽<br>
-                            <span style="color: #28a745;">Выгода от роста стоимости</span>
+                            Валовый прирост: ${formatNumber(grossAppreciation)} ₽<br>
+                            ${comparisonPeriod < 5 && grossAppreciation > 0 ? 
+                                `Налог с прибыли (13%): ${formatNumber(capitalGainsTax)} ₽<br>` : 
+                                'Налог с прибыли: освобождение (срок владения > 5 лет)<br>'
+                            }
+                            <span style="color: #28a745;">Чистая выгода: ${formatNumber(netAppreciation)} ₽</span>
                         </div>
                         
                         <div style="padding-top: 15px; border-top: 2px solid #28a745; font-weight: bold;">
