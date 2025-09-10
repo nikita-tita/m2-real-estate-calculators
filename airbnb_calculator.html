@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>М2 — Калькулятор доходности краткосрочной аренды</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8f9fa;
+            color: #333;
+            line-height: 1.4;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo {
+            font-size: 48px;
+            font-weight: 700;
+            color: #007bff;
+            margin-bottom: 12px;
+        }
+
+        .title {
+            font-size: 32px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 12px;
+        }
+
+        .subtitle {
+            font-size: 18px;
+            color: #666;
+        }
+
+        .back-link {
+            color: #007bff;
+            text-decoration: none;
+            font-size: 14px;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .calculator {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+            margin-bottom: 40px;
+        }
+
+        .inputs, .results {
+            background: white;
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            color: #333;
+        }
+
+        .input-group {
+            margin-bottom: 24px;
+        }
+
+        .input-label {
+            display: block;
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            font-size: 16px;
+            background: white;
+            transition: border-color 0.2s;
+            appearance: textfield;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+
+        .input-field::-webkit-outer-spin-button,
+        .input-field::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .quick-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+
+        .quick-btn {
+            padding: 8px 16px;
+            border: 1px solid #dee2e6;
+            background: white;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .quick-btn:hover, .quick-btn.active {
+            border-color: #007bff;
+            color: #007bff;
+            background: #f0f8ff;
+        }
+
+        .result-item {
+            margin-bottom: 24px;
+        }
+
+        .result-label {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+
+        .result-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .result-value.primary {
+            color: #007bff;
+            font-size: 36px;
+        }
+
+        .result-value.success {
+            color: #28a745;
+        }
+
+        .result-value.warning {
+            color: #ffc107;
+        }
+
+        .result-value.danger {
+            color: #dc3545;
+        }
+
+        .comparison-section {
+            background: white;
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            margin-bottom: 40px;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-top: 24px;
+        }
+
+        .comparison-card {
+            padding: 24px;
+            border-radius: 12px;
+            text-align: center;
+            color: white;
+        }
+
+        .comparison-card.airbnb {
+            background: linear-gradient(135deg, #ff5a5f, #c13515);
+        }
+
+        .comparison-card.longterm {
+            background: linear-gradient(135deg, #28a745, #20c997);
+        }
+
+        .comparison-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .comparison-yield {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .comparison-details {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .seasonal-analysis {
+            background: white;
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            margin-bottom: 40px;
+        }
+
+        .month-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .month-item {
+            padding: 16px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .month-name {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .month-rate {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .month-income {
+            font-size: 12px;
+            color: #28a745;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0056b3;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #007bff;
+            border: 2px solid #007bff;
+        }
+
+        .btn-secondary:hover {
+            background: #007bff;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .calculator {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+
+            .container {
+                padding: 24px 16px;
+            }
+
+            .inputs, .results, .comparison-section, .seasonal-analysis {
+                padding: 24px;
+            }
+
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .month-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Вернуться к калькуляторам</a>
+        
+        <div class="header">
+            <div class="logo">М2</div>
+            <h1 class="title">Калькулятор краткосрочной аренды</h1>
+            <p class="subtitle">Рассчитайте доходность от Airbnb и посуточной аренды</p>
+        </div>
+
+        <div class="calculator">
+            <div class="inputs">
+                <h2 class="section-title">Параметры объекта</h2>
+                
+                <div class="input-group">
+                    <label class="input-label" for="propertyPrice">Стоимость недвижимости</label>
+                    <input type="number" id="propertyPrice" class="input-field" value="8000000" min="500000" max="50000000" step="100000">
+                    <div class="quick-buttons">
+                        <button class="quick-btn" onclick="setValue('propertyPrice', 5000000)">5 млн</button>
+                        <button class="quick-btn active" onclick="setValue('propertyPrice', 8000000)">8 млн</button>
+                        <button class="quick-btn" onclick="setValue('propertyPrice', 12000000)">12 млн</button>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label" for="dailyRate">Средняя ставка за сутки</label>
+                    <input type="number" id="dailyRate" class="input-field" value="4500" min="1000" max="50000" step="100">
+                    <div class="quick-buttons">
+                        <button class="quick-btn" onclick="setValue('dailyRate', 3000)">3000 ₽</button>
+                        <button class="quick-btn active" onclick="setValue('dailyRate', 4500)">4500 ₽</button>
+                        <button class="quick-btn" onclick="setValue('dailyRate', 7000)">7000 ₽</button>
+                        <button class="quick-btn" onclick="setValue('dailyRate', 10000)">10000 ₽</button>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label" for="occupancyRate">Загруженность, %</label>
+                    <input type="number" id="occupancyRate" class="input-field" value="65" min="10" max="95" step="1">
+                    <div class="quick-buttons">
+                        <button class="quick-btn" onclick="setValue('occupancyRate', 50)">50%</button>
+                        <button class="quick-btn active" onclick="setValue('occupancyRate', 65)">65%</button>
+                        <button class="quick-btn" onclick="setValue('occupancyRate', 80)">80%</button>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label" for="cleaningFee">Плата за уборку</label>
+                    <input type="number" id="cleaningFee" class="input-field" value="2000" min="500" max="10000" step="100">
+                    <div class="quick-buttons">
+                        <button class="quick-btn" onclick="setValue('cleaningFee', 1500)">1500 ₽</button>
+                        <button class="quick-btn active" onclick="setValue('cleaningFee', 2000)">2000 ₽</button>
+                        <button class="quick-btn" onclick="setValue('cleaningFee', 3000)">3000 ₽</button>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label" for="platformCommission">Комиссия платформы, %</label>
+                    <input type="number" id="platformCommission" class="input-field" value="3" min="0" max="20" step="0.5">
+                    <div class="quick-buttons">
+                        <button class="quick-btn active" onclick="setValue('platformCommission', 3)">Airbnb 3%</button>
+                        <button class="quick-btn" onclick="setValue('platformCommission', 15)">Booking 15%</button>
+                        <button class="quick-btn" onclick="setValue('platformCommission', 0)">Прямые 0%</button>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label" for="operatingExpenses">Операционные расходы в месяц</label>
+                    <input type="number" id="operatingExpenses" class="input-field" value="25000" min="5000" max="100000" step="1000">
+                    <div class="quick-buttons">
+                        <button class="quick-btn" onclick="setValue('operatingExpenses', 15000)">15 тыс</button>
+                        <button class="quick-btn active" onclick="setValue('operatingExpenses', 25000)">25 тыс</button>
+                        <button class="quick-btn" onclick="setValue('operatingExpenses', 40000)">40 тыс</button>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label" for="longTermRate">Долгосрочная аренда (сравнение)</label>
+                    <input type="number" id="longTermRate" class="input-field" value="80000" min="20000" max="500000" step="5000">
+                    <div class="quick-buttons">
+                        <button class="quick-btn" onclick="setValue('longTermRate', 60000)">60 тыс</button>
+                        <button class="quick-btn active" onclick="setValue('longTermRate', 80000)">80 тыс</button>
+                        <button class="quick-btn" onclick="setValue('longTermRate', 120000)">120 тыс</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="results">
+                <h2 class="section-title">Результаты расчета</h2>
+                
+                <div class="result-item">
+                    <div class="result-label">Доход в месяц</div>
+                    <div class="result-value primary" id="monthlyIncome">87 750 ₽</div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-label">Чистая прибыль в месяц</div>
+                    <div class="result-value success" id="netProfit">54 130 ₽</div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-label">Доходность в год</div>
+                    <div class="result-value" id="annualYield">8.1%</div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-label">Загруженных дней в месяц</div>
+                    <div class="result-value" id="occupiedDays">19.5</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comparison Section -->
+        <div class="comparison-section">
+            <h2 class="section-title">Сравнение с долгосрочной арендой</h2>
+            <div class="comparison-grid">
+                <div class="comparison-card airbnb">
+                    <div class="comparison-title">Краткосрочная аренда</div>
+                    <div class="comparison-yield" id="airbnbYield">8.1%</div>
+                    <div class="comparison-details" id="airbnbIncome">54 130 ₽/мес</div>
+                </div>
+                <div class="comparison-card longterm">
+                    <div class="comparison-title">Долгосрочная аренда</div>
+                    <div class="comparison-yield" id="longTermYield">9.6%</div>
+                    <div class="comparison-details" id="longTermIncome">65 000 ₽/мес</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Seasonal Analysis -->
+        <div class="seasonal-analysis">
+            <h2 class="section-title">Сезонный анализ доходности</h2>
+            <div class="month-grid" id="seasonalGrid">
+                <!-- Будет заполнено JavaScript -->
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button class="btn btn-primary" onclick="exportToPDF()">
+                Экспорт в PDF
+            </button>
+            <button class="btn btn-secondary" onclick="resetCalculator()">
+                Сбросить
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function formatNumber(num) {
+            return new Intl.NumberFormat('ru-RU').format(Math.round(num));
+        }
+
+        function formatPercent(num) {
+            return num.toFixed(1) + '%';
+        }
+
+        function setValue(inputId, value) {
+            document.getElementById(inputId).value = value;
+            
+            const group = document.getElementById(inputId).closest('.input-group');
+            if (group) {
+                group.querySelectorAll('.quick-btn').forEach(btn => btn.classList.remove('active'));
+                event.target.classList.add('active');
+            }
+            
+            calculateAirbnb();
+        }
+
+        function calculateAirbnb() {
+            const propertyPrice = parseFloat(document.getElementById('propertyPrice').value) || 0;
+            const dailyRate = parseFloat(document.getElementById('dailyRate').value) || 0;
+            const occupancyRate = parseFloat(document.getElementById('occupancyRate').value) || 0;
+            const cleaningFee = parseFloat(document.getElementById('cleaningFee').value) || 0;
+            const platformCommission = parseFloat(document.getElementById('platformCommission').value) || 0;
+            const operatingExpenses = parseFloat(document.getElementById('operatingExpenses').value) || 0;
+            const longTermRate = parseFloat(document.getElementById('longTermRate').value) || 0;
+
+            if (propertyPrice <= 0 || dailyRate <= 0) {
+                return;
+            }
+
+            // Расчет краткосрочной аренды
+            const daysInMonth = 30;
+            const occupiedDays = (daysInMonth * occupancyRate) / 100;
+            
+            const grossRevenue = (dailyRate * occupiedDays) + (cleaningFee * occupiedDays * 0.5); // уборка не каждый день
+            const platformFee = grossRevenue * (platformCommission / 100);
+            const netRevenue = grossRevenue - platformFee;
+            const monthlyProfit = netRevenue - operatingExpenses;
+            
+            const annualProfit = monthlyProfit * 12;
+            const annualYield = (annualProfit / propertyPrice) * 100;
+
+            // Расчет долгосрочной аренды для сравнения
+            const longTermExpenses = operatingExpenses * 0.4; // меньше расходов при долгосрочной аренде
+            const longTermProfit = longTermRate - longTermExpenses;
+            const longTermYield = ((longTermProfit * 12) / propertyPrice) * 100;
+
+            // Обновляем результаты
+            document.getElementById('monthlyIncome').textContent = formatNumber(netRevenue) + ' ₽';
+            document.getElementById('netProfit').textContent = formatNumber(monthlyProfit) + ' ₽';
+            document.getElementById('annualYield').textContent = formatPercent(annualYield);
+            document.getElementById('occupiedDays').textContent = occupiedDays.toFixed(1);
+
+            // Обновляем сравнение
+            document.getElementById('airbnbYield').textContent = formatPercent(annualYield);
+            document.getElementById('airbnbIncome').textContent = formatNumber(monthlyProfit) + ' ₽/мес';
+            document.getElementById('longTermYield').textContent = formatPercent(longTermYield);
+            document.getElementById('longTermIncome').textContent = formatNumber(longTermProfit) + ' ₽/мес';
+
+            updateSeasonalAnalysis(dailyRate, occupiedDays, cleaningFee, platformCommission, operatingExpenses);
+        }
+
+        function updateSeasonalAnalysis(baseRate, baseOccupancy, cleaningFee, commission, expenses) {
+            const months = [
+                { name: 'Янв', multiplier: 0.7 },
+                { name: 'Фев', multiplier: 0.8 },
+                { name: 'Мар', multiplier: 0.9 },
+                { name: 'Апр', multiplier: 1.0 },
+                { name: 'Май', multiplier: 1.2 },
+                { name: 'Июн', multiplier: 1.4 },
+                { name: 'Июл', multiplier: 1.5 },
+                { name: 'Авг', multiplier: 1.4 },
+                { name: 'Сен', multiplier: 1.1 },
+                { name: 'Окт', multiplier: 1.0 },
+                { name: 'Ноя', multiplier: 0.8 },
+                { name: 'Дек', multiplier: 0.9 }
+            ];
+
+            const grid = document.getElementById('seasonalGrid');
+            grid.innerHTML = '';
+
+            months.forEach(month => {
+                const seasonalRate = baseRate * month.multiplier;
+                const seasonalOccupancy = Math.min(baseOccupancy * month.multiplier, 30);
+                
+                const grossRevenue = (seasonalRate * seasonalOccupancy) + (cleaningFee * seasonalOccupancy * 0.5);
+                const platformFee = grossRevenue * (commission / 100);
+                const netRevenue = grossRevenue - platformFee;
+                const monthlyProfit = netRevenue - expenses;
+
+                const monthItem = document.createElement('div');
+                monthItem.className = 'month-item';
+                monthItem.innerHTML = `
+                    <div class="month-name">${month.name}</div>
+                    <div class="month-rate">${formatNumber(seasonalRate)} ₽</div>
+                    <div class="month-income">${formatNumber(monthlyProfit)} ₽</div>
+                `;
+                grid.appendChild(monthItem);
+            });
+        }
+
+        function resetCalculator() {
+            document.getElementById('propertyPrice').value = 8000000;
+            document.getElementById('dailyRate').value = 4500;
+            document.getElementById('occupancyRate').value = 65;
+            document.getElementById('cleaningFee').value = 2000;
+            document.getElementById('platformCommission').value = 3;
+            document.getElementById('operatingExpenses').value = 25000;
+            document.getElementById('longTermRate').value = 80000;
+            calculateAirbnb();
+        }
+
+        function exportToPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            doc.setFontSize(20);
+            doc.text('Расчет доходности краткосрочной аренды', 20, 30);
+
+            doc.setFontSize(14);
+            doc.text('Параметры объекта:', 20, 50);
+            
+            const propertyPrice = document.getElementById('propertyPrice').value;
+            const dailyRate = document.getElementById('dailyRate').value;
+            const occupancyRate = document.getElementById('occupancyRate').value;
+            
+            doc.setFontSize(12);
+            doc.text(`Стоимость недвижимости: ${formatNumber(propertyPrice)} ₽`, 30, 65);
+            doc.text(`Ставка за сутки: ${formatNumber(dailyRate)} ₽`, 30, 75);
+            doc.text(`Загруженность: ${occupancyRate}%`, 30, 85);
+
+            doc.setFontSize(14);
+            doc.text('Результаты:', 20, 105);
+            
+            doc.setFontSize(12);
+            const monthlyIncome = document.getElementById('monthlyIncome').textContent;
+            const netProfit = document.getElementById('netProfit').textContent;
+            const annualYield = document.getElementById('annualYield').textContent;
+            
+            doc.text(`Доход в месяц: ${monthlyIncome}`, 30, 120);
+            doc.text(`Чистая прибыль: ${netProfit}`, 30, 130);
+            doc.text(`Доходность в год: ${annualYield}`, 30, 140);
+
+            doc.setFontSize(10);
+            doc.text('Документ создан с помощью М2 Платформы калькуляторов недвижимости', 20, 180);
+            doc.text(`Дата создания: ${new Date().toLocaleDateString('ru-RU')}`, 20, 190);
+
+            doc.save('airbnb-доходность.pdf');
+        }
+
+        // Event listeners
+        document.getElementById('propertyPrice').addEventListener('input', calculateAirbnb);
+        document.getElementById('dailyRate').addEventListener('input', calculateAirbnb);
+        document.getElementById('occupancyRate').addEventListener('input', calculateAirbnb);
+        document.getElementById('cleaningFee').addEventListener('input', calculateAirbnb);
+        document.getElementById('platformCommission').addEventListener('input', calculateAirbnb);
+        document.getElementById('operatingExpenses').addEventListener('input', calculateAirbnb);
+        document.getElementById('longTermRate').addEventListener('input', calculateAirbnb);
+
+        // Initial calculation
+        calculateAirbnb();
+    </script>
+</body>
+</html>

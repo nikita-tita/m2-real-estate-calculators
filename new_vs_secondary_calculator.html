@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>М2 — Калькулятор: новостройка vs вторичка</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8f9fa;
+            color: #333;
+            line-height: 1.4;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo {
+            font-size: 48px;
+            font-weight: 700;
+            color: #007bff;
+            margin-bottom: 12px;
+        }
+
+        .title {
+            font-size: 32px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 12px;
+        }
+
+        .subtitle {
+            font-size: 18px;
+            color: #666;
+        }
+
+        .back-link {
+            color: #007bff;
+            text-decoration: none;
+            font-size: 14px;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .calculator {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 32px;
+            margin-bottom: 40px;
+        }
+
+        .inputs {
+            background: white;
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            color: #333;
+        }
+
+        .input-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .input-group {
+            margin-bottom: 24px;
+        }
+
+        .input-label {
+            display: block;
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            font-size: 16px;
+            background: white;
+            transition: border-color 0.2s;
+            appearance: textfield;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+
+        .input-field::-webkit-outer-spin-button,
+        .input-field::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .comparison-results {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+            margin-bottom: 40px;
+        }
+
+        .result-card {
+            background: white;
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .result-card.new-build {
+            border-top: 4px solid #28a745;
+        }
+
+        .result-card.secondary {
+            border-top: 4px solid #007bff;
+        }
+
+        .card-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 24px;
+        }
+
+        .card-title.new-build {
+            color: #28a745;
+        }
+
+        .card-title.secondary {
+            color: #007bff;
+        }
+
+        .result-item {
+            margin-bottom: 20px;
+        }
+
+        .result-label {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+
+        .result-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .result-value.primary {
+            font-size: 28px;
+            color: #007bff;
+        }
+
+        .result-value.success {
+            color: #28a745;
+        }
+
+        .result-value.danger {
+            color: #dc3545;
+        }
+
+        .pros-cons-section {
+            background: white;
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            margin-bottom: 40px;
+        }
+
+        .pros-cons-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-top: 24px;
+        }
+
+        .pros-cons-column h3 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-align: center;
+            padding: 12px;
+            border-radius: 8px;
+        }
+
+        .new-build-header {
+            background: #28a745;
+            color: white;
+        }
+
+        .secondary-header {
+            background: #007bff;
+            color: white;
+        }
+
+        .pros-list {
+            list-style: none;
+            margin-bottom: 24px;
+        }
+
+        .pros-list li {
+            padding: 8px 0;
+            padding-left: 24px;
+            position: relative;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .pros-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .cons-list {
+            list-style: none;
+        }
+
+        .cons-list li {
+            padding: 8px 0;
+            padding-left: 24px;
+            position: relative;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .cons-list li::before {
+            content: '✗';
+            position: absolute;
+            left: 0;
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        .recommendation {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+            border-radius: 16px;
+            padding: 32px;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .recommendation h2 {
+            font-size: 28px;
+            margin-bottom: 16px;
+        }
+
+        .recommendation p {
+            font-size: 18px;
+            opacity: 0.9;
+            line-height: 1.5;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0056b3;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #007bff;
+            border: 2px solid #007bff;
+        }
+
+        .btn-secondary:hover {
+            background: #007bff;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .comparison-results, .pros-cons-grid, .input-row {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+
+            .container {
+                padding: 24px 16px;
+            }
+
+            .inputs, .result-card, .pros-cons-section, .recommendation {
+                padding: 24px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Вернуться к калькуляторам</a>
+        
+        <div class="header">
+            <div class="logo">М2</div>
+            <h1 class="title">Новостройка vs Вторичка</h1>
+            <p class="subtitle">Сравните полную стоимость владения и выберите оптимальный вариант</p>
+        </div>
+
+        <div class="calculator">
+            <div class="inputs">
+                <h2 class="section-title">Параметры сравнения</h2>
+                
+                <div class="input-row">
+                    <div class="input-group">
+                        <label class="input-label" for="newBuildPrice">Цена новостройки</label>
+                        <input type="number" id="newBuildPrice" class="input-field" value="12000000" min="1000000" max="100000000" step="100000">
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label" for="secondaryPrice">Цена вторички</label>
+                        <input type="number" id="secondaryPrice" class="input-field" value="15000000" min="1000000" max="100000000" step="100000">
+                    </div>
+                </div>
+
+                <div class="input-row">
+                    <div class="input-group">
+                        <label class="input-label" for="newBuildDelivery">Срок сдачи новостройки, мес</label>
+                        <input type="number" id="newBuildDelivery" class="input-field" value="24" min="6" max="60" step="1">
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label" for="renovationCost">Ремонт вторички</label>
+                        <input type="number" id="renovationCost" class="input-field" value="1500000" min="0" max="10000000" step="50000">
+                    </div>
+                </div>
+
+                <div class="input-row">
+                    <div class="input-group">
+                        <label class="input-label" for="currentRent">Текущая аренда жилья, мес</label>
+                        <input type="number" id="currentRent" class="input-field" value="80000" min="0" max="500000" step="5000">
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label" for="mortgageRate">Ставка по ипотеке, %</label>
+                        <input type="number" id="mortgageRate" class="input-field" value="12" min="1" max="30" step="0.1">
+                    </div>
+                </div>
+
+                <div class="input-row">
+                    <div class="input-group">
+                        <label class="input-label" for="priceGrowthNew">Рост цен новостроек, % в год</label>
+                        <input type="number" id="priceGrowthNew" class="input-field" value="8" min="0" max="30" step="0.5">
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label" for="priceGrowthSecondary">Рост цен вторички, % в год</label>
+                        <input type="number" id="priceGrowthSecondary" class="input-field" value="5" min="0" max="30" step="0.5">
+                    </div>
+                </div>
+
+                <div class="input-row">
+                    <div class="input-group">
+                        <label class="input-label" for="downPayment">Первоначальный взнос, %</label>
+                        <input type="number" id="downPayment" class="input-field" value="30" min="10" max="100" step="5">
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label" for="loanTerm">Срок кредита, лет</label>
+                        <input type="number" id="loanTerm" class="input-field" value="20" min="5" max="30" step="1">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="comparison-results">
+            <div class="result-card new-build">
+                <h3 class="card-title new-build">Новостройка</h3>
+                
+                <div class="result-item">
+                    <div class="result-label">Итоговая стоимость</div>
+                    <div class="result-value primary" id="newBuildTotal">14 920 000 ₽</div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-label">Ежемесячный платеж</div>
+                    <div class="result-value" id="newBuildPayment">92 400 ₽</div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-label">Затраты до заселения</div>
+                    <div class="result-value" id="newBuildWaiting">1 920 000 ₽</div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-label">Стоимость к моменту сдачи</div>
+                    <div class="result-value success" id="newBuildFuture">14 080 000 ₽</div>
+                </div>
+            </div>
+
+            <div class="result-card secondary">
+                <h3 class="card-title secondary">Вторичка</h3>
+                
+                <div class="result-item">
+                    <div class="result-label">Итоговая стоимость</div>
+                    <div class="result-value primary" id="secondaryTotal">16 500 000 ₽</div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-label">Ежемесячный платеж</div>
+                    <div class="result-value" id="secondaryPayment">115 500 ₽</div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-label">Первоначальные затраты</div>
+                    <div class="result-value" id="secondaryUpfront">6 000 000 ₽</div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-label">Готова к проживанию</div>
+                    <div class="result-value success" id="secondaryReady">Сразу</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="pros-cons-section">
+            <h2 class="section-title">Преимущества и недостатки</h2>
+            <div class="pros-cons-grid">
+                <div class="pros-cons-column">
+                    <h3 class="new-build-header">Новостройка</h3>
+                    <h4 style="margin-bottom: 16px; color: #28a745;">Плюсы:</h4>
+                    <ul class="pros-list">
+                        <li>Ниже цена за квадратный метр</li>
+                        <li>Современная планировка и технологии</li>
+                        <li>Не требует ремонта</li>
+                        <li>Возможность налогового вычета</li>
+                        <li>Рост стоимости в процессе строительства</li>
+                        <li>Новая инфраструктура района</li>
+                    </ul>
+                    <h4 style="margin-bottom: 16px; color: #dc3545;">Минусы:</h4>
+                    <ul class="cons-list">
+                        <li>Риск задержки сдачи объекта</li>
+                        <li>Затраты на аренду жилья до сдачи</li>
+                        <li>Неразвитая инфраструктура</li>
+                        <li>Возможные проблемы с застройщиком</li>
+                        <li>Отсутствие сложившегося сообщества</li>
+                    </ul>
+                </div>
+
+                <div class="pros-cons-column">
+                    <h3 class="secondary-header">Вторичка</h3>
+                    <h4 style="margin-bottom: 16px; color: #28a745;">Плюсы:</h4>
+                    <ul class="pros-list">
+                        <li>Готова к проживанию сразу</li>
+                        <li>Развитая инфраструктура</li>
+                        <li>Проверенное качество дома</li>
+                        <li>Сложившееся сообщество жильцов</li>
+                        <li>Возможность осмотра перед покупкой</li>
+                        <li>Стабильные цены на рынке</li>
+                    </ul>
+                    <h4 style="margin-bottom: 16px; color: #dc3545;">Минусы:</h4>
+                    <ul class="cons-list">
+                        <li>Выше цена за квадратный метр</li>
+                        <li>Требует ремонта или обновления</li>
+                        <li>Устаревшие коммуникации</li>
+                        <li>Ограниченный выбор планировок</li>
+                        <li>Износ дома и придомовой территории</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="recommendation" id="recommendation">
+            <h2>Рекомендация</h2>
+            <p id="recommendationText">Новостройка выгоднее на 1 580 000 ₽ с учетом всех расходов</p>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button class="btn btn-primary" onclick="exportToPDF()">
+                Экспорт в PDF
+            </button>
+            <button class="btn btn-secondary" onclick="resetCalculator()">
+                Сбросить
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function formatNumber(num) {
+            return new Intl.NumberFormat('ru-RU').format(Math.round(num));
+        }
+
+        function calculateMortgagePayment(loanAmount, annualRate, termYears) {
+            const monthlyRate = annualRate / 100 / 12;
+            const numPayments = termYears * 12;
+            
+            if (monthlyRate === 0) {
+                return loanAmount / numPayments;
+            }
+            
+            const payment = loanAmount * (monthlyRate * Math.pow(1 + monthlyRate, numPayments)) / 
+                           (Math.pow(1 + monthlyRate, numPayments) - 1);
+            
+            return payment;
+        }
+
+        function calculateComparison() {
+            const newBuildPrice = parseFloat(document.getElementById('newBuildPrice').value) || 0;
+            const secondaryPrice = parseFloat(document.getElementById('secondaryPrice').value) || 0;
+            const newBuildDelivery = parseFloat(document.getElementById('newBuildDelivery').value) || 0;
+            const renovationCost = parseFloat(document.getElementById('renovationCost').value) || 0;
+            const currentRent = parseFloat(document.getElementById('currentRent').value) || 0;
+            const mortgageRate = parseFloat(document.getElementById('mortgageRate').value) || 0;
+            const priceGrowthNew = parseFloat(document.getElementById('priceGrowthNew').value) || 0;
+            const priceGrowthSecondary = parseFloat(document.getElementById('priceGrowthSecondary').value) || 0;
+            const downPaymentPercent = parseFloat(document.getElementById('downPayment').value) || 0;
+            const loanTerm = parseFloat(document.getElementById('loanTerm').value) || 0;
+
+            // Расчеты для новостройки
+            const waitingCost = currentRent * newBuildDelivery; // затраты на аренду
+            const newBuildGrowth = Math.pow(1 + priceGrowthNew / 100, newBuildDelivery / 12);
+            const newBuildFuturePrice = newBuildPrice * newBuildGrowth;
+            
+            const newBuildDownPayment = newBuildFuturePrice * (downPaymentPercent / 100);
+            const newBuildLoanAmount = newBuildFuturePrice - newBuildDownPayment;
+            const newBuildMonthlyPayment = calculateMortgagePayment(newBuildLoanAmount, mortgageRate, loanTerm);
+            
+            const newBuildTotal = newBuildPrice + waitingCost; // первоначальная стоимость + аренда
+
+            // Расчеты для вторички
+            const secondaryTotalPrice = secondaryPrice + renovationCost;
+            const secondaryDownPayment = secondaryTotalPrice * (downPaymentPercent / 100);
+            const secondaryLoanAmount = secondaryTotalPrice - secondaryDownPayment;
+            const secondaryMonthlyPayment = calculateMortgagePayment(secondaryLoanAmount, mortgageRate, loanTerm);
+
+            // Обновление результатов новостройки
+            document.getElementById('newBuildTotal').textContent = formatNumber(newBuildTotal) + ' ₽';
+            document.getElementById('newBuildPayment').textContent = formatNumber(newBuildMonthlyPayment) + ' ₽';
+            document.getElementById('newBuildWaiting').textContent = formatNumber(waitingCost) + ' ₽';
+            document.getElementById('newBuildFuture').textContent = formatNumber(newBuildFuturePrice) + ' ₽';
+
+            // Обновление результатов вторички
+            document.getElementById('secondaryTotal').textContent = formatNumber(secondaryTotalPrice) + ' ₽';
+            document.getElementById('secondaryPayment').textContent = formatNumber(secondaryMonthlyPayment) + ' ₽';
+            document.getElementById('secondaryUpfront').textContent = formatNumber(secondaryDownPayment + renovationCost) + ' ₽';
+            document.getElementById('secondaryReady').textContent = 'Сразу';
+
+            // Рекомендация
+            const difference = secondaryTotalPrice - newBuildTotal;
+            let recommendationText = '';
+            let recommendationColor = '';
+
+            if (difference > 0) {
+                recommendationText = `Новостройка выгоднее на ${formatNumber(difference)} ₽ с учетом всех расходов`;
+                recommendationColor = 'linear-gradient(135deg, #28a745, #20c997)';
+            } else {
+                recommendationText = `Вторичка выгоднее на ${formatNumber(Math.abs(difference))} ₽ с учетом всех расходов`;
+                recommendationColor = 'linear-gradient(135deg, #007bff, #0056b3)';
+            }
+
+            document.getElementById('recommendationText').textContent = recommendationText;
+            document.getElementById('recommendation').style.background = recommendationColor;
+        }
+
+        function resetCalculator() {
+            document.getElementById('newBuildPrice').value = 12000000;
+            document.getElementById('secondaryPrice').value = 15000000;
+            document.getElementById('newBuildDelivery').value = 24;
+            document.getElementById('renovationCost').value = 1500000;
+            document.getElementById('currentRent').value = 80000;
+            document.getElementById('mortgageRate').value = 12;
+            document.getElementById('priceGrowthNew').value = 8;
+            document.getElementById('priceGrowthSecondary').value = 5;
+            document.getElementById('downPayment').value = 30;
+            document.getElementById('loanTerm').value = 20;
+            calculateComparison();
+        }
+
+        function exportToPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            doc.setFontSize(20);
+            doc.text('Сравнение новостройки и вторички', 20, 30);
+
+            doc.setFontSize(14);
+            doc.text('Параметры сравнения:', 20, 50);
+            
+            const newBuildPrice = document.getElementById('newBuildPrice').value;
+            const secondaryPrice = document.getElementById('secondaryPrice').value;
+            
+            doc.setFontSize(12);
+            doc.text(`Цена новостройки: ${formatNumber(newBuildPrice)} ₽`, 30, 65);
+            doc.text(`Цена вторички: ${formatNumber(secondaryPrice)} ₽`, 30, 75);
+
+            doc.setFontSize(14);
+            doc.text('Результаты:', 20, 95);
+            
+            doc.setFontSize(12);
+            const newBuildTotal = document.getElementById('newBuildTotal').textContent;
+            const secondaryTotal = document.getElementById('secondaryTotal').textContent;
+            const recommendation = document.getElementById('recommendationText').textContent;
+            
+            doc.text(`Итоговая стоимость новостройки: ${newBuildTotal}`, 30, 110);
+            doc.text(`Итоговая стоимость вторички: ${secondaryTotal}`, 30, 120);
+            doc.text(`Рекомендация: ${recommendation}`, 30, 140);
+
+            doc.setFontSize(10);
+            doc.text('Документ создан с помощью М2 Платформы калькуляторов недвижимости', 20, 180);
+            doc.text(`Дата создания: ${new Date().toLocaleDateString('ru-RU')}`, 20, 190);
+
+            doc.save('новостройка-vs-вторичка.pdf');
+        }
+
+        // Event listeners
+        document.getElementById('newBuildPrice').addEventListener('input', calculateComparison);
+        document.getElementById('secondaryPrice').addEventListener('input', calculateComparison);
+        document.getElementById('newBuildDelivery').addEventListener('input', calculateComparison);
+        document.getElementById('renovationCost').addEventListener('input', calculateComparison);
+        document.getElementById('currentRent').addEventListener('input', calculateComparison);
+        document.getElementById('mortgageRate').addEventListener('input', calculateComparison);
+        document.getElementById('priceGrowthNew').addEventListener('input', calculateComparison);
+        document.getElementById('priceGrowthSecondary').addEventListener('input', calculateComparison);
+        document.getElementById('downPayment').addEventListener('input', calculateComparison);
+        document.getElementById('loanTerm').addEventListener('input', calculateComparison);
+
+        // Initial calculation
+        calculateComparison();
+    </script>
+</body>
+</html>
