@@ -327,6 +327,130 @@
             color: white;
         }
 
+        /* Parameter Groups */
+        .parameter-group {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            border: 1px solid #e9ecef;
+        }
+
+        .group-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .group-header h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .group-description {
+            font-size: 13px;
+            color: #666;
+            font-style: italic;
+            flex-basis: 100%;
+        }
+
+        .add-parameter-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .add-parameter-btn:hover {
+            background: #218838;
+            transform: translateY(-1px);
+        }
+
+        /* Custom Parameters */
+        .custom-parameters {
+            margin-top: 16px;
+        }
+
+        .custom-parameter {
+            display: flex;
+            align-items: end;
+            gap: 12px;
+            margin-bottom: 16px;
+            padding: 16px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+
+        .custom-parameter:last-child {
+            margin-bottom: 0;
+        }
+
+        .parameter-type-select {
+            min-width: 120px;
+        }
+
+        .parameter-type-select select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            background: white;
+        }
+
+        .custom-parameter .input-group {
+            flex: 1;
+            margin: 0;
+        }
+
+        .remove-parameter-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            height: 40px;
+            min-width: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .remove-parameter-btn:hover {
+            background: #c82333;
+        }
+
+        .parameter-applies-to {
+            font-size: 12px;
+            color: #666;
+            margin-top: 8px;
+            padding: 4px 8px;
+            background: #e3f2fd;
+            border-radius: 4px;
+            text-align: center;
+        }
+
         @media (max-width: 768px) {
             .comparison-results, .pros-cons-grid, .input-row {
                 grid-template-columns: 1fr;
@@ -367,25 +491,67 @@
             <div class="inputs">
                 <h2 class="section-title">Параметры сравнения</h2>
                 
-                <div class="input-row">
-                    <div class="input-group">
-                        <label class="input-label" for="newBuildPrice">Цена новостройки</label>
-                        <input type="number" id="newBuildPrice" class="input-field" value="12000000" min="1000000" max="100000000" step="100000">
+                <!-- Группа основных расходов -->
+                <div class="parameter-group">
+                    <div class="group-header">
+                        <h3>💰 Основные расходы</h3>
+                        <span class="group-description">Стоимость покупки и подготовки к заселению</span>
                     </div>
-                    <div class="input-group">
-                        <label class="input-label" for="secondaryPrice">Цена вторички</label>
-                        <input type="number" id="secondaryPrice" class="input-field" value="15000000" min="1000000" max="100000000" step="100000">
+                    
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label class="input-label" for="newBuildPrice">Цена новостройки</label>
+                            <input type="number" id="newBuildPrice" class="input-field" value="12000000" min="1000000" max="100000000" step="100000">
+                        </div>
+                        <div class="input-group">
+                            <label class="input-label" for="secondaryPrice">Цена вторички</label>
+                            <input type="number" id="secondaryPrice" class="input-field" value="15000000" min="1000000" max="100000000" step="100000">
+                        </div>
+                    </div>
+                    
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label class="input-label" for="newBuildRenovation">Ремонт новостройки</label>
+                            <input type="number" id="newBuildRenovation" class="input-field" value="2000000" min="0" max="10000000" step="50000">
+                        </div>
+                        <div class="input-group">
+                            <label class="input-label" for="secondaryRenovation">Ремонт вторички</label>
+                            <input type="number" id="secondaryRenovation" class="input-field" value="1500000" min="0" max="10000000" step="50000">
+                        </div>
                     </div>
                 </div>
 
-                <div class="input-row">
-                    <div class="input-group">
-                        <label class="input-label" for="newBuildDelivery">Срок сдачи новостройки, мес</label>
-                        <input type="number" id="newBuildDelivery" class="input-field" value="24" min="6" max="60" step="1">
+                <!-- Группа дополнительных расходов -->
+                <div class="parameter-group">
+                    <div class="group-header">
+                        <h3>📋 Дополнительные расходы</h3>
+                        <span class="group-description">Юридические и другие сопутствующие расходы</span>
                     </div>
-                    <div class="input-group">
-                        <label class="input-label" for="renovationCost">Ремонт вторички</label>
-                        <input type="number" id="renovationCost" class="input-field" value="1500000" min="0" max="10000000" step="50000">
+                    
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label class="input-label" for="newBuildDelivery">Срок сдачи новостройки, мес</label>
+                            <input type="number" id="newBuildDelivery" class="input-field" value="24" min="6" max="60" step="1">
+                        </div>
+                        <div class="input-group">
+                            <label class="input-label" for="legalCosts">Юридические расходы</label>
+                            <input type="number" id="legalCosts" class="input-field" value="200000" min="0" max="1000000" step="10000">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Конструктор дополнительных параметров -->
+                <div class="parameter-group">
+                    <div class="group-header">
+                        <h3>⚙️ Дополнительные параметры</h3>
+                        <span class="group-description">Добавьте свои параметры для более точного расчета</span>
+                        <button type="button" class="add-parameter-btn" onclick="addCustomParameter()">
+                            + Добавить параметр
+                        </button>
+                    </div>
+                    
+                    <div id="customParameters" class="custom-parameters">
+                        <!-- Динамически добавляемые параметры будут здесь -->
                     </div>
                 </div>
 
@@ -471,6 +637,20 @@
                     <div class="result-label">Готова к проживанию</div>
                     <div class="result-value success" id="secondaryReady">Сразу</div>
                 </div>
+            </div>
+        </div>
+
+        <!-- Детализация расчетов -->
+        <div class="calculation-details" style="margin: 40px 0; background: white; border-radius: 12px; padding: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+            <div class="details-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 2px solid #f0f0f0; padding-bottom: 15px;">
+                <h3 style="margin: 0; color: #3416b6; font-size: 24px;">📊 Как мы считаем</h3>
+                <button type="button" onclick="toggleCalculationDetails()" style="background: #3416b6; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 14px;">
+                    Показать расчеты
+                </button>
+            </div>
+            
+            <div id="detailsContent" style="display: none;">
+                <div class="calculation-steps" id="calculationSteps"></div>
             </div>
         </div>
 
@@ -560,13 +740,18 @@
             const newBuildPrice = parseFloat(document.getElementById('newBuildPrice').value) || 0;
             const secondaryPrice = parseFloat(document.getElementById('secondaryPrice').value) || 0;
             const newBuildDelivery = parseFloat(document.getElementById('newBuildDelivery').value) || 0;
-            const renovationCost = parseFloat(document.getElementById('renovationCost').value) || 0;
+            const newBuildRenovation = parseFloat(document.getElementById('newBuildRenovation').value) || 0;
+            const secondaryRenovation = parseFloat(document.getElementById('secondaryRenovation').value) || 0;
+            const legalCosts = parseFloat(document.getElementById('legalCosts').value) || 0;
             const currentRent = parseFloat(document.getElementById('currentRent').value) || 0;
             const mortgageRate = parseFloat(document.getElementById('mortgageRate').value) || 0;
             const priceGrowthNew = parseFloat(document.getElementById('priceGrowthNew').value) || 0;
             const priceGrowthSecondary = parseFloat(document.getElementById('priceGrowthSecondary').value) || 0;
             const downPaymentPercent = parseFloat(document.getElementById('downPayment').value) || 0;
             const loanTerm = parseFloat(document.getElementById('loanTerm').value) || 0;
+            
+            // Получаем суммы кастомных параметров
+            const customParams = getCustomParametersTotal();
 
             // Расчеты для новостройки
             const waitingCost = currentRent * newBuildDelivery; // затраты на аренду
@@ -577,10 +762,10 @@
             const newBuildLoanAmount = newBuildFuturePrice - newBuildDownPayment;
             const newBuildMonthlyPayment = calculateMortgagePayment(newBuildLoanAmount, mortgageRate, loanTerm);
             
-            const newBuildTotal = newBuildPrice + waitingCost; // первоначальная стоимость + аренда
+            const newBuildTotal = newBuildPrice + newBuildRenovation + legalCosts + waitingCost + customParams.newTotal;
 
-            // Расчеты для вторички
-            const secondaryTotalPrice = secondaryPrice + renovationCost;
+            // Расчеты для вторички  
+            const secondaryTotalPrice = secondaryPrice + secondaryRenovation + legalCosts + customParams.secondaryTotal;
             const secondaryDownPayment = secondaryTotalPrice * (downPaymentPercent / 100);
             const secondaryLoanAmount = secondaryTotalPrice - secondaryDownPayment;
             const secondaryMonthlyPayment = calculateMortgagePayment(secondaryLoanAmount, mortgageRate, loanTerm);
@@ -594,7 +779,7 @@
             // Обновление результатов вторички
             document.getElementById('secondaryTotal').textContent = formatNumber(secondaryTotalPrice) + ' ₽';
             document.getElementById('secondaryPayment').textContent = formatNumber(secondaryMonthlyPayment) + ' ₽';
-            document.getElementById('secondaryUpfront').textContent = formatNumber(secondaryDownPayment + renovationCost) + ' ₽';
+            document.getElementById('secondaryUpfront').textContent = formatNumber(secondaryDownPayment + secondaryRenovation + legalCosts + customParams.secondaryTotal) + ' ₽';
             document.getElementById('secondaryReady').textContent = 'Сразу';
 
             // Рекомендация
@@ -612,20 +797,138 @@
 
             document.getElementById('recommendationText').textContent = recommendationText;
             document.getElementById('recommendation').style.background = recommendationColor;
+            
+            // Обновляем детализацию расчетов
+            updateCalculationDetails();
         }
 
         function resetCalculator() {
             document.getElementById('newBuildPrice').value = 12000000;
             document.getElementById('secondaryPrice').value = 15000000;
             document.getElementById('newBuildDelivery').value = 24;
-            document.getElementById('renovationCost').value = 1500000;
+            document.getElementById('newBuildRenovation').value = 1500000;
+            document.getElementById('secondaryRenovation').value = 800000;
+            document.getElementById('legalCosts').value = 300000;
             document.getElementById('currentRent').value = 80000;
             document.getElementById('mortgageRate').value = 12;
             document.getElementById('priceGrowthNew').value = 8;
             document.getElementById('priceGrowthSecondary').value = 5;
             document.getElementById('downPayment').value = 30;
             document.getElementById('loanTerm').value = 20;
+            
+            // Удаляем все кастомные параметры
+            const customParameters = document.getElementById('customParameters');
+            customParameters.innerHTML = '';
+            customParameterCount = 0;
+            
             calculateComparison();
+        }
+
+        // Конструктор дополнительных параметров
+        let customParameterCount = 0;
+
+        function addCustomParameter() {
+            customParameterCount++;
+            const customParameters = document.getElementById('customParameters');
+            
+            const parameterId = `customParam_${customParameterCount}`;
+            
+            const parameterDiv = document.createElement('div');
+            parameterDiv.className = 'custom-parameter';
+            parameterDiv.id = `customParameter_${customParameterCount}`;
+            
+            parameterDiv.innerHTML = `
+                <div class="parameter-type-select">
+                    <label class="input-label">Тип</label>
+                    <select onchange="updateParameterType(${customParameterCount})">
+                        <option value="both">Оба варианта</option>
+                        <option value="new">Только новостройка</option>
+                        <option value="secondary">Только вторичка</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label class="input-label" for="${parameterId}_name">Название параметра</label>
+                    <input type="text" id="${parameterId}_name" class="input-field" placeholder="Например: Мебель" onchange="calculateComparison()">
+                </div>
+                <div class="input-group">
+                    <label class="input-label" for="${parameterId}_new">Новостройка</label>
+                    <input type="number" id="${parameterId}_new" class="input-field" value="0" min="0" step="1000" onchange="calculateComparison()">
+                </div>
+                <div class="input-group">
+                    <label class="input-label" for="${parameterId}_secondary">Вторичка</label>
+                    <input type="number" id="${parameterId}_secondary" class="input-field" value="0" min="0" step="1000" onchange="calculateComparison()">
+                </div>
+                <button type="button" class="remove-parameter-btn" onclick="removeCustomParameter(${customParameterCount})" title="Удалить параметр">
+                    ×
+                </button>
+            `;
+            
+            customParameters.appendChild(parameterDiv);
+            
+            // Сразу пересчитываем после добавления
+            calculateComparison();
+        }
+
+        function removeCustomParameter(parameterId) {
+            const parameterDiv = document.getElementById(`customParameter_${parameterId}`);
+            if (parameterDiv) {
+                parameterDiv.remove();
+                calculateComparison();
+            }
+        }
+
+        function updateParameterType(parameterId) {
+            const select = document.querySelector(`#customParameter_${parameterId} select`);
+            const newInput = document.getElementById(`customParam_${parameterId}_new`);
+            const secondaryInput = document.getElementById(`customParam_${parameterId}_secondary`);
+            
+            const type = select.value;
+            
+            // Обновляем состояние полей в зависимости от типа
+            switch(type) {
+                case 'new':
+                    newInput.disabled = false;
+                    secondaryInput.disabled = true;
+                    secondaryInput.value = 0;
+                    newInput.style.opacity = '1';
+                    secondaryInput.style.opacity = '0.5';
+                    break;
+                case 'secondary':
+                    newInput.disabled = true;
+                    secondaryInput.disabled = false;
+                    newInput.value = 0;
+                    newInput.style.opacity = '0.5';
+                    secondaryInput.style.opacity = '1';
+                    break;
+                case 'both':
+                default:
+                    newInput.disabled = false;
+                    secondaryInput.disabled = false;
+                    newInput.style.opacity = '1';
+                    secondaryInput.style.opacity = '1';
+                    break;
+            }
+            
+            calculateComparison();
+        }
+
+        function getCustomParametersTotal() {
+            let newTotal = 0;
+            let secondaryTotal = 0;
+            
+            for (let i = 1; i <= customParameterCount; i++) {
+                const newInput = document.getElementById(`customParam_${i}_new`);
+                const secondaryInput = document.getElementById(`customParam_${i}_secondary`);
+                
+                if (newInput && !newInput.disabled) {
+                    newTotal += parseFloat(newInput.value) || 0;
+                }
+                if (secondaryInput && !secondaryInput.disabled) {
+                    secondaryTotal += parseFloat(secondaryInput.value) || 0;
+                }
+            }
+            
+            return { newTotal, secondaryTotal };
         }
 
         function exportToPDF() {
@@ -633,11 +936,182 @@
             exportNewVsSecondaryToPDF();
         }
 
+        // Функции для детализации расчетов
+        function toggleCalculationDetails() {
+            const content = document.getElementById('detailsContent');
+            const button = content.previousElementSibling.querySelector('button');
+            
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                button.textContent = 'Скрыть расчеты';
+                updateCalculationDetails();
+            } else {
+                content.style.display = 'none';
+                button.textContent = 'Показать расчеты';
+            }
+        }
+
+        function updateCalculationDetails() {
+            const newBuildPrice = parseFloat(document.getElementById('newBuildPrice').value) || 0;
+            const secondaryPrice = parseFloat(document.getElementById('secondaryPrice').value) || 0;
+            const newBuildDelivery = parseFloat(document.getElementById('newBuildDelivery').value) || 0;
+            const newBuildRenovation = parseFloat(document.getElementById('newBuildRenovation').value) || 0;
+            const secondaryRenovation = parseFloat(document.getElementById('secondaryRenovation').value) || 0;
+            const legalCosts = parseFloat(document.getElementById('legalCosts').value) || 0;
+            const currentRent = parseFloat(document.getElementById('currentRent').value) || 0;
+            const mortgageRate = parseFloat(document.getElementById('mortgageRate').value) || 0;
+            const priceGrowthNew = parseFloat(document.getElementById('priceGrowthNew').value) || 0;
+            const priceGrowthSecondary = parseFloat(document.getElementById('priceGrowthSecondary').value) || 0;
+            const downPayment = parseFloat(document.getElementById('downPayment').value) || 0;
+            const loanTerm = parseFloat(document.getElementById('loanTerm').value) || 0;
+
+            // Получаем кастомные параметры
+            const customParams = getCustomParametersTotal();
+            
+            const stepsContainer = document.getElementById('calculationSteps');
+            
+            // Расчеты для новостройки
+            const newLoanAmount = (newBuildPrice + newBuildRenovation + legalCosts + customParams.newTotal) * (1 - downPayment / 100);
+            const newDownPaymentAmount = (newBuildPrice + newBuildRenovation + legalCosts + customParams.newTotal) * (downPayment / 100);
+            const newMonthlyPayment = calculateMortgagePayment(newLoanAmount, mortgageRate, loanTerm);
+            const newWaitingCosts = currentRent * newBuildDelivery;
+            const newTotalCost = newBuildPrice + newBuildRenovation + legalCosts + customParams.newTotal + newWaitingCosts;
+            const newFutureValue = newBuildPrice * Math.pow(1 + priceGrowthNew / 100, newBuildDelivery / 12);
+
+            // Расчеты для вторички
+            const secondaryLoanAmount = (secondaryPrice + secondaryRenovation + legalCosts + customParams.secondaryTotal) * (1 - downPayment / 100);
+            const secondaryDownPaymentAmount = (secondaryPrice + secondaryRenovation + legalCosts + customParams.secondaryTotal) * (downPayment / 100);
+            const secondaryMonthlyPayment = calculateMortgagePayment(secondaryLoanAmount, mortgageRate, loanTerm);
+            const secondaryTotalCost = secondaryPrice + secondaryRenovation + legalCosts + customParams.secondaryTotal;
+
+            stepsContainer.innerHTML = `
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 20px;">
+                    <div style="background: #f8f9fa; padding: 25px; border-radius: 12px; border-left: 4px solid #28a745;">
+                        <h4 style="color: #28a745; margin-bottom: 20px; font-size: 18px;">🏗️ Расчет для новостройки</h4>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <strong>1. Базовая стоимость:</strong><br>
+                            ${formatNumber(newBuildPrice)} ₽
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <strong>2. Дополнительные расходы:</strong><br>
+                            • Ремонт: ${formatNumber(newBuildRenovation)} ₽<br>
+                            • Юридические услуги: ${formatNumber(legalCosts)} ₽<br>
+                            ${customParams.newTotal > 0 ? `• Доп. параметры: ${formatNumber(customParams.newTotal)} ₽<br>` : ''}
+                            = ${formatNumber(newBuildRenovation + legalCosts + customParams.newTotal)} ₽
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <strong>3. Общая стоимость объекта:</strong><br>
+                            ${formatNumber(newBuildPrice)} + ${formatNumber(newBuildRenovation + legalCosts + customParams.newTotal)} = ${formatNumber(newBuildPrice + newBuildRenovation + legalCosts + customParams.newTotal)} ₽
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <strong>4. Первоначальный взнос (${downPayment}%):</strong><br>
+                            ${formatNumber(newDownPaymentAmount)} ₽
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <strong>5. Сумма кредита:</strong><br>
+                            ${formatNumber(newLoanAmount)} ₽
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <strong>6. Ежемесячный платеж:</strong><br>
+                            ${formatNumber(newMonthlyPayment)} ₽/месяц
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <strong>7. Аренда до сдачи (${newBuildDelivery} мес.):</strong><br>
+                            ${formatNumber(currentRent)} × ${newBuildDelivery} = ${formatNumber(newWaitingCosts)} ₽
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <strong>8. Прогнозируемая стоимость к сдаче:</strong><br>
+                            ${formatNumber(newBuildPrice)} × (1 + ${priceGrowthNew}%)^${(newBuildDelivery/12).toFixed(1)} = ${formatNumber(newFutureValue)} ₽
+                        </div>
+                        
+                        <div style="padding-top: 15px; border-top: 2px solid #28a745; font-weight: bold;">
+                            <strong>Итоговые затраты: ${formatNumber(newTotalCost)} ₽</strong>
+                        </div>
+                    </div>
+                    
+                    <div style="background: #f8f9fa; padding: 25px; border-radius: 12px; border-left: 4px solid #007bff;">
+                        <h4 style="color: #007bff; margin-bottom: 20px; font-size: 18px;">🏠 Расчет для вторички</h4>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <strong>1. Базовая стоимость:</strong><br>
+                            ${formatNumber(secondaryPrice)} ₽
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <strong>2. Дополнительные расходы:</strong><br>
+                            • Ремонт: ${formatNumber(secondaryRenovation)} ₽<br>
+                            • Юридические услуги: ${formatNumber(legalCosts)} ₽<br>
+                            ${customParams.secondaryTotal > 0 ? `• Доп. параметры: ${formatNumber(customParams.secondaryTotal)} ₽<br>` : ''}
+                            = ${formatNumber(secondaryRenovation + legalCosts + customParams.secondaryTotal)} ₽
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <strong>3. Общая стоимость объекта:</strong><br>
+                            ${formatNumber(secondaryPrice)} + ${formatNumber(secondaryRenovation + legalCosts + customParams.secondaryTotal)} = ${formatNumber(secondaryPrice + secondaryRenovation + legalCosts + customParams.secondaryTotal)} ₽
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <strong>4. Первоначальный взнос (${downPayment}%):</strong><br>
+                            ${formatNumber(secondaryDownPaymentAmount)} ₽
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <strong>5. Сумма кредита:</strong><br>
+                            ${formatNumber(secondaryLoanAmount)} ₽
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <strong>6. Ежемесячный платеж:</strong><br>
+                            ${formatNumber(secondaryMonthlyPayment)} ₽/месяц
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <strong>7. Преимущество:</strong><br>
+                            Готова к проживанию сразу
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <strong>8. Рыночная динамика:</strong><br>
+                            Рост стоимости: ${priceGrowthSecondary}% в год
+                        </div>
+                        
+                        <div style="padding-top: 15px; border-top: 2px solid #007bff; font-weight: bold;">
+                            <strong>Итоговые затраты: ${formatNumber(secondaryTotalCost)} ₽</strong>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #e3f2fd, #f0f7ff); border-radius: 12px; text-align: center;">
+                    <h4 style="color: #1976d2; margin-bottom: 15px;">💡 Основные выводы</h4>
+                    <p style="margin: 10px 0; color: #333;">
+                        <strong>Разница в стоимости:</strong> ${formatNumber(Math.abs(newTotalCost - secondaryTotalCost))} ₽
+                        (${newTotalCost < secondaryTotalCost ? 'новостройка дешевле' : 'вторичка дешевле'})
+                    </p>
+                    <p style="margin: 10px 0; color: #333;">
+                        <strong>Разница в ежемесячных платежах:</strong> ${formatNumber(Math.abs(newMonthlyPayment - secondaryMonthlyPayment))} ₽
+                    </p>
+                    <p style="margin: 10px 0; color: #666; font-size: 14px;">
+                        * Расчеты носят информационный характер. Для точного расчета обратитесь к специалистам М2.
+                    </p>
+                </div>
+            `;
+        }
+
         // Event listeners
         document.getElementById('newBuildPrice').addEventListener('input', calculateComparison);
         document.getElementById('secondaryPrice').addEventListener('input', calculateComparison);
         document.getElementById('newBuildDelivery').addEventListener('input', calculateComparison);
-        document.getElementById('renovationCost').addEventListener('input', calculateComparison);
+        document.getElementById('newBuildRenovation').addEventListener('input', calculateComparison);
+        document.getElementById('secondaryRenovation').addEventListener('input', calculateComparison);
+        document.getElementById('legalCosts').addEventListener('input', calculateComparison);
         document.getElementById('currentRent').addEventListener('input', calculateComparison);
         document.getElementById('mortgageRate').addEventListener('input', calculateComparison);
         document.getElementById('priceGrowthNew').addEventListener('input', calculateComparison);

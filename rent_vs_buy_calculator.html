@@ -420,6 +420,44 @@
             color: white;
         }
 
+        /* Parameter Groups */
+        .parameter-group {
+            margin-bottom: 32px;
+            padding: 24px;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            border: 1px solid #e9ecef;
+        }
+
+        .group-header {
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #f8f9fa;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .group-header h3 {
+            margin: 0;
+            color: #333;
+            font-size: 18px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .group-description {
+            color: #666;
+            font-size: 14px;
+            font-style: italic;
+            flex-basis: 100%;
+        }
+
         @media (max-width: 768px) {
             .calculator {
                 grid-template-columns: 1fr;
@@ -483,7 +521,12 @@
 
         <div class="calculator basic-mode" id="calculatorContainer">
             <div class="inputs">
-                <h2 class="section-title">Параметры сравнения</h2>
+                <!-- Группа основных параметров -->
+                <div class="parameter-group">
+                    <div class="group-header">
+                        <h3>🏠 Основные параметры недвижимости</h3>
+                        <div class="group-description">Стоимость объекта и арендные платежи</div>
+                    </div>
                 
                 <div class="input-group">
                     <label class="input-label" for="propertyPrice">Стоимость недвижимости</label>
@@ -517,6 +560,14 @@
                         <button class="quick-btn" onclick="setPercentage('downPayment', 100)">100%</button>
                     </div>
                 </div>
+                </div>
+
+                <!-- Группа финансирования -->
+                <div class="parameter-group">
+                    <div class="group-header">
+                        <h3>💳 Условия финансирования</h3>
+                        <div class="group-description">Параметры кредитования и ипотеки</div>
+                    </div>
 
                 <div class="input-group">
                     <label class="input-label" for="mortgageRate">Ставка по ипотеке, %</label>
@@ -529,8 +580,16 @@
                     </div>
                 </div>
 
+                </div>
+
                 <!-- Advanced Mode Fields -->
                 <div class="advanced-features">
+                    <!-- Группа расширенных параметров -->
+                    <div class="parameter-group">
+                        <div class="group-header">
+                            <h3>📈 Расширенные параметры</h3>
+                            <div class="group-description">Долгосрочное планирование и альтернативы</div>
+                        </div>
                     <div class="input-group">
                         <label class="input-label" for="rentGrowth">Рост арендной платы, % в год</label>
                         <input type="number" id="rentGrowth" class="input-field" value="4" min="0" max="20" step="0.5">
@@ -554,6 +613,7 @@
                     <div class="input-group">
                         <label class="input-label" for="transactionCosts">Расходы на покупку (нотариус, риэлтор)</label>
                         <input type="number" id="transactionCosts" class="input-field" value="400000" min="0" step="10000">
+                    </div>
                     </div>
                 </div>
 
@@ -676,6 +736,20 @@
                 <p style="font-size: 12px; color: #666; margin-top: 16px; text-align: center;">
                     *Упущенная выгода - доходность от инвестирования первоначального взноса
                 </p>
+            </div>
+        </div>
+
+        <!-- Детализация расчетов -->
+        <div class="calculation-details" style="margin: 40px 0; background: white; border-radius: 12px; padding: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+            <div class="details-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 2px solid #f0f0f0; padding-bottom: 15px;">
+                <h3 style="margin: 0; color: #3416b6; font-size: 24px;">📊 Как мы считаем</h3>
+                <button type="button" onclick="toggleCalculationDetails()" style="background: #3416b6; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 14px;">
+                    Показать расчеты
+                </button>
+            </div>
+            
+            <div id="detailsContent" style="display: none;">
+                <div class="calculation-steps" id="calculationSteps"></div>
             </div>
         </div>
 
@@ -805,6 +879,9 @@
                 updateAdvancedResults(totalRentCost, totalBuyCost, savings, winner, mortgagePayments, maintenanceTotal, 
                                     transactionCosts, appreciation, utilityCost, opportunityCost);
             }
+            
+            // Обновляем детализацию расчетов
+            updateCalculationDetails();
         }
 
         function updateAdvancedResults(totalRentCost, totalBuyCost, savings, winner, mortgagePayments, 
@@ -874,6 +951,156 @@
         document.getElementById('investmentReturn').addEventListener('input', calculateComparison);
         document.getElementById('transactionCosts').addEventListener('input', calculateComparison);
         document.getElementById('comparisonPeriod').addEventListener('input', calculateComparison);
+
+        // Функции для детализации расчетов
+        function toggleCalculationDetails() {
+            const content = document.getElementById('detailsContent');
+            const button = content.previousElementSibling.querySelector('button');
+            
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                button.textContent = 'Скрыть расчеты';
+                updateCalculationDetails();
+            } else {
+                content.style.display = 'none';
+                button.textContent = 'Показать расчеты';
+            }
+        }
+
+        function updateCalculationDetails() {
+            const propertyPrice = parseFloat(document.getElementById('propertyPrice').value) || 0;
+            const monthlyRent = parseFloat(document.getElementById('monthlyRent').value) || 0;
+            const downPayment = parseFloat(document.getElementById('downPayment').value) || 0;
+            const mortgageRate = parseFloat(document.getElementById('mortgageRate').value) || 0;
+            const rentGrowth = parseFloat(document.getElementById('rentGrowth').value) || 0;
+            const propertyGrowth = parseFloat(document.getElementById('propertyGrowth').value) || 0;
+            const maintenanceCost = parseFloat(document.getElementById('maintenanceCost').value) || 0;
+            const investmentReturn = parseFloat(document.getElementById('investmentReturn').value) || 0;
+            const transactionCosts = parseFloat(document.getElementById('transactionCosts').value) || 0;
+            const comparisonPeriod = parseFloat(document.getElementById('comparisonPeriod').value) || 0;
+
+            const stepsContainer = document.getElementById('calculationSteps');
+            
+            // Расчеты аренды
+            let totalRentCost = 0;
+            let currentRent = monthlyRent;
+            for (let year = 1; year <= comparisonPeriod; year++) {
+                totalRentCost += currentRent * 12;
+                currentRent *= (1 + rentGrowth / 100);
+            }
+            const utilityCost = totalRentCost * 0.15;
+            totalRentCost += utilityCost;
+            const opportunityCost = downPayment * Math.pow(1 + investmentReturn / 100, comparisonPeriod) - downPayment;
+            totalRentCost += opportunityCost;
+
+            // Расчеты покупки
+            const loanAmount = propertyPrice - downPayment;
+            const monthlyRate = mortgageRate / 100 / 12;
+            const numberOfPayments = 30 * 12;
+            
+            let monthlyPayment = 0;
+            if (loanAmount > 0 && monthlyRate > 0) {
+                monthlyPayment = loanAmount * (monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments)) / 
+                                (Math.pow(1 + monthlyRate, numberOfPayments) - 1);
+            }
+            const mortgagePayments = Math.min(monthlyPayment * 12 * comparisonPeriod, loanAmount * 1.5);
+            const maintenanceTotal = maintenanceCost * 12 * comparisonPeriod;
+            const futurePropertyValue = propertyPrice * Math.pow(1 + propertyGrowth / 100, comparisonPeriod);
+            const appreciation = futurePropertyValue - propertyPrice;
+            const totalBuyCost = downPayment + mortgagePayments + maintenanceTotal + transactionCosts - appreciation;
+
+            const savings = totalRentCost - totalBuyCost;
+            const winner = savings > 0 ? 'buy' : 'rent';
+
+            stepsContainer.innerHTML = `
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 20px;">
+                    <div style="background: #f8f9fa; padding: 25px; border-radius: 12px; border-left: 4px solid #dc3545;">
+                        <h4 style="color: #dc3545; margin-bottom: 20px; font-size: 18px;">🏠 Сценарий "Аренда"</h4>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <strong>1. Расчет арендной платы за ${comparisonPeriod} лет:</strong><br>
+                            Начальная аренда: ${formatNumber(monthlyRent)} ₽/мес<br>
+                            Рост: ${rentGrowth}% в год<br>
+                            Итого аренда: ${formatNumber(totalRentCost - utilityCost - opportunityCost)} ₽
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <strong>2. Коммунальные услуги (15% от аренды):</strong><br>
+                            ${formatNumber(utilityCost)} ₽
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <strong>3. Упущенная выгода от первого взноса:</strong><br>
+                            ${formatNumber(downPayment)} ₽ под ${investmentReturn}% годовых<br>
+                            За ${comparisonPeriod} лет: ${formatNumber(opportunityCost)} ₽
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <strong>4. Плюсы аренды:</strong><br>
+                            • Мобильность и гибкость<br>
+                            • Нет расходов на ремонт<br>
+                            • Не зависит от рынка недвижимости<br>
+                            • Можно инвестировать разницу
+                        </div>
+                        
+                        <div style="padding-top: 15px; border-top: 2px solid #dc3545; font-weight: bold;">
+                            <strong>Общие затраты: ${formatNumber(totalRentCost)} ₽</strong>
+                        </div>
+                    </div>
+                    
+                    <div style="background: #f8f9fa; padding: 25px; border-radius: 12px; border-left: 4px solid #28a745;">
+                        <h4 style="color: #28a745; margin-bottom: 20px; font-size: 18px;">🏡 Сценарий "Покупка"</h4>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <strong>1. Первоначальный взнос:</strong><br>
+                            ${formatNumber(downPayment)} ₽ (${((downPayment/propertyPrice)*100).toFixed(1)}% от стоимости)
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <strong>2. Ипотечные платежи за ${comparisonPeriod} лет:</strong><br>
+                            Сумма кредита: ${formatNumber(loanAmount)} ₽<br>
+                            Ставка: ${mortgageRate}% годовых<br>
+                            Ежемесячно: ${formatNumber(monthlyPayment)} ₽<br>
+                            Итого: ${formatNumber(mortgagePayments)} ₽
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <strong>3. Содержание и обслуживание:</strong><br>
+                            ${formatNumber(maintenanceCost)} ₽/мес × ${comparisonPeriod} лет = ${formatNumber(maintenanceTotal)} ₽
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <strong>4. Расходы на покупку:</strong><br>
+                            Нотариус, риэлтор: ${formatNumber(transactionCosts)} ₽
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <strong>5. Рост стоимости недвижимости:</strong><br>
+                            ${propertyGrowth}% в год за ${comparisonPeriod} лет<br>
+                            Прирост: ${formatNumber(appreciation)} ₽<br>
+                            <span style="color: #28a745;">Выгода от роста стоимости</span>
+                        </div>
+                        
+                        <div style="padding-top: 15px; border-top: 2px solid #28a745; font-weight: bold;">
+                            <strong>Общие затраты: ${formatNumber(totalBuyCost)} ₽</strong>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, ${winner === 'buy' ? '#e8f5e8' : '#fff3e0'}, ${winner === 'buy' ? '#f0f9f0' : '#ffeaa7'}); border-radius: 12px; text-align: center;">
+                    <h4 style="color: ${winner === 'buy' ? '#2e7d32' : '#f57c00'}; margin-bottom: 15px;">💡 Итоговое сравнение</h4>
+                    <p style="margin: 10px 0; color: #333; font-size: 18px;">
+                        <strong>${winner === 'buy' ? 'Покупка выгоднее' : 'Аренда выгоднее'} на ${formatNumber(Math.abs(savings))} ₽</strong>
+                    </p>
+                    <p style="margin: 10px 0; color: #666;">
+                        За период ${comparisonPeriod} лет при текущих условиях
+                    </p>
+                    <p style="margin: 10px 0; color: #666; font-size: 14px;">
+                        * Расчет учитывает рост цен, инфляцию и альтернативные инвестиции. Результат может изменяться в зависимости от рыночных условий.
+                    </p>
+                </div>
+            `;
+        }
 
         // Initial calculation
         calculateComparison();

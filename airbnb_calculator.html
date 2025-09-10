@@ -304,6 +304,44 @@
             color: white;
         }
 
+        /* Parameter Groups */
+        .parameter-group {
+            margin-bottom: 32px;
+            padding: 24px;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            border: 1px solid #e9ecef;
+        }
+
+        .group-header {
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #f8f9fa;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .group-header h3 {
+            margin: 0;
+            color: #333;
+            font-size: 18px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .group-description {
+            color: #666;
+            font-size: 14px;
+            font-style: italic;
+            flex-basis: 100%;
+        }
+
         @media (max-width: 768px) {
             .calculator {
                 grid-template-columns: 1fr;
@@ -350,7 +388,12 @@
 
         <div class="calculator">
             <div class="inputs">
-                <h2 class="section-title">Параметры объекта</h2>
+                <!-- Группа доходов -->
+                <div class="parameter-group">
+                    <div class="group-header">
+                        <h3>💰 Доходы от аренды</h3>
+                        <div class="group-description">Основные параметры получения дохода</div>
+                    </div>
                 
                 <div class="input-group">
                     <label class="input-label" for="propertyPrice">Стоимость недвижимости</label>
@@ -392,6 +435,14 @@
                         <button class="quick-btn" onclick="setValue('cleaningFee', 3000)">3000 ₽</button>
                     </div>
                 </div>
+                </div>
+
+                <!-- Группа расходов -->
+                <div class="parameter-group">
+                    <div class="group-header">
+                        <h3>📉 Расходы и комиссии</h3>
+                        <div class="group-description">Затраты на обслуживание и платформы</div>
+                    </div>
 
                 <div class="input-group">
                     <label class="input-label" for="platformCommission">Комиссия платформы, % <span class="help-icon tooltip-trigger" data-term="platform-commission">?</span></label>
@@ -412,6 +463,14 @@
                         <button class="quick-btn" onclick="setValue('operatingExpenses', 40000)">40 тыс</button>
                     </div>
                 </div>
+                </div>
+
+                <!-- Группа сравнения -->
+                <div class="parameter-group">
+                    <div class="group-header">
+                        <h3>📊 Параметры сравнения</h3>
+                        <div class="group-description">Данные для анализа альтернативных вложений</div>
+                    </div>
 
                 <div class="input-group">
                     <label class="input-label" for="longTermRate">Долгосрочная аренда (сравнение)</label>
@@ -421,6 +480,7 @@
                         <button class="quick-btn active" onclick="setValue('longTermRate', 80000)">80 тыс</button>
                         <button class="quick-btn" onclick="setValue('longTermRate', 120000)">120 тыс</button>
                     </div>
+                </div>
                 </div>
             </div>
 
@@ -471,6 +531,20 @@
             <h2 class="section-title">Сезонный анализ доходности</h2>
             <div class="month-grid" id="seasonalGrid">
                 <!-- Будет заполнено JavaScript -->
+            </div>
+        </div>
+
+        <!-- Детализация расчетов -->
+        <div class="calculation-details" style="margin: 40px 0; background: white; border-radius: 12px; padding: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+            <div class="details-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 2px solid #f0f0f0; padding-bottom: 15px;">
+                <h3 style="margin: 0; color: #3416b6; font-size: 24px;">📊 Как мы считаем</h3>
+                <button type="button" onclick="toggleCalculationDetails()" style="background: #3416b6; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 14px;">
+                    Показать расчеты
+                </button>
+            </div>
+            
+            <div id="detailsContent" style="display: none;">
+                <div class="calculation-steps" id="calculationSteps"></div>
             </div>
         </div>
 
@@ -549,6 +623,9 @@
             document.getElementById('longTermIncome').textContent = formatNumber(longTermProfit) + ' ₽/мес';
 
             updateSeasonalAnalysis(dailyRate, occupiedDays, cleaningFee, platformCommission, operatingExpenses);
+            
+            // Обновляем детализацию расчетов
+            updateCalculationDetails();
         }
 
         function updateSeasonalAnalysis(baseRate, baseOccupancy, cleaningFee, commission, expenses) {
@@ -604,6 +681,154 @@
         function exportToPDF() {
             // Use the improved PDF export system
             exportAirbnbToPDF();
+        }
+
+        // Функции для детализации расчетов
+        function toggleCalculationDetails() {
+            const content = document.getElementById('detailsContent');
+            const button = content.previousElementSibling.querySelector('button');
+            
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                button.textContent = 'Скрыть расчеты';
+                updateCalculationDetails();
+            } else {
+                content.style.display = 'none';
+                button.textContent = 'Показать расчеты';
+            }
+        }
+
+        function updateCalculationDetails() {
+            const propertyPrice = parseFloat(document.getElementById('propertyPrice').value) || 0;
+            const dailyRate = parseFloat(document.getElementById('dailyRate').value) || 0;
+            const occupancyRate = parseFloat(document.getElementById('occupancyRate').value) || 0;
+            const cleaningFee = parseFloat(document.getElementById('cleaningFee').value) || 0;
+            const platformCommission = parseFloat(document.getElementById('platformCommission').value) || 0;
+            const operatingExpenses = parseFloat(document.getElementById('operatingExpenses').value) || 0;
+            const longTermRate = parseFloat(document.getElementById('longTermRate').value) || 0;
+
+            const stepsContainer = document.getElementById('calculationSteps');
+            
+            // Расчеты
+            const daysInMonth = 30;
+            const occupiedDays = (daysInMonth * occupancyRate) / 100;
+            const grossRevenue = (dailyRate * occupiedDays) + (cleaningFee * occupiedDays * 0.5);
+            const platformFee = grossRevenue * (platformCommission / 100);
+            const netRevenue = grossRevenue - platformFee;
+            const monthlyProfit = netRevenue - operatingExpenses;
+            const annualProfit = monthlyProfit * 12;
+            const annualYield = (annualProfit / propertyPrice) * 100;
+
+            // Расчеты для долгосрочной аренды
+            const longTermExpenses = operatingExpenses * 0.4;
+            const longTermProfit = longTermRate - longTermExpenses;
+            const longTermYield = ((longTermProfit * 12) / propertyPrice) * 100;
+            const advantage = monthlyProfit - longTermProfit;
+
+            stepsContainer.innerHTML = `
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 20px;">
+                    <div style="background: #f8f9fa; padding: 25px; border-radius: 12px; border-left: 4px solid #28a745;">
+                        <h4 style="color: #28a745; margin-bottom: 20px; font-size: 18px;">🏠 Краткосрочная аренда (Airbnb)</h4>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <strong>1. Занятость объекта:</strong><br>
+                            ${occupancyRate}% от 30 дней = ${occupiedDays.toFixed(1)} дней
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <strong>2. Валовый доход:</strong><br>
+                            • Проживание: ${formatNumber(dailyRate)} × ${occupiedDays.toFixed(1)} = ${formatNumber(dailyRate * occupiedDays)} ₽<br>
+                            • Уборка: ${formatNumber(cleaningFee)} × ${(occupiedDays * 0.5).toFixed(1)} = ${formatNumber(cleaningFee * occupiedDays * 0.5)} ₽<br>
+                            = ${formatNumber(grossRevenue)} ₽
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <strong>3. Комиссия платформы (${platformCommission}%):</strong><br>
+                            ${formatNumber(grossRevenue)} × ${platformCommission}% = ${formatNumber(platformFee)} ₽
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <strong>4. Чистый доход:</strong><br>
+                            ${formatNumber(grossRevenue)} - ${formatNumber(platformFee)} = ${formatNumber(netRevenue)} ₽
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <strong>5. Операционные расходы:</strong><br>
+                            ${formatNumber(operatingExpenses)} ₽/мес
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <strong>6. Чистая прибыль:</strong><br>
+                            ${formatNumber(netRevenue)} - ${formatNumber(operatingExpenses)} = ${formatNumber(monthlyProfit)} ₽
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <strong>7. Годовая доходность:</strong><br>
+                            (${formatNumber(monthlyProfit)} × 12) ÷ ${formatNumber(propertyPrice)} × 100% = ${formatPercent(annualYield)}
+                        </div>
+                        
+                        <div style="padding-top: 15px; border-top: 2px solid #28a745; font-weight: bold;">
+                            <strong>Прибыль в месяц: ${formatNumber(monthlyProfit)} ₽</strong><br>
+                            <strong>Доходность: ${formatPercent(annualYield)}</strong>
+                        </div>
+                    </div>
+                    
+                    <div style="background: #f8f9fa; padding: 25px; border-radius: 12px; border-left: 4px solid #007bff;">
+                        <h4 style="color: #007bff; margin-bottom: 20px; font-size: 18px;">🏢 Долгосрочная аренда</h4>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <strong>1. Месячная аренда:</strong><br>
+                            ${formatNumber(longTermRate)} ₽
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <strong>2. Пустота и смена жильцов:</strong><br>
+                            Стабильно весь месяц
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <strong>3. Операционные расходы:</strong><br>
+                            ${formatNumber(operatingExpenses)} × 40% = ${formatNumber(longTermExpenses)} ₽<br>
+                            <small>(меньше расходов на обслуживание)</small>
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <strong>4. Чистая прибыль:</strong><br>
+                            ${formatNumber(longTermRate)} - ${formatNumber(longTermExpenses)} = ${formatNumber(longTermProfit)} ₽
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <strong>5. Годовая доходность:</strong><br>
+                            (${formatNumber(longTermProfit)} × 12) ÷ ${formatNumber(propertyPrice)} × 100% = ${formatPercent(longTermYield)}
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <strong>6. Преимущества:</strong><br>
+                            • Стабильный доход<br>
+                            • Меньше хлопот<br>
+                            • Предсказуемые расходы
+                        </div>
+                        
+                        <div style="padding-top: 15px; border-top: 2px solid #007bff; font-weight: bold;">
+                            <strong>Прибыль в месяц: ${formatNumber(longTermProfit)} ₽</strong><br>
+                            <strong>Доходность: ${formatPercent(longTermYield)}</strong>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, ${advantage > 0 ? '#e8f5e8' : '#fff3e0'}, ${advantage > 0 ? '#f0f9f0' : '#ffeaa7'}); border-radius: 12px; text-align: center;">
+                    <h4 style="color: ${advantage > 0 ? '#2e7d32' : '#f57c00'}; margin-bottom: 15px;">💡 Итоговое сравнение</h4>
+                    <p style="margin: 10px 0; color: #333; font-size: 18px;">
+                        <strong>${advantage > 0 ? 'Airbnb выгоднее' : 'Долгосрочная аренда выгоднее'} на ${formatNumber(Math.abs(advantage))} ₽ в месяц</strong>
+                    </p>
+                    <p style="margin: 10px 0; color: #666;">
+                        Разница в годовой доходности: <strong>${(annualYield - longTermYield).toFixed(1)}%</strong>
+                    </p>
+                    <p style="margin: 10px 0; color: #666; font-size: 14px;">
+                        * Учитывайте дополнительные факторы: время на управление, сезонность, риски
+                    </p>
+                </div>
+            `;
         }
 
         // Event listeners
