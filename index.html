@@ -5,6 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>М2 — Платформа калькуляторов недвижимости</title>
     <meta name="description" content="Комплексная платформа калькуляторов для недвижимости: ипотека, доступность жилья, инвестиции, аренда vs покупка. Точные расчеты с экспортом в PDF.">
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#007bff">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="М2 Калькуляторы">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="msapplication-TileColor" content="#007bff">
+    <meta name="msapplication-tap-highlight" content="no">
+    
+    <!-- Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Favicons and Icons -->
+    <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="icons/icon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-180x180.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="icons/icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="icons/icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="icons/icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="icons/icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="icons/icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="icons/icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="icons/icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="57x57" href="icons/icon-57x57.png">
+    
+    <!-- Scripts -->
+    <script src="tooltip-system.js"></script>
+    <script src="calculator-storage.js"></script>
     <style>
         * {
             margin: 0;
@@ -622,5 +651,306 @@
             <p style="margin-top: 8px; font-size: 13px;">Для принятия финансовых решений обращайтесь к специалистам</p>
         </div>
     </footer>
+
+    <!-- PWA Installation Prompt -->
+    <div id="pwa-install-banner" class="pwa-banner" style="display: none;">
+        <div class="pwa-content">
+            <div class="pwa-icon">📱</div>
+            <div class="pwa-text">
+                <h4>Установить приложение?</h4>
+                <p>Добавьте М2 Калькуляторы на главный экран для быстрого доступа</p>
+            </div>
+            <div class="pwa-actions">
+                <button id="pwa-install-btn" class="pwa-btn pwa-btn-install">Установить</button>
+                <button id="pwa-dismiss-btn" class="pwa-btn pwa-btn-dismiss">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // PWA Installation and Service Worker
+        let deferredPrompt;
+        let installBanner = document.getElementById('pwa-install-banner');
+        let installBtn = document.getElementById('pwa-install-btn');
+        let dismissBtn = document.getElementById('pwa-dismiss-btn');
+
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('SW registered: ', registration);
+                        
+                        // Check for updates
+                        registration.addEventListener('updatefound', () => {
+                            const newWorker = registration.installing;
+                            newWorker.addEventListener('statechange', () => {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    showUpdateNotification();
+                                }
+                            });
+                        });
+                    })
+                    .catch(registrationError => {
+                        console.log('SW registration failed: ', registrationError);
+                    });
+            });
+        }
+
+        // PWA Install Prompt
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            
+            // Show install banner after a delay
+            setTimeout(() => {
+                if (!localStorage.getItem('pwa-dismissed')) {
+                    showInstallBanner();
+                }
+            }, 3000);
+        });
+
+        // Show install banner
+        function showInstallBanner() {
+            if (installBanner) {
+                installBanner.style.display = 'block';
+                installBanner.style.animation = 'slideUp 0.3s ease-out';
+            }
+        }
+
+        // Hide install banner
+        function hideInstallBanner() {
+            if (installBanner) {
+                installBanner.style.animation = 'slideDown 0.3s ease-out';
+                setTimeout(() => {
+                    installBanner.style.display = 'none';
+                }, 300);
+            }
+        }
+
+        // Install button click
+        if (installBtn) {
+            installBtn.addEventListener('click', async () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    
+                    if (outcome === 'accepted') {
+                        console.log('PWA installed');
+                    } else {
+                        console.log('PWA installation dismissed');
+                    }
+                    
+                    deferredPrompt = null;
+                    hideInstallBanner();
+                }
+            });
+        }
+
+        // Dismiss button click
+        if (dismissBtn) {
+            dismissBtn.addEventListener('click', () => {
+                hideInstallBanner();
+                localStorage.setItem('pwa-dismissed', 'true');
+                
+                // Show again after 7 days
+                setTimeout(() => {
+                    localStorage.removeItem('pwa-dismissed');
+                }, 7 * 24 * 60 * 60 * 1000);
+            });
+        }
+
+        // App installed event
+        window.addEventListener('appinstalled', (evt) => {
+            console.log('PWA was installed');
+            hideInstallBanner();
+        });
+
+        // Update notification
+        function showUpdateNotification() {
+            if ('Notification' in window && Notification.permission === 'granted') {
+                new Notification('Обновление доступно', {
+                    body: 'Новая версия М2 Калькуляторов готова к установке',
+                    icon: '/icons/icon-192x192.png',
+                    badge: '/icons/icon-72x72.png'
+                });
+            } else {
+                // Fallback to custom notification
+                showCustomNotification('Обновление доступно', 'Перезагрузите страницу для получения новых возможностей');
+            }
+        }
+
+        // Custom notification
+        function showCustomNotification(title, message) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #007bff;
+                color: white;
+                padding: 16px 20px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+                z-index: 10000;
+                max-width: 300px;
+                cursor: pointer;
+            `;
+            notification.innerHTML = `
+                <div style="font-weight: 600; margin-bottom: 4px;">${title}</div>
+                <div style="font-size: 14px; opacity: 0.9;">${message}</div>
+            `;
+            
+            notification.onclick = () => window.location.reload();
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                setTimeout(() => notification.remove(), 300);
+            }, 5000);
+        }
+
+        // Request notification permission
+        if ('Notification' in window && Notification.permission === 'default') {
+            setTimeout(() => {
+                Notification.requestPermission();
+            }, 10000); // Request after 10 seconds
+        }
+
+        // Check if running as PWA
+        function isPWA() {
+            return window.matchMedia('(display-mode: standalone)').matches ||
+                   window.navigator.standalone ||
+                   document.referrer.includes('android-app://') ||
+                   localStorage.getItem('isPWA') === 'true';
+        }
+
+        // Add PWA styles if running as standalone app
+        if (isPWA()) {
+            document.body.classList.add('pwa-mode');
+            localStorage.setItem('isPWA', 'true');
+        }
+
+        // Add CSS for PWA banner
+        const pwaStyles = document.createElement('style');
+        pwaStyles.textContent = `
+            .pwa-banner {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background: linear-gradient(135deg, #007bff, #0056b3);
+                color: white;
+                z-index: 10000;
+                box-shadow: 0 -4px 12px rgba(0,0,0,0.2);
+            }
+            
+            .pwa-content {
+                display: flex;
+                align-items: center;
+                padding: 16px 20px;
+                max-width: 1200px;
+                margin: 0 auto;
+            }
+            
+            .pwa-icon {
+                font-size: 32px;
+                margin-right: 16px;
+            }
+            
+            .pwa-text {
+                flex: 1;
+            }
+            
+            .pwa-text h4 {
+                margin: 0 0 4px 0;
+                font-size: 16px;
+                font-weight: 600;
+            }
+            
+            .pwa-text p {
+                margin: 0;
+                font-size: 14px;
+                opacity: 0.9;
+            }
+            
+            .pwa-actions {
+                display: flex;
+                gap: 12px;
+                margin-left: 16px;
+            }
+            
+            .pwa-btn {
+                padding: 8px 16px;
+                border: none;
+                border-radius: 6px;
+                font-size: 14px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+            
+            .pwa-btn-install {
+                background: white;
+                color: #007bff;
+            }
+            
+            .pwa-btn-install:hover {
+                background: #f8f9fa;
+                transform: scale(1.05);
+            }
+            
+            .pwa-btn-dismiss {
+                background: rgba(255, 255, 255, 0.1);
+                color: white;
+                border: 1px solid rgba(255, 255, 255, 0.3);
+            }
+            
+            .pwa-btn-dismiss:hover {
+                background: rgba(255, 255, 255, 0.2);
+            }
+            
+            @keyframes slideUp {
+                from { transform: translateY(100%); }
+                to { transform: translateY(0); }
+            }
+            
+            @keyframes slideDown {
+                from { transform: translateY(0); }
+                to { transform: translateY(100%); }
+            }
+            
+            @media (max-width: 768px) {
+                .pwa-content {
+                    flex-direction: column;
+                    text-align: center;
+                    padding: 20px;
+                }
+                
+                .pwa-icon {
+                    margin: 0 0 12px 0;
+                }
+                
+                .pwa-text {
+                    margin-bottom: 16px;
+                }
+                
+                .pwa-actions {
+                    margin: 0;
+                    width: 100%;
+                }
+                
+                .pwa-btn {
+                    flex: 1;
+                }
+            }
+            
+            body.pwa-mode {
+                padding-top: env(safe-area-inset-top);
+                padding-bottom: env(safe-area-inset-bottom);
+            }
+        `;
+        document.head.appendChild(pwaStyles);
+    </script>
 </body>
 </html>

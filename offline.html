@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Оффлайн режим — М2 Калькуляторы</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 500px;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .logo {
+            font-size: 64px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+
+        .offline-icon {
+            font-size: 80px;
+            margin-bottom: 30px;
+            opacity: 0.8;
+        }
+
+        h1 {
+            font-size: 32px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        p {
+            font-size: 18px;
+            margin-bottom: 30px;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        .features {
+            text-align: left;
+            margin-bottom: 30px;
+        }
+
+        .features h3 {
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .features ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .features li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+            font-size: 16px;
+        }
+
+        .features li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #4ade80;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .retry-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+
+        .retry-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .saved-calcs {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+        }
+
+        .saved-calcs h3 {
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .calc-link {
+            display: inline-block;
+            margin: 5px;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .calc-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            font-size: 14px;
+        }
+
+        .online {
+            background: rgba(34, 197, 94, 0.2);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        .offline-indicator {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+                margin: 20px;
+            }
+
+            .logo {
+                font-size: 48px;
+            }
+
+            .offline-icon {
+                font-size: 60px;
+            }
+
+            h1 {
+                font-size: 26px;
+            }
+
+            p {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">М2</div>
+        <div class="offline-icon">📱</div>
+        <h1>Оффлайн режим</h1>
+        <p>Интернет-соединение недоступно, но вы можете продолжать работать с сохраненными калькуляторами.</p>
+
+        <div class="features">
+            <h3>Доступно в оффлайн режиме:</h3>
+            <ul>
+                <li>Все основные калькуляторы</li>
+                <li>Сохранение расчетов локально</li>
+                <li>Экспорт результатов в PDF</li>
+                <li>Полная функциональность интерфейса</li>
+            </ul>
+        </div>
+
+        <button class="retry-btn" onclick="checkConnection()">🔄 Проверить соединение</button>
+        <button class="retry-btn" onclick="goHome()">🏠 На главную</button>
+
+        <div class="saved-calcs">
+            <h3>Быстрый доступ к калькуляторам:</h3>
+            <a href="mortgage_calculator.html" class="calc-link">🏦 Ипотека</a>
+            <a href="affordability_calculator.html" class="calc-link">💰 Доступность</a>
+            <a href="rental_profitability_calculator.html" class="calc-link">📊 Доходность</a>
+            <a href="airbnb_calculator.html" class="calc-link">🏠 Airbnb</a>
+            <a href="rent_vs_buy_calculator.html" class="calc-link">⚖️ Аренда vs Покупка</a>
+            <a href="new_vs_secondary_calculator.html" class="calc-link">🆚 Новострой vs Вторичка</a>
+        </div>
+
+        <div class="status" id="connectionStatus">
+            <div class="offline-indicator">
+                ❌ Соединение отсутствует
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Проверка состояния соединения
+        function updateConnectionStatus() {
+            const status = document.getElementById('connectionStatus');
+            
+            if (navigator.onLine) {
+                status.innerHTML = '<div class="online">✅ Соединение восстановлено</div>';
+                
+                // Предлагаем перезагрузить страницу
+                setTimeout(() => {
+                    if (confirm('Соединение восстановлено! Перезагрузить страницу?')) {
+                        window.location.reload();
+                    }
+                }, 1000);
+            } else {
+                status.innerHTML = '<div class="offline-indicator">❌ Соединение отсутствует</div>';
+            }
+        }
+
+        // Проверка соединения по кнопке
+        function checkConnection() {
+            const btn = event.target;
+            btn.innerHTML = '⏳ Проверяем...';
+            btn.disabled = true;
+
+            fetch('/', { method: 'HEAD', cache: 'no-cache' })
+                .then(() => {
+                    btn.innerHTML = '✅ Соединение есть!';
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
+                })
+                .catch(() => {
+                    btn.innerHTML = '❌ Соединения нет';
+                    setTimeout(() => {
+                        btn.innerHTML = '🔄 Проверить соединение';
+                        btn.disabled = false;
+                    }, 2000);
+                });
+        }
+
+        // Переход на главную страницу
+        function goHome() {
+            window.location.href = '/';
+        }
+
+        // Отслеживание изменений соединения
+        window.addEventListener('online', updateConnectionStatus);
+        window.addEventListener('offline', updateConnectionStatus);
+
+        // Инициализация
+        updateConnectionStatus();
+
+        // Периодическая проверка соединения
+        setInterval(() => {
+            if (navigator.onLine) {
+                // Пытаемся сделать запрос для проверки реального соединения
+                fetch('/', { method: 'HEAD', cache: 'no-cache' })
+                    .then(() => updateConnectionStatus())
+                    .catch(() => {
+                        // Соединение есть по navigator.onLine, но сервер недоступен
+                        document.getElementById('connectionStatus').innerHTML = 
+                            '<div class="offline-indicator">⚠️ Соединение нестабильно</div>';
+                    });
+            }
+        }, 10000); // Проверяем каждые 10 секунд
+
+        // Регистрация Service Worker (если еще не зарегистрирован)
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js')
+                .then(registration => {
+                    console.log('SW зарегистрирован:', registration);
+                })
+                .catch(error => {
+                    console.log('Ошибка регистрации SW:', error);
+                });
+        }
+    </script>
+</body>
+</html>

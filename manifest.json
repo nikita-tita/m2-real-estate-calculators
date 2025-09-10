@@ -1,0 +1,142 @@
+{
+  "name": "М2 — Калькуляторы недвижимости",
+  "short_name": "М2 Калькуляторы",
+  "description": "Профессиональные калькуляторы для анализа недвижимости: ипотека, доходность, инвестиции, Airbnb",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8f9fa",
+  "theme_color": "#007bff",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "ru",
+  "categories": ["finance", "productivity", "utilities"],
+  "icons": [
+    {
+      "src": "icons/icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-128x128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-152x152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "screenshots/desktop.png",
+      "sizes": "1200x800",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "М2 Калькуляторы на десктопе"
+    },
+    {
+      "src": "screenshots/mobile.png", 
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "М2 Калькуляторы на мобильном"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Ипотечный калькулятор",
+      "short_name": "Ипотека",
+      "description": "Рассчитать ежемесячный платеж по ипотеке",
+      "url": "/mortgage_calculator.html",
+      "icons": [
+        {
+          "src": "icons/mortgage-icon-96x96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Доходность недвижимости",
+      "short_name": "Доходность",
+      "description": "Анализ прибыльности инвестиций в недвижимость",
+      "url": "/rental_profitability_calculator.html",
+      "icons": [
+        {
+          "src": "icons/profit-icon-96x96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Доступность жилья",
+      "short_name": "Доступность",
+      "description": "Расчет максимальной суммы кредита по доходу",
+      "url": "/affordability_calculator.html",
+      "icons": [
+        {
+          "src": "icons/afford-icon-96x96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Airbnb калькулятор",
+      "short_name": "Airbnb",
+      "description": "Доходность краткосрочной аренды",
+      "url": "/airbnb_calculator.html",
+      "icons": [
+        {
+          "src": "icons/airbnb-icon-96x96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "handle_links": "preferred",
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  }
+}

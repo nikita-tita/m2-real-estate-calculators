@@ -6,6 +6,7 @@
     <title>М2 — Калькулятор доступности жилья</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <script src="tooltip-system.js"></script>
     <style>
         * {
             margin: 0;
@@ -577,7 +578,7 @@
                 <h2 class="section-title">Ваши доходы и расходы</h2>
                 
                 <div class="input-group">
-                    <label class="input-label" for="monthlyIncome">Ежемесячный доход (чистый)</label>
+                    <label class="input-label" for="monthlyIncome">Ежемесячный доход (чистый) <span class="help-icon tooltip-trigger" data-term="monthly-income">?</span></label>
                     <input type="number" id="monthlyIncome" class="input-field" value="120000" min="30000" max="5000000" step="5000">
                     <div class="quick-buttons">
                         <button class="quick-btn" onclick="setValue('monthlyIncome', 80000)">80 тыс</button>
@@ -588,7 +589,7 @@
                 </div>
 
                 <div class="input-group">
-                    <label class="input-label" for="monthlyExpenses">Обязательные расходы</label>
+                    <label class="input-label" for="monthlyExpenses">Обязательные расходы <span class="help-icon tooltip-trigger" data-term="monthly-expenses">?</span></label>
                     <input type="number" id="monthlyExpenses" class="input-field" value="40000" min="0" max="1000000" step="1000">
                     <div class="quick-buttons">
                         <button class="quick-btn" onclick="setValue('monthlyExpenses', 25000)">25 тыс</button>
@@ -601,7 +602,7 @@
                 <!-- Advanced Mode Fields -->
                 <div class="advanced-features">
                     <div class="input-group">
-                        <label class="input-label" for="existingLoans">Другие кредиты (ежемесячно)</label>
+                        <label class="input-label" for="existingLoans">Другие кредиты (ежемесячно) <span class="help-icon tooltip-trigger" data-term="debt-service">?</span></label>
                         <input type="number" id="existingLoans" class="input-field" value="0" min="0" step="1000">
                     </div>
 
@@ -632,7 +633,7 @@
                 </div>
 
                 <div class="input-group">
-                    <label class="input-label" for="interestRate">Ожидаемая ставка по ипотеке, %</label>
+                    <label class="input-label" for="interestRate">Ожидаемая ставка по ипотеке, % <span class="help-icon tooltip-trigger" data-term="mortgage-rate">?</span></label>
                     <input type="number" id="interestRate" class="input-field" value="8.5" min="1" max="30" step="0.1">
                     <div class="quick-buttons">
                         <button class="quick-btn" onclick="setValue('interestRate', 7.5)">7.5%</button>
@@ -690,7 +691,7 @@
         <div class="advanced-features">
             <!-- Debt Load Indicator -->
             <div class="debt-indicator">
-                <h2 class="section-title">Показатель долговой нагрузки (ПДН)</h2>
+                <h2 class="section-title">Показатель долговой нагрузки (ПДН) <span class="help-icon tooltip-trigger" data-term="pdn">?</span></h2>
                 <div class="debt-gauge">
                     <svg viewBox="0 0 200 100">
                         <path d="M 20 80 A 80 80 0 0 1 180 80" class="gauge-bg"/>

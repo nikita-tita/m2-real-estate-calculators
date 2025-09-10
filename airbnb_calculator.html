@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>М2 — Калькулятор доходности краткосрочной аренды</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="tooltip-system.js"></script>
     <style>
         * {
             margin: 0;
@@ -371,7 +372,7 @@
                 </div>
 
                 <div class="input-group">
-                    <label class="input-label" for="occupancyRate">Загруженность, %</label>
+                    <label class="input-label" for="occupancyRate">Загруженность, % <span class="help-icon tooltip-trigger" data-term="occupancy-rate">?</span></label>
                     <input type="number" id="occupancyRate" class="input-field" value="65" min="10" max="95" step="1">
                     <div class="quick-buttons">
                         <button class="quick-btn" onclick="setValue('occupancyRate', 50)">50%</button>
@@ -381,7 +382,7 @@
                 </div>
 
                 <div class="input-group">
-                    <label class="input-label" for="cleaningFee">Плата за уборку</label>
+                    <label class="input-label" for="cleaningFee">Плата за уборку <span class="help-icon tooltip-trigger" data-term="cleaning-fee">?</span></label>
                     <input type="number" id="cleaningFee" class="input-field" value="2000" min="500" max="10000" step="100">
                     <div class="quick-buttons">
                         <button class="quick-btn" onclick="setValue('cleaningFee', 1500)">1500 ₽</button>
@@ -391,7 +392,7 @@
                 </div>
 
                 <div class="input-group">
-                    <label class="input-label" for="platformCommission">Комиссия платформы, %</label>
+                    <label class="input-label" for="platformCommission">Комиссия платформы, % <span class="help-icon tooltip-trigger" data-term="platform-commission">?</span></label>
                     <input type="number" id="platformCommission" class="input-field" value="3" min="0" max="20" step="0.5">
                     <div class="quick-buttons">
                         <button class="quick-btn active" onclick="setValue('platformCommission', 3)">Airbnb 3%</button>
