@@ -253,6 +253,137 @@
             color: #666;
         }
 
+        /* Calculation Details */
+        .calculation-details {
+            background: #f8f9fa;
+            border-radius: 12px;
+            margin: 32px 0;
+            overflow: hidden;
+            border: 1px solid #e9ecef;
+        }
+
+        .details-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            background: white;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .details-header h3 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .details-toggle {
+            background: none;
+            border: none;
+            color: #007bff;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: background 0.2s ease;
+        }
+
+        .details-toggle:hover {
+            background: #f8f9fa;
+        }
+
+        .toggle-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .details-toggle.active .toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        .details-content {
+            padding: 0 24px;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .details-content.show {
+            max-height: 800px;
+            opacity: 1;
+            padding: 24px;
+        }
+
+        .detail-step {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 24px;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .detail-step:last-child {
+            margin-bottom: 0;
+        }
+
+        .step-number {
+            width: 32px;
+            height: 32px;
+            background: #007bff;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-content h4 {
+            margin: 0 0 12px 0;
+            font-size: 16px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .formula {
+            background: #e3f2fd;
+            padding: 12px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            margin-bottom: 8px;
+            color: #1565c0;
+            border-left: 4px solid #2196f3;
+        }
+
+        .formula-explanation {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 8px;
+            font-style: italic;
+        }
+
+        .calculation {
+            background: #f1f8e9;
+            padding: 12px;
+            border-radius: 6px;
+            font-weight: 500;
+            color: #2e7d32;
+            border-left: 4px solid #4caf50;
+        }
+
         /* Advanced Mode Features */
         .advanced-features {
             display: none;
@@ -686,6 +817,61 @@
                     <div class="result-label">Ежемесячный платеж</div>
                     <div class="result-value" id="monthlyPayment">35 280 ₽</div>
                 </div>
+                
+                <!-- Детализация расчетов -->
+                <div class="calculation-details">
+                    <div class="details-header">
+                        <h3>Как мы считаем доступность</h3>
+                        <button type="button" class="details-toggle" onclick="toggleCalculationDetails()">
+                            <span class="toggle-text">Показать расчеты</span>
+                            <span class="toggle-icon">▼</span>
+                        </button>
+                    </div>
+                    
+                    <div class="details-content" id="calculationDetailsContent">
+                        <div class="detail-step">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h4>Расчет максимального платежа (ПДН 50%)</h4>
+                                <div class="formula">Макс. платеж = (Доход - Расходы) × 0.5</div>
+                                <div class="formula-explanation">
+                                    Банки одобряют кредиты при показателе долговой нагрузки до 50%
+                                </div>
+                                <div class="calculation" id="maxPaymentCalculation">
+                                    (100 000 - 25 000) × 0.5 = 37 500 руб./мес
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-step">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h4>Расчет максимальной суммы кредита</h4>
+                                <div class="formula">S = ПМТ × [(1 + i)^n - 1] / [i × (1 + i)^n]</div>
+                                <div class="formula-explanation">
+                                    где ПМТ - максимальный платеж, i - месячная ставка, n - срок в месяцах
+                                </div>
+                                <div class="calculation" id="maxLoanCalculation">
+                                    ПМТ = 37 500 руб., i = 0.01333, n = 240
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-step">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <h4>Расчет стоимости недвижимости</h4>
+                                <div class="formula">Стоимость = Сумма кредита / (1 - Первый взнос %)</div>
+                                <div class="formula-explanation">
+                                    При первом взносе 20% кредит покрывает 80% стоимости
+                                </div>
+                                <div class="calculation" id="propertyPriceCalculation">
+                                    4 200 000 / 0.8 = 5 250 000 руб.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -884,6 +1070,9 @@
             const actualDebtRatio = (maxMortgagePayment + existingLoans) / monthlyIncome;
 
             updateResults(maxLoanAmount, maxPropertyPrice, recommendedDownPayment, maxMortgagePayment, availableIncome, actualDebtRatio * 100);
+            
+            // Обновляем детализацию расчетов
+            updateCalculationDetails();
 
             if (currentMode === 'advanced') {
                 const freeIncome = monthlyIncome - monthlyExpenses - maxMortgagePayment;
@@ -1047,6 +1236,50 @@
             }
             
             calculateAffordability();
+        }
+
+        // Функции для работы с детализацией расчетов
+        function toggleCalculationDetails() {
+            const content = document.getElementById('calculationDetailsContent');
+            const toggle = document.querySelector('.details-toggle');
+            const toggleText = toggle.querySelector('.toggle-text');
+            
+            if (content.classList.contains('show')) {
+                content.classList.remove('show');
+                toggle.classList.remove('active');
+                toggleText.textContent = 'Показать расчеты';
+            } else {
+                content.classList.add('show');
+                toggle.classList.add('active');
+                toggleText.textContent = 'Скрыть расчеты';
+            }
+        }
+        
+        function updateCalculationDetails() {
+            const monthlyIncome = parseFloat(document.getElementById('monthlyIncome').value);
+            const monthlyExpenses = parseFloat(document.getElementById('monthlyExpenses').value);
+            const existingLoans = parseFloat(document.getElementById('existingLoans').value) || 0;
+            const interestRate = parseFloat(document.getElementById('interestRate').value);
+            const loanTerm = parseFloat(document.getElementById('loanTerm').value);
+            
+            const availableIncome = monthlyIncome - monthlyExpenses - existingLoans;
+            const maxPayment = availableIncome * 0.5;
+            
+            const monthlyRate = interestRate / 12 / 100;
+            const numberOfPayments = loanTerm * 12;
+            const maxLoanAmount = maxPayment * ((Math.pow(1 + monthlyRate, numberOfPayments) - 1) / 
+                                                (monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments)));
+            const maxPropertyPrice = maxLoanAmount / 0.8; // При первом взносе 20%
+            
+            // Обновляем расчеты в детализации
+            document.getElementById('maxPaymentCalculation').textContent = 
+                `(${formatNumber(monthlyIncome)} - ${formatNumber(monthlyExpenses + existingLoans)}) × 0.5 = ${formatNumber(maxPayment)} руб./мес`;
+            
+            document.getElementById('maxLoanCalculation').textContent = 
+                `ПМТ = ${formatNumber(maxPayment)} руб., i = ${monthlyRate.toFixed(6)}, n = ${numberOfPayments}`;
+            
+            document.getElementById('propertyPriceCalculation').textContent = 
+                `${formatNumber(maxLoanAmount)} / 0.8 = ${formatNumber(maxPropertyPrice)} руб.`;
         }
 
         function exportToPDF() {
