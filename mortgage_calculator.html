@@ -4,12 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>М2 — Ипотечный калькулятор</title>
+    <meta name="description" content="Точный ипотечный калькулятор от М2. Рассчитайте ежемесячный платеж, переплату, досрочные погашения. Расчеты по российскому законодательству.">
+    <meta name="keywords" content="ипотечный калькулятор, ипотека, недвижимость, М2, расчет ипотеки, ежемесячный платеж">
+    <meta property="og:title" content="М2 — Ипотечный калькулятор">
+    <meta property="og:description" content="Точный ипотечный калькулятор от М2. Рассчитайте ежемесячный платеж, переплату, досрочные погашения.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://m2-calculators-dfol1ftj8-nikita-tita-projects.vercel.app/mortgage_calculator.html">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="М2 — Ипотечный калькулятор">
+    <meta name="twitter:description" content="Точный ипотечный калькулятор от М2. Рассчитайте ежемесячный платеж, переплату, досрочные погашения.">
+    
+    <!-- Favicon and Icons -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#007bff">
+    <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
     <script src="tooltip-system.js"></script>
     <script src="calculator-storage.js"></script>
     <script src="pdf-export.js"></script>
     <script src="components.js"></script>
+    <script src="analytics.js"></script>
     <style>
         * {
             margin: 0;
@@ -1202,6 +1219,11 @@
 
         // Initial calculation
         calculateMortgage();
+        
+        // Register Service Worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js');
+        }
     </script>
 </body>
 </html>

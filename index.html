@@ -11,6 +11,12 @@
     <meta name="author" content="М2 — Метр квадратный">
     <meta name="robots" content="index, follow">
     
+    <!-- Favicon and Icons -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#007bff">
+    <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+    
     <!-- Open Graph Meta Tags -->
     <meta property="og:title" content="М2 — Калькуляторы недвижимости">
     <meta property="og:description" content="Профессиональные инструменты для расчета ипотеки, доходности и сравнения инвестиций в недвижимость">
@@ -27,7 +33,9 @@
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     
+    <script src="performance.js"></script>
     <script src="components.js"></script>
+    <script src="analytics.js"></script>
     
     <style>
         * {
@@ -658,6 +666,19 @@
                 observer.observe(card);
             });
         });
+        
+        // Register Service Worker for performance optimization
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(function(registration) {
+                        console.log('Service Worker registered successfully:', registration.scope);
+                    })
+                    .catch(function(error) {
+                        console.log('Service Worker registration failed:', error);
+                    });
+            });
+        }
     </script>
 </body>
 </html>
