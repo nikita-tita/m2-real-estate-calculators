@@ -148,6 +148,26 @@
 
         .input-group {
             margin-bottom: 24px;
+            position: relative;
+        }
+        
+        /* Группировка по законам гештальта */
+        .input-section {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+            border-left: 4px solid #007bff;
+        }
+        
+        .section-header {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .input-label {
@@ -165,13 +185,27 @@
             border-radius: 12px;
             font-size: 16px;
             background: white;
-            transition: border-color 0.2s;
+            transition: all 0.15s ease;
             appearance: textfield;
+            min-height: 48px;
         }
 
         .input-field:focus {
             outline: none;
             border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+            transform: scale(1.005);
+        }
+        
+        .input-field.calculating {
+            background: linear-gradient(90deg, #f8f9fa 0%, #e9ecef 50%, #f8f9fa 100%);
+            background-size: 200% 100%;
+            animation: shimmer 1s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
         }
 
         .input-field::-webkit-outer-spin-button,
@@ -188,13 +222,20 @@
         }
 
         .quick-btn {
-            padding: 8px 16px;
+            padding: 12px 20px;
             border: 1px solid #dee2e6;
             background: white;
-            border-radius: 8px;
+            border-radius: 24px;
             font-size: 14px;
+            font-weight: 500;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.2s ease;
+            min-height: 44px;
+            min-width: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
         }
 
         .quick-btn:hover {
@@ -1210,11 +1251,32 @@
             exportMortgageToPDF();
         }
 
-        // Event listeners
-        document.getElementById('propertyPrice').addEventListener('input', calculateMortgage);
-        document.getElementById('downPayment').addEventListener('input', calculateMortgage);
-        document.getElementById('interestRate').addEventListener('input', calculateMortgage);
-        document.getElementById('loanTerm').addEventListener('input', calculateMortgage);
+        // Дебаунсинг для оптимизации производительности
+        let calculationTimeout;
+        function debouncedCalculate() {
+            // Добавляем визуальную обратную связь
+            document.querySelectorAll('.input-field').forEach(field => {
+                if (field === document.activeElement) {
+                    field.classList.add('calculating');
+                }
+            });
+            
+            clearTimeout(calculationTimeout);
+            calculationTimeout = setTimeout(() => {
+                calculateMortgage();
+                
+                // Убираем индикатор загрузки
+                document.querySelectorAll('.input-field').forEach(field => {
+                    field.classList.remove('calculating');
+                });
+            }, 150); // Соблюдение порога Доэрти (<400ms)
+        }
+
+        // Event listeners с дебаунсингом
+        document.getElementById('propertyPrice').addEventListener('input', debouncedCalculate);
+        document.getElementById('downPayment').addEventListener('input', debouncedCalculate);
+        document.getElementById('interestRate').addEventListener('input', debouncedCalculate);
+        document.getElementById('loanTerm').addEventListener('input', debouncedCalculate);
         document.getElementById('paymentType').addEventListener('change', calculateMortgage);
 
         // Initial calculation
