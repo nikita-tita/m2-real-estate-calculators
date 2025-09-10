@@ -8,6 +8,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
     <script src="tooltip-system.js"></script>
     <script src="calculator-storage.js"></script>
+    <script src="pdf-export.js"></script>
     <style>
         * {
             margin: 0;
@@ -857,49 +858,8 @@
         }
 
         function exportToPDF() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-
-            // Title
-            doc.setFontSize(20);
-            doc.text('Сравнение: Аренда vs Покупка', 20, 30);
-
-            // Input parameters
-            doc.setFontSize(14);
-            doc.text('Параметры сравнения:', 20, 50);
-            
-            const propertyPrice = document.getElementById('propertyPrice').value;
-            const monthlyRent = document.getElementById('monthlyRent').value;
-            const downPayment = document.getElementById('downPayment').value;
-            const comparisonPeriod = document.getElementById('comparisonPeriod').value;
-            
-            doc.setFontSize(12);
-            doc.text(`Стоимость недвижимости: ${formatNumber(propertyPrice)} ₽`, 30, 65);
-            doc.text(`Ежемесячная аренда: ${formatNumber(monthlyRent)} ₽`, 30, 75);
-            doc.text(`Первоначальный взнос: ${formatNumber(downPayment)} ₽`, 30, 85);
-            doc.text(`Период сравнения: ${comparisonPeriod} лет`, 30, 95);
-
-            // Results
-            doc.setFontSize(14);
-            doc.text('Результаты сравнения:', 20, 115);
-            
-            doc.setFontSize(12);
-            const totalRentText = document.getElementById('totalRentCost').textContent;
-            const totalBuyText = document.getElementById('totalBuyCost').textContent;
-            const savingsText = document.getElementById('totalSavings').textContent;
-            const breakevenText = document.getElementById('breakevenPoint').textContent;
-            
-            doc.text(`Общие затраты на аренду: ${totalRentText}`, 30, 130);
-            doc.text(`Общие затраты на покупку: ${totalBuyText}`, 30, 140);
-            doc.text(`Экономия: ${savingsText}`, 30, 150);
-            doc.text(`Точка безубыточности: ${breakevenText}`, 30, 160);
-
-            // Footer
-            doc.setFontSize(10);
-            doc.text('Документ создан с помощью М2 Платформы калькуляторов недвижимости', 20, 180);
-            doc.text(`Дата создания: ${new Date().toLocaleDateString('ru-RU')}`, 20, 190);
-
-            doc.save('аренда-vs-покупка.pdf');
+            // Use the improved PDF export system
+            exportRentVsBuyToPDF();
         }
 
         // Event listeners

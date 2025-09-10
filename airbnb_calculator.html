@@ -6,6 +6,7 @@
     <title>М2 — Калькулятор доходности краткосрочной аренды</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="tooltip-system.js"></script>
+    <script src="pdf-export.js"></script>
     <style>
         * {
             margin: 0;
@@ -600,41 +601,8 @@
         }
 
         function exportToPDF() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-
-            doc.setFontSize(20);
-            doc.text('Расчет доходности краткосрочной аренды', 20, 30);
-
-            doc.setFontSize(14);
-            doc.text('Параметры объекта:', 20, 50);
-            
-            const propertyPrice = document.getElementById('propertyPrice').value;
-            const dailyRate = document.getElementById('dailyRate').value;
-            const occupancyRate = document.getElementById('occupancyRate').value;
-            
-            doc.setFontSize(12);
-            doc.text(`Стоимость недвижимости: ${formatNumber(propertyPrice)} ₽`, 30, 65);
-            doc.text(`Ставка за сутки: ${formatNumber(dailyRate)} ₽`, 30, 75);
-            doc.text(`Загруженность: ${occupancyRate}%`, 30, 85);
-
-            doc.setFontSize(14);
-            doc.text('Результаты:', 20, 105);
-            
-            doc.setFontSize(12);
-            const monthlyIncome = document.getElementById('monthlyIncome').textContent;
-            const netProfit = document.getElementById('netProfit').textContent;
-            const annualYield = document.getElementById('annualYield').textContent;
-            
-            doc.text(`Доход в месяц: ${monthlyIncome}`, 30, 120);
-            doc.text(`Чистая прибыль: ${netProfit}`, 30, 130);
-            doc.text(`Доходность в год: ${annualYield}`, 30, 140);
-
-            doc.setFontSize(10);
-            doc.text('Документ создан с помощью М2 Платформы калькуляторов недвижимости', 20, 180);
-            doc.text(`Дата создания: ${new Date().toLocaleDateString('ru-RU')}`, 20, 190);
-
-            doc.save('airbnb-доходность.pdf');
+            // Use the improved PDF export system
+            exportAirbnbToPDF();
         }
 
         // Event listeners
