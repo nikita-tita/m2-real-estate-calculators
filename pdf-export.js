@@ -8,7 +8,7 @@ class PDFExporter {
     }
 
     checkLibraryAvailability() {
-        this.isLibraryLoaded = typeof window.jspdf !== 'undefined';
+        this.isLibraryLoaded = typeof window.jspdf !== 'undefined' || typeof window.jsPDF !== 'undefined';
         if (!this.isLibraryLoaded) {
             console.warn('jsPDF library not loaded');
         }
@@ -22,7 +22,15 @@ class PDFExporter {
         }
 
         try {
-            const { jsPDF } = window.jspdf;
+            let jsPDF;
+            if (window.jspdf && window.jspdf.jsPDF) {
+                jsPDF = window.jspdf.jsPDF;
+            } else if (window.jsPDF) {
+                jsPDF = window.jsPDF;
+            } else {
+                this.showError('jsPDF library not properly loaded');
+                return;
+            }
             const doc = new jsPDF();
 
             // Настройка для кириллицы (fallback на Arial)
@@ -667,7 +675,7 @@ function exportToPDF() {
 // Инициализация при загрузке страницы
 document.addEventListener('DOMContentLoaded', function() {
     // Проверяем доступность jsPDF
-    if (typeof window.jspdf === 'undefined') {
+    if (typeof window.jspdf === 'undefined' && typeof window.jsPDF === 'undefined') {
         console.warn('jsPDF library not loaded. PDF export may not work properly.');
     }
 });
