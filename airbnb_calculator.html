@@ -4,15 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>М2 — Калькулятор доходности краткосрочной аренды</title>
-    <meta name="description" content="Калькулятор Airbnb и краткосрочной аренды от М2. Рассчитайте доходность, загрузку, расходы на содержание. Учитывает налоги и управление.">
-    <meta name="keywords" content="airbnb калькулятор, краткосрочная аренда, доходность недвижимости, М2, доход от airbnb, суточная аренда">
+    <meta name="description" content="Калькулятор краткосрочной и посуточной аренды от М2. Рассчитайте доходность, загрузку, расходы на содержание. Учитывает налоги и управление.">
+    <meta name="keywords" content="краткосрочная аренда калькулятор, посуточная аренда, доходность недвижимости, М2, доход от аренды, суточная аренда">
     <meta property="og:title" content="М2 — Калькулятор доходности краткосрочной аренды">
-    <meta property="og:description" content="Калькулятор Airbnb и краткосрочной аренды от М2. Рассчитайте доходность, загрузку, расходы.">
+    <meta property="og:description" content="Калькулятор краткосрочной и посуточной аренды от М2. Рассчитайте доходность, загрузку, расходы.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://m2-calculators-dfol1ftj8-nikita-tita-projects.vercel.app/airbnb_calculator.html">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="М2 — Калькулятор доходности краткосрочной аренды">
-    <meta name="twitter:description" content="Калькулятор Airbnb и краткосрочной аренды от М2. Рассчитайте доходность, загрузку, расходы.">
+    <meta name="twitter:description" content="Калькулятор краткосрочной и посуточной аренды от М2. Рассчитайте доходность, загрузку, расходы.">
     
     <!-- Favicon and Icons -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
@@ -25,6 +25,7 @@
     <script src="pdf-export.js"></script>
     <script src="components.js"></script>
     <script src="ux-enhancements.js"></script>
+    <script src="advanced-ux-enhancements.js"></script>
     <script src="analytics.js"></script>
     <style>
         * {
@@ -215,7 +216,7 @@
             color: white;
         }
 
-        .comparison-card.airbnb {
+        .comparison-card.shortterm {
             background: linear-gradient(135deg, #ff5a5f, #c13515);
         }
 
@@ -401,7 +402,7 @@
         <div class="header">
             <div class="logo">М2</div>
             <h1 class="title">Калькулятор краткосрочной аренды</h1>
-            <p class="subtitle">Рассчитайте доходность от Airbnb и посуточной аренды</p>
+            <p class="subtitle">Рассчитайте доходность от краткосрочной и посуточной аренды</p>
         </div>
 
         <div class="calculator">
@@ -473,8 +474,8 @@
                     <label class="input-label" for="platformCommission">Комиссия платформы, % <span class="help-icon tooltip-trigger" data-term="platform-commission">?</span></label>
                     <input type="number" id="platformCommission" class="input-field" value="3" min="0" max="20" step="0.5">
                     <div class="quick-buttons">
-                        <button class="quick-btn active" onclick="setValue('platformCommission', 3)">Airbnb 3%</button>
-                        <button class="quick-btn" onclick="setValue('platformCommission', 15)">Booking 15%</button>
+                        <button class="quick-btn active" onclick="setValue('platformCommission', 3)">Низкая 3%</button>
+                        <button class="quick-btn" onclick="setValue('platformCommission', 15)">Высокая 15%</button>
                         <button class="quick-btn" onclick="setValue('platformCommission', 0)">Прямые 0%</button>
                     </div>
                 </div>
@@ -544,10 +545,10 @@
         <div class="comparison-section">
             <h2 class="section-title">Сравнение с долгосрочной арендой</h2>
             <div class="comparison-grid">
-                <div class="comparison-card airbnb">
+                <div class="comparison-card shortterm">
                     <div class="comparison-title">Краткосрочная аренда</div>
-                    <div class="comparison-yield" id="airbnbYield">8.1%</div>
-                    <div class="comparison-details" id="airbnbIncome">54 130 ₽/мес</div>
+                    <div class="comparison-yield" id="shorttermYield">8.1%</div>
+                    <div class="comparison-details" id="shorttermIncome">54 130 ₽/мес</div>
                 </div>
                 <div class="comparison-card longterm">
                     <div class="comparison-title">Долгосрочная аренда</div>
@@ -605,6 +606,20 @@
             return num.toFixed(1) + '%';
         }
 
+        function formatCurrencyAdvanced(amount, options = {}) {
+            if (window.advancedUX) {
+                return window.advancedUX.formatCurrency(amount, options);
+            }
+            return formatNumber(amount) + ' ₽';
+        }
+
+        function formatPercentAdvanced(percent, options = {}) {
+            if (window.advancedUX) {
+                return window.advancedUX.formatPercent(percent, options);
+            }
+            return formatPercent(percent);
+        }
+
         function setValue(inputId, value) {
             document.getElementById(inputId).value = value;
             
@@ -614,10 +629,10 @@
                 event.target.classList.add('active');
             }
             
-            calculateAirbnb();
+            calculateShortterm();
         }
 
-        function calculateAirbnb() {
+        function calculateShortterm() {
             const propertyPrice = parseFloat(document.getElementById('propertyPrice').value) || 0;
             const dailyRate = parseFloat(document.getElementById('dailyRate').value) || 0;
             const occupancyRate = parseFloat(document.getElementById('occupancyRate').value) || 0;
@@ -650,17 +665,23 @@
             const longTermProfit = longTermRate - longTermExpenses;
             const longTermYield = ((longTermProfit * 12) / propertyPrice) * 100;
 
-            // Обновляем результаты
-            document.getElementById('monthlyIncome').textContent = formatNumber(netRevenue) + ' ₽';
-            document.getElementById('netProfit').textContent = formatNumber(monthlyProfit) + ' ₽';
-            document.getElementById('annualYield').textContent = formatPercent(annualYield);
+            // Обновляем результаты с улучшенным форматированием
+            document.getElementById('monthlyIncome').innerHTML = formatCurrencyAdvanced(netRevenue, { colorCode: false });
+            document.getElementById('netProfit').innerHTML = formatCurrencyAdvanced(monthlyProfit, { 
+                colorCode: true, 
+                showSign: monthlyProfit !== 0 
+            });
+            document.getElementById('annualYield').innerHTML = formatPercentAdvanced(annualYield, { 
+                colorCode: true, 
+                benchmark: 8.0 
+            });
             document.getElementById('occupiedDays').textContent = occupiedDays.toFixed(1);
 
             // Обновляем сравнение
-            document.getElementById('airbnbYield').textContent = formatPercent(annualYield);
-            document.getElementById('airbnbIncome').textContent = formatNumber(monthlyProfit) + ' ₽/мес';
-            document.getElementById('longTermYield').textContent = formatPercent(longTermYield);
-            document.getElementById('longTermIncome').textContent = formatNumber(longTermProfit) + ' ₽/мес';
+            document.getElementById('shorttermYield').innerHTML = formatPercentAdvanced(annualYield, { colorCode: false });
+            document.getElementById('shorttermIncome').innerHTML = formatCurrencyAdvanced(monthlyProfit, { colorCode: false }) + '/мес';
+            document.getElementById('longTermYield').innerHTML = formatPercentAdvanced(longTermYield, { colorCode: false });
+            document.getElementById('longTermIncome').innerHTML = formatCurrencyAdvanced(longTermProfit, { colorCode: false }) + '/мес';
 
             updateSeasonalAnalysis(dailyRate, occupiedDays, cleaningFee, platformCommission, operatingExpenses);
             
@@ -715,12 +736,12 @@
             document.getElementById('platformCommission').value = 3;
             document.getElementById('operatingExpenses').value = 25000;
             document.getElementById('longTermRate').value = 80000;
-            calculateAirbnb();
+            calculateShortterm();
         }
 
         function exportToPDF() {
             // Use the improved PDF export system
-            exportAirbnbToPDF();
+            exportShorttermRentalToPDF();
         }
 
         // Функции для детализации расчетов
@@ -774,7 +795,7 @@
                                 <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
                                 <polyline points="9,22 9,12 15,12 15,22"></polyline>
                             </svg>
-                            Краткосрочная аренда (Airbnb)
+                            Краткосрочная аренда
                         </h4>
                         
                         <div style="margin-bottom: 15px;">
@@ -872,7 +893,7 @@
                         Итоговое сравнение
                     </h4>
                     <p style="margin: 10px 0; color: #333; font-size: 18px;">
-                        <strong>${advantage > 0 ? 'Airbnb выгоднее' : 'Долгосрочная аренда выгоднее'} на ${formatNumber(Math.abs(advantage))} ₽ в месяц</strong>
+                        <strong>${advantage > 0 ? 'Краткосрочная аренда выгоднее' : 'Долгосрочная аренда выгоднее'} на ${formatNumber(Math.abs(advantage))} ₽ в месяц</strong>
                     </p>
                     <p style="margin: 10px 0; color: #666;">
                         Разница в годовой доходности: <strong>${(annualYield - longTermYield).toFixed(1)}%</strong>
@@ -887,21 +908,21 @@
         // Debounced calculation functions
         let calculationTimeout = null;
         
-        function debouncedCalculateAirbnb() {
+        function debouncedCalculateShortterm() {
             clearTimeout(calculationTimeout);
             calculationTimeout = setTimeout(() => {
-                calculateAirbnb();
+                calculateShortterm();
             }, 150); // Doherty Threshold compliance - under 400ms
         }
 
         // Event listeners with debouncing
-        document.getElementById('propertyPrice').addEventListener('input', debouncedCalculateAirbnb);
-        document.getElementById('dailyRate').addEventListener('input', debouncedCalculateAirbnb);
-        document.getElementById('occupancyRate').addEventListener('input', debouncedCalculateAirbnb);
-        document.getElementById('cleaningFee').addEventListener('input', debouncedCalculateAirbnb);
-        document.getElementById('platformCommission').addEventListener('input', debouncedCalculateAirbnb);
-        document.getElementById('operatingExpenses').addEventListener('input', debouncedCalculateAirbnb);
-        document.getElementById('longTermRate').addEventListener('input', debouncedCalculateAirbnb);
+        document.getElementById('propertyPrice').addEventListener('input', debouncedCalculateShortterm);
+        document.getElementById('dailyRate').addEventListener('input', debouncedCalculateShortterm);
+        document.getElementById('occupancyRate').addEventListener('input', debouncedCalculateShortterm);
+        document.getElementById('cleaningFee').addEventListener('input', debouncedCalculateShortterm);
+        document.getElementById('platformCommission').addEventListener('input', debouncedCalculateShortterm);
+        document.getElementById('operatingExpenses').addEventListener('input', debouncedCalculateShortterm);
+        document.getElementById('longTermRate').addEventListener('input', debouncedCalculateShortterm);
 
         // Initial calculation
         calculateAirbnb();
@@ -911,9 +932,59 @@
             if (window.uxEnhancer) {
                 // Highlight main comparison results
                 setTimeout(() => {
-                    window.uxEnhancer.highlightMainResult('.comparison-card.airbnb');
+                    window.uxEnhancer.highlightMainResult('.comparison-card.shortterm');
                     window.uxEnhancer.groupResults(['.comparison-card', '.seasonal-analysis']);
                 }, 100);
+            }
+
+            // Apply advanced UX enhancements
+            if (window.advancedUX) {
+                // Group calculation results using cognitive load principles
+                const resultsContainer = document.querySelector('.results');
+                if (resultsContainer) {
+                    window.advancedUX.groupInformation(resultsContainer, 5);
+                }
+
+                // Add progressive disclosure to seasonal analysis
+                const seasonalSection = document.querySelector('.seasonal-analysis');
+                if (seasonalSection) {
+                    // Convert seasonal grid to progressive disclosure
+                    const seasonalGrid = seasonalSection.querySelector('.month-grid');
+                    const seasonalContent = seasonalGrid.outerHTML;
+                    
+                    const disclosureSection = window.advancedUX.createDisclosureSection(
+                        'Подробный сезонный анализ по месяцам',
+                        seasonalContent,
+                        { priority: 'secondary', initiallyOpen: false }
+                    );
+                    
+                    seasonalGrid.style.display = 'none';
+                    seasonalSection.appendChild(disclosureSection);
+                }
+
+                // Add formula tooltips
+                const yieldElement = document.getElementById('annualYield').parentElement;
+                if (yieldElement) {
+                    window.advancedUX.createFormulaTooltip(
+                        yieldElement,
+                        'Годовая доходность = (Чистая прибыль × 12) ÷ Стоимость недвижимости × 100%',
+                        'Показывает процентную доходность инвестиций в год с учетом всех расходов'
+                    );
+                }
+
+                // Setup input validation
+                const priceInput = document.getElementById('propertyPrice');
+                if (priceInput) {
+                    priceInput.setAttribute('data-validation', 'positive,price');
+                }
+
+                const rateInput = document.getElementById('occupancyRate');
+                if (rateInput) {
+                    rateInput.setAttribute('data-validation', 'percentage');
+                }
+
+                // Initialize validation after setting attributes
+                window.advancedUX.initializeValidation();
             }
         });
     </script>
