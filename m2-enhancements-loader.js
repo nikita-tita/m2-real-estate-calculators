@@ -9,11 +9,14 @@ class M2EnhancementsLoader {
         this.loadedModules = new Set();
         this.config = {
             enableVersionManager: true,
+            enableMonitoringSystem: true,
             enableAutoUpdater: true,
             enableAnalyticsTracker: true,
             enableMetricsDashboard: true,
             enableExternalApi: true,
             enableMobileOptimizer: true,
+            enablePwaManager: true,
+            enableAiAssistant: true,
             enableBundleOptimizer: true,
             enableScenarioComparison: true,
             enableAdvancedValidation: true,
@@ -33,11 +36,14 @@ class M2EnhancementsLoader {
         // Определяем порядок загрузки модулей
         const loadOrder = [
             { name: 'version-manager', file: 'version-manager.js', required: true },
+            { name: 'monitoring-system', file: 'monitoring-system.js', required: true },
             { name: 'auto-updater', file: 'auto-updater.js', required: true },
             { name: 'analytics-tracker', file: 'analytics-tracker.js', required: true },
             { name: 'metrics-dashboard', file: 'metrics-dashboard.js', required: false },
             { name: 'external-api', file: 'external-api.js', required: true },
             { name: 'mobile-optimizer', file: 'mobile-optimizer.js', required: true },
+            { name: 'pwa-manager', file: 'pwa-manager.js', required: true },
+            { name: 'ai-assistant', file: 'ai-assistant.js', required: true },
             { name: 'dark-theme', file: 'dark-theme.js', required: true },
             { name: 'bundle-optimizer', file: 'bundle-optimizer.js', required: false },
             { name: 'advanced-validation', file: 'advanced-validation.js', required: true },
