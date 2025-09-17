@@ -460,10 +460,22 @@ class AnalyticsTracker {
 
     // Публичные методы для внешнего использования
     getMetrics() {
+        // Получаем данные счетчика посетителей
+        const visitorStats = window.M2VisitorCounter ? window.M2VisitorCounter.getVisitorStats() : null;
+
         return {
             ...this.metrics,
             featuresUsed: Array.from(this.metrics.features),
-            sessionDuration: Date.now() - this.startTime
+            sessionDuration: Date.now() - this.startTime,
+            // Интеграция счетчика посетителей
+            visitors: visitorStats ? {
+                uniqueVisitors: visitorStats.global.totalUniqueVisitors,
+                todayVisitors: visitorStats.global.todayVisitors,
+                isNewVisitor: visitorStats.visitor.isNewVisitor,
+                visitCount: visitorStats.visitor.visitCount,
+                calculatorsUsed: visitorStats.visitor.calculatorsUsed,
+                sessionCalculations: visitorStats.session.calculationsPerformed
+            } : null
         };
     }
 

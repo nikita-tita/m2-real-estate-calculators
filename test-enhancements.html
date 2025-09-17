@@ -173,6 +173,7 @@
             <button class="test-btn" onclick="testThemes()">🎨 Тест тем</button>
             <button class="test-btn" onclick="testAnalytics()">📊 Тест аналитики</button>
             <button class="test-btn" onclick="testTemplates()">📋 Тест шаблонов</button>
+            <button class="test-btn" onclick="testVisitorCounter()">👥 Тест счетчика</button>
             <button class="test-btn" onclick="showDashboard()">📈 Показать дашборд</button>
             <button class="test-btn" onclick="testPDFExport()">📄 Тест PDF</button>
             <button class="test-btn" onclick="exportData()">💾 Экспорт данных</button>
@@ -414,6 +415,45 @@
 
             } catch (error) {
                 log(`❌ Ошибка тестирования шаблонов: ${error.message}`, 'error');
+            }
+        }
+
+        function testVisitorCounter() {
+            log('👥 Тестирование счетчика посетителей...', 'info');
+
+            if (!window.M2VisitorCounter) {
+                log('❌ M2VisitorCounter не загружен', 'error');
+                return;
+            }
+
+            try {
+                const stats = window.M2VisitorCounter.getVisitorStats();
+                log(`👥 Уникальных посетителей: ${stats.global.totalUniqueVisitors}`, 'success');
+                log(`📅 Сегодня посетителей: ${stats.global.todayVisitors}`, 'info');
+                log(`🔢 ID посетителя: ${stats.visitor.id}`, 'info');
+                log(`🆕 Новый посетитель: ${stats.visitor.isNewVisitor ? 'Да' : 'Нет'}`, 'info');
+                log(`🔄 Количество визитов: ${stats.visitor.visitCount}`, 'info');
+
+                if (stats.visitor.calculatorsUsed.length > 0) {
+                    log(`🧮 Использованные калькуляторы: ${stats.visitor.calculatorsUsed.join(', ')}`, 'success');
+                } else {
+                    log('🧮 Калькуляторы еще не использовались', 'info');
+                }
+
+                // Получаем тренды
+                const trends = window.M2VisitorCounter.getVisitorTrends();
+                if (trends) {
+                    const last7Days = trends.last7Days.reduce((sum, day) => sum + day.visitors, 0);
+                    log(`📊 Посетителей за последние 7 дней: ${last7Days}`, 'info');
+                }
+
+                // Тестируем добавление события
+                window.M2VisitorCounter.addUsedFeature('visitor-counter-test');
+                log('✅ Тестовое событие добавлено', 'success');
+
+            } catch (error) {
+                log(`❌ Ошибка тестирования счетчика: ${error.message}`, 'error');
+                console.error('Visitor Counter Test Error:', error);
             }
         }
 

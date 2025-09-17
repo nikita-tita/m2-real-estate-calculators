@@ -37,6 +37,21 @@ class MetricsDashboard {
 
             <div class="dashboard-content">
                 <div class="metrics-grid">
+                    <div class="metric-card visitor-info">
+                        <div class="metric-header">
+                            <span class="metric-icon">👥</span>
+                            <h3>Посетители</h3>
+                        </div>
+                        <div class="metric-content">
+                            <div class="metric-value" id="unique-visitors">0</div>
+                            <div class="metric-details">
+                                <div>Сегодня: <span id="today-visitors">0</span></div>
+                                <div>Возвратов: <span id="visitor-returns">0</span></div>
+                                <div>Статус: <span id="visitor-status">Новый</span></div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="metric-card session-info">
                         <div class="metric-header">
                             <span class="metric-icon">⏱️</span>
@@ -216,6 +231,14 @@ class MetricsDashboard {
     }
 
     updateMetricCards(metrics) {
+        // Данные посетителей
+        if (metrics.visitors) {
+            document.getElementById('unique-visitors').textContent = metrics.visitors.uniqueVisitors.toLocaleString();
+            document.getElementById('today-visitors').textContent = metrics.visitors.todayVisitors;
+            document.getElementById('visitor-returns').textContent = metrics.visitors.visitCount;
+            document.getElementById('visitor-status').textContent = metrics.visitors.isNewVisitor ? 'Новый' : 'Возвращается';
+        }
+
         // Время сессии
         const duration = Math.floor(metrics.sessionDuration / 1000);
         document.getElementById('session-duration').textContent = this.formatDuration(duration);

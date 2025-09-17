@@ -37,6 +37,7 @@ class M2EnhancementsLoader {
         const loadOrder = [
             { name: 'version-manager', file: 'version-manager.js', required: true },
             { name: 'monitoring-system', file: 'monitoring-system.js', required: true },
+            { name: 'visitor-counter', file: 'visitor-counter.js', required: true },
             { name: 'auto-updater', file: 'auto-updater.js', required: true },
             { name: 'analytics-tracker', file: 'analytics-tracker.js', required: true },
             { name: 'metrics-dashboard', file: 'metrics-dashboard.js', required: false },
