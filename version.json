@@ -1,0 +1,64 @@
+{
+  "version": "1.0.0",
+  "releaseDate": "2024-01-15",
+  "modules": [
+    {
+      "name": "bundle-optimizer",
+      "file": "bundle-optimizer.js",
+      "version": "1.0.0",
+      "checksum": "abc123"
+    },
+    {
+      "name": "scenario-comparison",
+      "file": "scenario-comparison.js",
+      "version": "1.0.0",
+      "checksum": "def456"
+    },
+    {
+      "name": "advanced-validation",
+      "file": "advanced-validation.js",
+      "version": "1.0.0",
+      "checksum": "ghi789"
+    },
+    {
+      "name": "excel-export",
+      "file": "excel-export.js",
+      "version": "1.0.0",
+      "checksum": "jkl012"
+    },
+    {
+      "name": "dark-theme",
+      "file": "dark-theme.js",
+      "version": "1.0.0",
+      "checksum": "mno345"
+    },
+    {
+      "name": "calculation-templates",
+      "file": "calculation-templates.js",
+      "version": "1.0.0",
+      "checksum": "pqr678"
+    },
+    {
+      "name": "auto-updater",
+      "file": "auto-updater.js",
+      "version": "1.0.0",
+      "checksum": "stu901"
+    }
+  ],
+  "changes": [
+    "🎉 Добавлена система автоматических обновлений",
+    "⚡ Улучшена производительность загрузки модулей",
+    "🎨 Обновлена система темной темы",
+    "📊 Расширены возможности экспорта в Excel"
+  ],
+  "compatibility": {
+    "minVersion": "1.0.0",
+    "browsers": ["Chrome 90+", "Firefox 88+", "Safari 14+", "Edge 90+"]
+  },
+  "features": [
+    "Автоматическое обновление модулей",
+    "Версионирование и откат изменений",
+    "Уведомления о новых функциях",
+    "Проверка совместимости браузера"
+  ]
+}
