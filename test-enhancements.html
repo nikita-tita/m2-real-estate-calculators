@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест M2 Calculator Enhancements</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #007bff;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .status-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #007bff;
+        }
+
+        .status-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .status-value {
+            font-size: 14px;
+            color: #666;
+            word-break: break-all;
+        }
+
+        .test-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 30px 0;
+        }
+
+        .test-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .test-btn:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        .test-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .log {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 12px;
+            line-height: 1.4;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .success {
+            color: #28a745;
+        }
+
+        .error {
+            color: #dc3545;
+        }
+
+        .warning {
+            color: #ffc107;
+        }
+
+        .info {
+            color: #17a2b8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Тест M2 Calculator Enhancements v1.1</h1>
+
+        <div class="status-grid" id="statusGrid">
+            <div class="status-card">
+                <div class="status-title">Система загружена</div>
+                <div class="status-value" id="systemLoaded">Проверяется...</div>
+            </div>
+
+            <div class="status-card">
+                <div class="status-title">Загружено модулей</div>
+                <div class="status-value" id="modulesLoaded">0 / 17</div>
+            </div>
+
+            <div class="status-card">
+                <div class="status-title">API статус</div>
+                <div class="status-value" id="apiStatus">Не готов</div>
+            </div>
+
+            <div class="status-card">
+                <div class="status-title">Устройство</div>
+                <div class="status-value" id="deviceInfo">Определяется...</div>
+            </div>
+        </div>
+
+        <div class="test-buttons">
+            <button class="test-btn" onclick="testAPI()">🔧 Тест API</button>
+            <button class="test-btn" onclick="testAI()">🤖 Тест AI</button>
+            <button class="test-btn" onclick="testPWA()">📱 Тест PWA</button>
+            <button class="test-btn" onclick="testThemes()">🎨 Тест тем</button>
+            <button class="test-btn" onclick="testAnalytics()">📊 Тест аналитики</button>
+            <button class="test-btn" onclick="testTemplates()">📋 Тест шаблонов</button>
+            <button class="test-btn" onclick="showDashboard()">📈 Показать дашборд</button>
+            <button class="test-btn" onclick="exportData()">💾 Экспорт данных</button>
+        </div>
+
+        <div class="log" id="testLog">
+            <div class="info">🔄 Инициализация системы тестирования...</div>
+        </div>
+    </div>
+
+    <!-- Подключаем систему улучшений -->
+    <script src="m2-enhancements-loader.js"></script>
+
+    <script>
+        let testLog = [];
+
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            testLog.push({ timestamp, message, type });
+
+            const logElement = document.getElementById('testLog');
+            const logEntry = document.createElement('div');
+            logEntry.className = type;
+            logEntry.textContent = `[${timestamp}] ${message}`;
+            logElement.appendChild(logEntry);
+
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+
+        function updateStatus() {
+            // Проверяем загрузку системы
+            const systemLoaded = !!window.M2EnhancementsLoader;
+            document.getElementById('systemLoaded').textContent = systemLoaded ? '✅ Да' : '❌ Нет';
+            document.getElementById('systemLoaded').className = systemLoaded ? 'success' : 'error';
+
+            // Считаем загруженные модули
+            const moduleCount = Object.keys(window).filter(key => key.startsWith('M2')).length;
+            document.getElementById('modulesLoaded').textContent = `${moduleCount} / 17`;
+
+            // Проверяем API
+            const apiReady = !!window.M2API;
+            document.getElementById('apiStatus').textContent = apiReady ? '✅ Готов' : '❌ Не готов';
+
+            // Информация об устройстве
+            if (window.M2MobileOptimizer) {
+                const deviceInfo = window.M2MobileOptimizer.getDeviceInfo();
+                document.getElementById('deviceInfo').textContent =
+                    `${deviceInfo.isMobile ? '📱 Мобильное' : '💻 Десктоп'} устройство`;
+            }
+
+            log(`Статус обновлен: ${moduleCount} модулей загружено`, 'info');
+        }
+
+        // Тестовые функции
+        async function testAPI() {
+            log('🔧 Тестирование API...', 'info');
+
+            if (!window.M2API) {
+                log('❌ M2API не загружен', 'error');
+                return;
+            }
+
+            try {
+                // Тест расчета ипотеки
+                const result = await window.M2API.calculate('mortgage', {
+                    propertyPrice: 5000000,
+                    downPayment: 1000000,
+                    interestRate: 8.5,
+                    loanTerm: 20
+                });
+
+                if (result.success) {
+                    log(`✅ API работает: Платеж = ${result.data.monthlyPayment.toLocaleString()} руб`, 'success');
+                } else {
+                    log(`❌ Ошибка API: ${result.error}`, 'error');
+                }
+
+                // Тест валидации
+                const validation = await window.M2API.validateParameters('mortgage', {
+                    propertyPrice: 5000000
+                });
+
+                log(`🔍 Валидация: ${validation.valid ? 'Прошла' : 'Не прошла'}`, validation.valid ? 'success' : 'warning');
+
+            } catch (error) {
+                log(`❌ Ошибка тестирования API: ${error.message}`, 'error');
+            }
+        }
+
+        function testAI() {
+            log('🤖 Тестирование AI помощника...', 'info');
+
+            if (!window.M2AI) {
+                log('❌ M2AI не загружен', 'error');
+                return;
+            }
+
+            try {
+                window.M2AI.toggle();
+                log('✅ AI помощник активирован', 'success');
+
+                setTimeout(() => {
+                    window.M2AI.askQuestion('Какой оптимальный первоначальный взнос?');
+                    log('✅ Тестовый вопрос отправлен AI', 'success');
+                }, 1000);
+
+            } catch (error) {
+                log(`❌ Ошибка тестирования AI: ${error.message}`, 'error');
+            }
+        }
+
+        function testPWA() {
+            log('📱 Тестирование PWA...', 'info');
+
+            if (!window.M2PWA) {
+                log('❌ M2PWA не загружен', 'error');
+                return;
+            }
+
+            try {
+                const status = window.M2PWA.getPWAStatus();
+                log(`📱 PWA статус: Установлено=${status.isInstalled}, Доступно=${status.isInstallable}`, 'info');
+                log(`🔌 Подключение: ${status.isOnline ? 'Онлайн' : 'Офлайн'}`, status.isOnline ? 'success' : 'warning');
+                log(`⚙️ Service Worker: ${status.serviceWorkerRegistered ? 'Зарегистрирован' : 'Не зарегистрирован'}`, 'info');
+
+            } catch (error) {
+                log(`❌ Ошибка тестирования PWA: ${error.message}`, 'error');
+            }
+        }
+
+        function testThemes() {
+            log('🎨 Тестирование тем...', 'info');
+
+            if (!window.M2DarkTheme) {
+                log('❌ M2DarkTheme не загружен', 'error');
+                return;
+            }
+
+            try {
+                const currentTheme = window.M2DarkTheme.getCurrentTheme();
+                log(`🎨 Текущая тема: ${currentTheme}`, 'info');
+
+                // Переключаем тему для демонстрации
+                window.M2DarkTheme.toggleTheme();
+                log('✅ Тема переключена', 'success');
+
+            } catch (error) {
+                log(`❌ Ошибка тестирования тем: ${error.message}`, 'error');
+            }
+        }
+
+        function testAnalytics() {
+            log('📊 Тестирование аналитики...', 'info');
+
+            if (!window.M2Analytics) {
+                log('❌ M2Analytics не загружен', 'error');
+                return;
+            }
+
+            try {
+                const metrics = window.M2Analytics.getMetrics();
+                log(`📊 Сессия: ${Math.round(metrics.sessionDuration / 1000)}с, События: ${window.M2Analytics.events.length}`, 'info');
+                log(`🧮 Расчеты: ${metrics.calculations}, Взаимодействия: ${metrics.interactions}`, 'info');
+                log(`🎯 Использованные функции: ${metrics.featuresUsed.join(', ')}`, 'success');
+
+            } catch (error) {
+                log(`❌ Ошибка тестирования аналитики: ${error.message}`, 'error');
+            }
+        }
+
+        function testTemplates() {
+            log('📋 Тестирование шаблонов...', 'info');
+
+            if (!window.M2Templates) {
+                log('❌ M2Templates не загружен', 'error');
+                return;
+            }
+
+            try {
+                const templates = window.M2Templates.getTemplates();
+                log(`📋 Доступно шаблонов: ${templates.length}`, 'info');
+
+                if (templates.length > 0) {
+                    log(`📋 Примеры: ${templates.slice(0, 3).map(t => t.name).join(', ')}`, 'success');
+                }
+
+            } catch (error) {
+                log(`❌ Ошибка тестирования шаблонов: ${error.message}`, 'error');
+            }
+        }
+
+        function showDashboard() {
+            log('📈 Открытие дашборда метрик...', 'info');
+
+            if (!window.M2MetricsDashboard) {
+                log('❌ M2MetricsDashboard не загружен', 'error');
+                log('💡 Попробуйте нажать Ctrl+Alt+D', 'info');
+                return;
+            }
+
+            try {
+                window.M2MetricsDashboard.show();
+                log('✅ Дашборд метрик открыт', 'success');
+
+            } catch (error) {
+                log(`❌ Ошибка открытия дашборда: ${error.message}`, 'error');
+            }
+        }
+
+        async function exportData() {
+            log('💾 Экспорт тестовых данных...', 'info');
+
+            try {
+                const exportData = {
+                    timestamp: new Date().toISOString(),
+                    testResults: testLog,
+                    systemStatus: {
+                        modulesLoaded: Object.keys(window).filter(key => key.startsWith('M2')),
+                        analytics: window.M2Analytics?.getMetrics(),
+                        device: window.M2MobileOptimizer?.getDeviceInfo(),
+                        pwa: window.M2PWA?.getPWAStatus(),
+                        monitoring: window.M2Monitoring?.getMonitoringStatus()
+                    }
+                };
+
+                const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `m2-test-results-${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+
+                log('✅ Данные экспортированы', 'success');
+
+            } catch (error) {
+                log(`❌ Ошибка экспорта: ${error.message}`, 'error');
+            }
+        }
+
+        // Инициализация
+        document.addEventListener('DOMContentLoaded', () => {
+            log('🚀 Страница загружена, проверяем систему...', 'info');
+
+            // Обновляем статус каждые 2 секунды
+            setInterval(updateStatus, 2000);
+
+            // Первоначальная проверка
+            setTimeout(updateStatus, 1000);
+
+            // Автоматические тесты через 5 секунд
+            setTimeout(() => {
+                log('🔄 Запуск автоматических тестов...', 'info');
+                testAPI();
+                setTimeout(() => testAnalytics(), 1000);
+                setTimeout(() => testTemplates(), 2000);
+            }, 5000);
+        });
+
+        // Обработка события загрузки модулей
+        document.addEventListener('moduleLoaded', (event) => {
+            log(`📦 Модуль загружен: ${event.detail.name}`, 'success');
+            updateStatus();
+        });
+
+        // Горячие клавиши
+        document.addEventListener('keydown', (event) => {
+            if (event.ctrlKey && event.altKey) {
+                switch (event.key) {
+                    case 't':
+                        event.preventDefault();
+                        testAPI();
+                        break;
+                    case 'a':
+                        event.preventDefault();
+                        testAI();
+                        break;
+                    case 'p':
+                        event.preventDefault();
+                        testPWA();
+                        break;
+                }
+            }
+        });
+
+        log('🎯 Тестовая страница готова к работе', 'success');
+        log('⌨️ Горячие клавиши: Ctrl+Alt+T (API), Ctrl+Alt+A (AI), Ctrl+Alt+P (PWA)', 'info');
+    </script>
+</body>
+</html>
