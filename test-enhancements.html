@@ -119,23 +119,50 @@
 
         <div class="status-grid" id="statusGrid">
             <div class="status-card">
-                <div class="status-title">Система загружена</div>
+                <div class="status-title">🚀 Система загружена</div>
                 <div class="status-value" id="systemLoaded">Проверяется...</div>
             </div>
 
             <div class="status-card">
-                <div class="status-title">Загружено модулей</div>
+                <div class="status-title">📦 Загружено модулей</div>
                 <div class="status-value" id="modulesLoaded">0 / 17</div>
+                <div style="font-size: 10px; margin-top: 5px; color: #666;" id="modulesList">Загружаются...</div>
             </div>
 
             <div class="status-card">
-                <div class="status-title">API статус</div>
+                <div class="status-title">🔧 API статус</div>
                 <div class="status-value" id="apiStatus">Не готов</div>
+                <div style="font-size: 10px; margin-top: 5px; color: #666;" id="apiDetails">Ожидание...</div>
             </div>
 
             <div class="status-card">
-                <div class="status-title">Устройство</div>
+                <div class="status-title">📱 Устройство</div>
                 <div class="status-value" id="deviceInfo">Определяется...</div>
+                <div style="font-size: 10px; margin-top: 5px; color: #666;" id="deviceDetails">Анализ...</div>
+            </div>
+
+            <div class="status-card">
+                <div class="status-title">🤖 AI Помощник</div>
+                <div class="status-value" id="aiStatus">Не готов</div>
+                <div style="font-size: 10px; margin-top: 5px; color: #666;" id="aiDetails">Ожидание загрузки...</div>
+            </div>
+
+            <div class="status-card">
+                <div class="status-title">📊 PDF Экспорт</div>
+                <div class="status-value" id="pdfStatus">Не готов</div>
+                <div style="font-size: 10px; margin-top: 5px; color: #666;" id="pdfDetails">Проверка библиотеки...</div>
+            </div>
+
+            <div class="status-card">
+                <div class="status-title">🎨 Темы</div>
+                <div class="status-value" id="themeStatus">Не готов</div>
+                <div style="font-size: 10px; margin-top: 5px; color: #666;" id="themeDetails">Инициализация...</div>
+            </div>
+
+            <div class="status-card">
+                <div class="status-title">📱 PWA</div>
+                <div class="status-value" id="pwaStatus">Не готов</div>
+                <div style="font-size: 10px; margin-top: 5px; color: #666;" id="pwaDetails">Проверка поддержки...</div>
             </div>
         </div>
 
@@ -147,13 +174,33 @@
             <button class="test-btn" onclick="testAnalytics()">📊 Тест аналитики</button>
             <button class="test-btn" onclick="testTemplates()">📋 Тест шаблонов</button>
             <button class="test-btn" onclick="showDashboard()">📈 Показать дашборд</button>
+            <button class="test-btn" onclick="testPDFExport()">📄 Тест PDF</button>
             <button class="test-btn" onclick="exportData()">💾 Экспорт данных</button>
+        </div>
+
+        <div style="margin: 30px 0;">
+            <h3 style="color: #007bff; margin-bottom: 15px;">🧮 Быстрые ссылки на калькуляторы:</h3>
+            <div class="test-buttons">
+                <button class="test-btn" onclick="openCalculator('mortgage_calculator.html')">🏠 Ипотека</button>
+                <button class="test-btn" onclick="openCalculator('rental_profitability_calculator.html')">💰 Доходность</button>
+                <button class="test-btn" onclick="openCalculator('affordability_calculator.html')">💳 Доступность</button>
+                <button class="test-btn" onclick="openCalculator('rent_vs_buy_calculator.html')">⚖️ Аренда vs Покупка</button>
+                <button class="test-btn" onclick="openCalculator('airbnb_calculator.html')">🏨 Airbnb</button>
+                <button class="test-btn" onclick="openCalculator('new_vs_secondary_calculator.html')">🆚 Новое vs Вторичка</button>
+                <button class="test-btn" onclick="openCalculator('advanced_compound_calculator.html')">📈 Инвестиции</button>
+                <button class="test-btn" onclick="openCalculator('compound_interest_calculator.html')">🧮 Проценты</button>
+                <button class="test-btn" onclick="openCalculator('prepayment_calculator.html')">⏰ Досрочка</button>
+            </div>
         </div>
 
         <div class="log" id="testLog">
             <div class="info">🔄 Инициализация системы тестирования...</div>
         </div>
     </div>
+
+    <!-- Подключаем jsPDF для тестирования PDF экспорта -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
 
     <!-- Подключаем систему улучшений -->
     <script src="m2-enhancements-loader.js"></script>
@@ -182,17 +229,51 @@
 
             // Считаем загруженные модули
             const moduleCount = Object.keys(window).filter(key => key.startsWith('M2')).length;
+            const modules = Object.keys(window).filter(key => key.startsWith('M2'));
             document.getElementById('modulesLoaded').textContent = `${moduleCount} / 17`;
+            document.getElementById('modulesList').textContent = modules.length > 0 ? modules.join(', ') : 'Загружаются...';
 
             // Проверяем API
             const apiReady = !!window.M2API;
             document.getElementById('apiStatus').textContent = apiReady ? '✅ Готов' : '❌ Не готов';
+            document.getElementById('apiDetails').textContent = apiReady ? 'Все функции доступны' : 'Ожидание загрузки M2API';
+
+            // AI Помощник
+            const aiReady = !!window.M2AI;
+            document.getElementById('aiStatus').textContent = aiReady ? '✅ Готов' : '❌ Не готов';
+            document.getElementById('aiDetails').textContent = aiReady ? 'Консультант готов к работе' : 'Загрузка AI модуля...';
+
+            // PDF Экспорт
+            const pdfReady = typeof window.jspdf !== 'undefined' || typeof window.jsPDF !== 'undefined';
+            document.getElementById('pdfStatus').textContent = pdfReady ? '✅ Готов' : '❌ Не готов';
+            document.getElementById('pdfDetails').textContent = pdfReady ? 'jsPDF библиотека загружена' : 'Ошибка загрузки jsPDF';
+
+            // Темы
+            const themeReady = !!window.M2DarkTheme;
+            document.getElementById('themeStatus').textContent = themeReady ? '✅ Готов' : '❌ Не готов';
+            document.getElementById('themeDetails').textContent = themeReady ?
+                `Текущая тема: ${window.M2DarkTheme.getCurrentTheme()}` : 'Загрузка системы тем...';
+
+            // PWA
+            const pwaReady = !!window.M2PWA;
+            document.getElementById('pwaStatus').textContent = pwaReady ? '✅ Готов' : '❌ Не готов';
+            if (pwaReady) {
+                const pwaStatus = window.M2PWA.getPWAStatus();
+                document.getElementById('pwaDetails').textContent =
+                    `Установлено: ${pwaStatus.isInstalled ? 'Да' : 'Нет'}, Онлайн: ${pwaStatus.isOnline ? 'Да' : 'Нет'}`;
+            } else {
+                document.getElementById('pwaDetails').textContent = 'Загрузка PWA модуля...';
+            }
 
             // Информация об устройстве
             if (window.M2MobileOptimizer) {
                 const deviceInfo = window.M2MobileOptimizer.getDeviceInfo();
                 document.getElementById('deviceInfo').textContent =
                     `${deviceInfo.isMobile ? '📱 Мобильное' : '💻 Десктоп'} устройство`;
+                document.getElementById('deviceDetails').textContent =
+                    `Экран: ${deviceInfo.screenWidth}x${deviceInfo.screenHeight}, Touch: ${deviceInfo.touchSupport ? 'Да' : 'Нет'}`;
+            } else {
+                document.getElementById('deviceDetails').textContent = 'Определение параметров...';
             }
 
             log(`Статус обновлен: ${moduleCount} модулей загружено`, 'info');
@@ -352,6 +433,65 @@
             } catch (error) {
                 log(`❌ Ошибка открытия дашборда: ${error.message}`, 'error');
             }
+        }
+
+        function testPDFExport() {
+            log('📄 Тестирование PDF экспорта...', 'info');
+
+            // Проверяем доступность jsPDF
+            const jsPDFAvailable = typeof window.jspdf !== 'undefined' || typeof window.jsPDF !== 'undefined';
+
+            if (!jsPDFAvailable) {
+                log('❌ jsPDF библиотека не найдена', 'error');
+                log('🔄 Попытка загрузки jsPDF...', 'info');
+
+                const script = document.createElement('script');
+                script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+                script.onload = () => {
+                    log('✅ jsPDF загружен успешно', 'success');
+                    setTimeout(() => testPDFExport(), 1000);
+                };
+                script.onerror = () => {
+                    log('❌ Не удалось загрузить jsPDF', 'error');
+                };
+                document.head.appendChild(script);
+                return;
+            }
+
+            try {
+                // Создаем тестовый PDF
+                let jsPDF;
+                if (window.jspdf && window.jspdf.jsPDF) {
+                    jsPDF = window.jspdf.jsPDF;
+                } else if (window.jsPDF) {
+                    jsPDF = window.jsPDF;
+                }
+
+                const doc = new jsPDF();
+                doc.setFont('Arial', 'normal');
+                doc.setFontSize(16);
+                doc.text('M2 Calculator Test Report', 20, 20);
+                doc.setFontSize(12);
+                doc.text('Тест PDF экспорта прошел успешно!', 20, 40);
+                doc.text(`Дата тестирования: ${new Date().toLocaleString('ru-RU')}`, 20, 55);
+
+                // Добавляем информацию о системе
+                const modules = Object.keys(window).filter(key => key.startsWith('M2'));
+                doc.text(`Загружено модулей: ${modules.length}/17`, 20, 70);
+                doc.text('Модули: ' + modules.join(', '), 20, 85);
+
+                doc.save('m2-pdf-test.pdf');
+                log('✅ PDF тест успешен! Файл скачан.', 'success');
+
+            } catch (error) {
+                log(`❌ Ошибка PDF теста: ${error.message}`, 'error');
+                console.error('PDF Test Error:', error);
+            }
+        }
+
+        function openCalculator(calculatorFile) {
+            log(`🧮 Открытие калькулятора: ${calculatorFile}`, 'info');
+            window.open(calculatorFile, '_blank');
         }
 
         async function exportData() {

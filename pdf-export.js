@@ -11,7 +11,22 @@ class PDFExporter {
         this.isLibraryLoaded = typeof window.jspdf !== 'undefined' || typeof window.jsPDF !== 'undefined';
         if (!this.isLibraryLoaded) {
             console.warn('jsPDF library not loaded');
+            // Попытка динамической загрузки
+            this.loadJsPDFLibrary();
         }
+    }
+
+    loadJsPDFLibrary() {
+        const script = document.createElement('script');
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+        script.onload = () => {
+            console.log('jsPDF loaded dynamically');
+            this.isLibraryLoaded = true;
+        };
+        script.onerror = () => {
+            console.error('Failed to load jsPDF library');
+        };
+        document.head.appendChild(script);
     }
 
     // Универсальный экспорт для любого калькулятора
@@ -22,15 +37,26 @@ class PDFExporter {
         }
 
         try {
+            // Улучшенная проверка доступности jsPDF
             let jsPDF;
             if (window.jspdf && window.jspdf.jsPDF) {
                 jsPDF = window.jspdf.jsPDF;
             } else if (window.jsPDF) {
                 jsPDF = window.jsPDF;
+            } else if (typeof jsPDF !== 'undefined') {
+                // Глобальная переменная jsPDF
+                jsPDF = window.jsPDF || jsPDF;
             } else {
-                this.showError('jsPDF library not properly loaded');
+                this.showError('Библиотека jsPDF не загружена. Попробуйте обновить страницу.');
+                console.error('jsPDF not available. Available objects:', {
+                    jspdf: typeof window.jspdf,
+                    jsPDF: typeof window.jsPDF,
+                    global_jsPDF: typeof jsPDF
+                });
                 return;
             }
+
+            console.log('Creating PDF with jsPDF:', jsPDF);
             const doc = new jsPDF();
 
             // Настройка для кириллицы (fallback на Arial)
