@@ -46,11 +46,11 @@ class M2EnhancementsLoader {
             { name: 'pwa-manager', file: 'pwa-manager.js', required: true },
             { name: 'ai-assistant', file: 'ai-assistant.js', required: true },
             { name: 'dark-theme', file: 'dark-theme.js', required: true },
-            { name: 'bundle-optimizer', file: 'bundle-optimizer.js', required: false },
             { name: 'advanced-validation', file: 'advanced-validation.js', required: true },
             { name: 'calculation-templates', file: 'calculation-templates.js', required: true },
             { name: 'scenario-comparison', file: 'scenario-comparison.js', required: true },
-            { name: 'excel-export', file: 'excel-export.js', required: false }
+            { name: 'pdf-export', file: 'pdf-export.js', required: true },
+            { name: 'advanced-ux', file: 'advanced-ux-enhancements.js', required: false }
         ];
 
         // Загружаем модули в правильном порядке
