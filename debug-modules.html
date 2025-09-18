@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Отладка модулей M2</title>
+    <style>
+        body {
+            font-family: monospace;
+            background: #1a1a1a;
+            color: #00ff00;
+            padding: 20px;
+            line-height: 1.4;
+        }
+
+        .log {
+            background: #000;
+            padding: 15px;
+            border: 1px solid #333;
+            border-radius: 5px;
+            margin: 10px 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .error { color: #ff4444; }
+        .success { color: #44ff44; }
+        .warning { color: #ffaa44; }
+        .info { color: #4444ff; }
+
+        h1 { color: #fff; text-align: center; }
+        .status { color: #ffff44; }
+
+        .module-item {
+            padding: 5px;
+            margin: 2px 0;
+            border-left: 3px solid #333;
+        }
+        .module-loading { border-left-color: #ffaa44; }
+        .module-success { border-left-color: #44ff44; }
+        .module-error { border-left-color: #ff4444; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Отладка загрузки модулей M2</h1>
+
+    <div class="status" id="status">Инициализация...</div>
+
+    <div class="log" id="log">
+        Ожидание запуска отладки...
+    </div>
+
+    <script>
+        let logElement = document.getElementById('log');
+        let statusElement = document.getElementById('status');
+
+        function log(message, type = 'info') {
+            console.log(message);
+            const timestamp = new Date().toLocaleTimeString();
+            const logLine = `[${timestamp}] ${message}\n`;
+            logElement.innerHTML += `<span class="${type}">${logLine}</span>`;
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+
+        function updateStatus(text) {
+            statusElement.textContent = text;
+        }
+
+        // Перехватываем ошибки
+        window.addEventListener('error', (event) => {
+            log(`❌ ОШИБКА: ${event.message} в ${event.filename}:${event.lineno}`, 'error');
+        });
+
+        window.addEventListener('unhandledrejection', (event) => {
+            log(`❌ НЕОБРАБОТАННАЯ ОШИБКА: ${event.reason}`, 'error');
+        });
+
+        // Отслеживаем загрузку скриптов
+        const originalCreateElement = document.createElement;
+        document.createElement = function(tagName) {
+            const element = originalCreateElement.call(this, tagName);
+
+            if (tagName.toLowerCase() === 'script') {
+                element.addEventListener('load', () => {
+                    if (element.src) {
+                        log(`✅ Скрипт загружен: ${element.src.split('/').pop()}`, 'success');
+                    }
+                });
+
+                element.addEventListener('error', () => {
+                    if (element.src) {
+                        log(`❌ Ошибка загрузки скрипта: ${element.src.split('/').pop()}`, 'error');
+                    }
+                });
+            }
+
+            return element;
+        };
+
+        async function testModuleLoading() {
+            log('🚀 Начинаем тестирование загрузки модулей', 'info');
+            updateStatus('Тестирование модулей...');
+
+            // Список модулей для тестирования
+            const modules = [
+                'version-manager.js',
+                'monitoring-system.js',
+                'visitor-counter.js',
+                'auto-updater.js',
+                'analytics-tracker.js',
+                'metrics-dashboard.js',
+                'external-api.js',
+                'mobile-optimizer.js',
+                'pwa-manager.js',
+                'ai-assistant.js',
+                'dark-theme.js',
+                'advanced-validation.js',
+                'calculation-templates.js',
+                'scenario-comparison.js',
+                'pdf-export.js',
+                'advanced-ux-enhancements.js'
+            ];
+
+            log(`📦 Тестируем ${modules.length} модулей`, 'info');
+
+            let loadedCount = 0;
+            let errorCount = 0;
+
+            // Тестируем каждый модуль по отдельности
+            for (const moduleName of modules) {
+                try {
+                    log(`⏳ Тестируем модуль: ${moduleName}`, 'warning');
+
+                    const response = await fetch(moduleName);
+                    if (response.ok) {
+                        log(`✅ ${moduleName} доступен (${response.status})`, 'success');
+                        loadedCount++;
+                    } else {
+                        log(`❌ ${moduleName} недоступен (${response.status})`, 'error');
+                        errorCount++;
+                    }
+                } catch (error) {
+                    log(`❌ ${moduleName} ошибка: ${error.message}`, 'error');
+                    errorCount++;
+                }
+            }
+
+            log(`📊 Результат: ${loadedCount} успешно, ${errorCount} ошибок`, loadedCount > errorCount ? 'success' : 'error');
+
+            if (loadedCount > 0) {
+                log('🔄 Теперь загружаем основной загрузчик...', 'info');
+                await testMainLoader();
+            }
+        }
+
+        async function testMainLoader() {
+            try {
+                log('📥 Загружаем m2-enhancements-loader.js...', 'info');
+
+                const script = document.createElement('script');
+                script.src = 'm2-enhancements-loader.js';
+
+                script.onload = () => {
+                    log('✅ Основной загрузчик загружен', 'success');
+
+                    setTimeout(() => {
+                        checkLoadedModules();
+                    }, 3000);
+                };
+
+                script.onerror = () => {
+                    log('❌ Ошибка загрузки основного загрузчика', 'error');
+                };
+
+                document.head.appendChild(script);
+
+            } catch (error) {
+                log(`❌ Критическая ошибка: ${error.message}`, 'error');
+            }
+        }
+
+        function checkLoadedModules() {
+            log('🔍 Проверяем загруженные модули в window...', 'info');
+
+            const m2Modules = Object.keys(window).filter(key => key.startsWith('M2'));
+            log(`🎯 Найдено M2 модулей в window: ${m2Modules.length}`, m2Modules.length > 0 ? 'success' : 'warning');
+
+            if (m2Modules.length > 0) {
+                m2Modules.forEach(moduleName => {
+                    log(`  📦 ${moduleName}`, 'success');
+                });
+            }
+
+            if (window.m2Enhancements) {
+                log('✅ Загрузчик m2Enhancements найден', 'success');
+
+                if (window.m2Enhancements.loadedModules) {
+                    const loadedModules = Array.from(window.m2Enhancements.loadedModules);
+                    log(`📊 Загружено модулей в системе: ${loadedModules.length}`, 'info');
+                    loadedModules.forEach(module => {
+                        log(`  ✅ ${module}`, 'success');
+                    });
+                }
+            } else {
+                log('❌ Загрузчик m2Enhancements НЕ найден', 'error');
+            }
+
+            updateStatus(`Готово: ${m2Modules.length} модулей обнаружено`);
+        }
+
+        // Запускаем тестирование
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                testModuleLoading();
+            }, 1000);
+        });
+
+        log('🔧 Отладчик модулей M2 готов', 'success');
+    </script>
+</body>
+</html>
