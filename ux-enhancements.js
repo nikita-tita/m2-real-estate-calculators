@@ -164,19 +164,7 @@ class UXEnhancer {
         const inputs = document.querySelectorAll('input[type="number"], input[type="text"], select');
         
         inputs.forEach(input => {
-            // Добавляем обработчики для визуальной обратной связи
-            input.addEventListener('focus', (e) => {
-                e.target.style.transform = 'scale(1.02)';
-                e.target.style.boxShadow = '0 0 0 3px rgba(52, 22, 182, 0.1)';
-            });
-            
-            input.addEventListener('blur', (e) => {
-                e.target.style.transform = '';
-                e.target.style.boxShadow = '';
-                e.target.classList.remove('calculating');
-            });
-            
-            // Добавляем дебаунсинг для input событий
+            // Добавляем только дебаунсинг для input событий без визуальных эффектов
             input.addEventListener('input', (e) => {
                 e.target.classList.add('calculating');
                 
