@@ -46,7 +46,7 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            background: #f9fafb;
             color: #333;
             line-height: 1.6;
             min-height: 100vh;
@@ -58,12 +58,14 @@
         }
 
         .hero-section {
-            background: linear-gradient(135deg, #3416b6 0%, #4726d6 100%);
+            background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
             color: white;
-            padding: 80px 20px;
+            padding: 100px 20px;
             text-align: center;
             position: relative;
             overflow: hidden;
+            border-radius: 0 0 30px 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
 
         .hero-section::before {
@@ -85,14 +87,18 @@
         }
 
         .hero-title {
-            font-size: 48px;
-            font-weight: 700;
+            font-size: 52px;
+            font-weight: 800;
             margin-bottom: 20px;
             letter-spacing: -1px;
+            background: linear-gradient(90deg, #ffffff, #e0e0e0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
         .hero-subtitle {
-            font-size: 24px;
+            font-size: 26px;
             margin-bottom: 30px;
             opacity: 0.95;
             font-weight: 300;
@@ -103,6 +109,7 @@
             max-width: 800px;
             margin: 0 auto 40px;
             opacity: 0.9;
+            line-height: 1.8;
         }
 
         .stats-grid {
@@ -185,14 +192,22 @@
 
         .calculator-card {
             background: white;
-            border-radius: 16px;
+            border-radius: 20px;
             padding: 30px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 1px solid #f0f0f0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            border: none;
             position: relative;
             overflow: hidden;
             cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .calculator-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
         }
         
         .calculator-card::after {
@@ -953,10 +968,7 @@
             });
 
             // Анимация появления карточек при скролле
-            const observerOptions = {
-                threshold: 0.1,
-                rootMargin: '0px 0px -50px 0px'
-            };
+            // Используем существующий observerOptions, объявленный выше
 
             const observer = new IntersectionObserver(function(entries) {
                 entries.forEach(entry => {
