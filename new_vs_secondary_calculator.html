@@ -943,15 +943,22 @@
             const customParams = getCustomParametersTotal();
 
             // Расчеты для новостройки
-            const waitingCost = currentRent * newBuildDelivery; // затраты на аренду
-            const newBuildGrowth = Math.pow(1 + priceGrowthNew / 100, newBuildDelivery / 12);
-            const newBuildFuturePrice = newBuildPrice * newBuildGrowth;
-            
-            const newBuildDownPayment = newBuildFuturePrice * (downPaymentPercent / 100);
-            const newBuildLoanAmount = newBuildFuturePrice - newBuildDownPayment;
+            const waitingCost = currentRent * newBuildDelivery; // затраты на аренду во время ожидания
+
+            // ИСПРАВЛЕНО: Цена по ДДУ фиксируется при покупке и НЕ растёт до сдачи
+            // Покупная цена остаётся той же
+            const purchasePrice = newBuildPrice;
+
+            // Рыночная стоимость после сдачи (для оценки инвестиционной привлекательности)
+            // Рост начинается только ПОСЛЕ сдачи объекта
+            const monthsAfterDelivery = Math.max(0, 12 - newBuildDelivery); // Сколько месяцев прошло после сдачи за первый год
+            const newBuildMarketValue = purchasePrice * Math.pow(1 + priceGrowthNew / 100, monthsAfterDelivery / 12);
+
+            const newBuildDownPayment = purchasePrice * (downPaymentPercent / 100);
+            const newBuildLoanAmount = purchasePrice - newBuildDownPayment;
             const newBuildMonthlyPayment = calculateMortgagePayment(newBuildLoanAmount, mortgageRate, loanTerm);
-            
-            const newBuildTotal = newBuildPrice + newBuildRenovation + legalCosts + waitingCost + customParams.newTotal;
+
+            const newBuildTotal = purchasePrice + newBuildRenovation + legalCosts + waitingCost + customParams.newTotal;
 
             // Расчеты для вторички  
             const secondaryTotalPrice = secondaryPrice + secondaryRenovation + legalCosts + customParams.secondaryTotal;
@@ -963,7 +970,7 @@
             document.getElementById('newBuildTotal').textContent = formatNumber(newBuildTotal) + ' ₽';
             document.getElementById('newBuildPayment').textContent = formatNumber(newBuildMonthlyPayment) + ' ₽';
             document.getElementById('newBuildWaiting').textContent = formatNumber(waitingCost) + ' ₽';
-            document.getElementById('newBuildFuture').textContent = formatNumber(newBuildFuturePrice) + ' ₽';
+            document.getElementById('newBuildFuture').textContent = formatNumber(newBuildMarketValue) + ' ₽';
 
             // Обновление результатов вторички
             document.getElementById('secondaryTotal').textContent = formatNumber(secondaryTotalPrice) + ' ₽';

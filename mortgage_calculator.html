@@ -1094,11 +1094,38 @@
         function calculateMortgage() {
             const propertyPrice = parseFloat(document.getElementById('propertyPrice').value) || 0;
             const downPayment = parseFloat(document.getElementById('downPayment').value) || 0;
-            const interestRate = parseFloat(document.getElementById('interestRate').value) || 0;
+            const maternalCapital = parseFloat(document.getElementById('maternalCapital').value) || 0;
+            let interestRate = parseFloat(document.getElementById('interestRate').value) || 0;
             const loanTerm = parseFloat(document.getElementById('loanTerm').value) || 0;
             const paymentType = document.getElementById('paymentType').value;
+            const subsidyType = document.getElementById('subsidyType').value;
 
-            const loanAmount = propertyPrice - downPayment;
+            // Применяем субсидии к процентной ставке
+            if (subsidyType === 'family') {
+                interestRate = Math.min(interestRate, 6.0); // Семейная ипотека до 6%
+            } else if (subsidyType === 'it') {
+                interestRate = Math.min(interestRate, 5.0); // IT-ипотека до 5%
+            } else if (subsidyType === 'military') {
+                interestRate = 5.9; // Военная ипотека фиксированная ставка
+            } else if (subsidyType === 'rural') {
+                interestRate = Math.min(interestRate, 3.0); // Сельская ипотека до 3%
+            } else if (subsidyType === 'dv') {
+                interestRate = Math.min(interestRate, 2.0); // Дальневосточная до 2%
+            }
+
+            // Проверка минимального первоначального взноса (15% собственных средств)
+            const minDownPaymentPercent = 0.15;
+            const minDownPayment = propertyPrice * minDownPaymentPercent;
+
+            if (downPayment < minDownPayment) {
+                alert(`Требуется минимум ${Math.round(minDownPaymentPercent * 100)}% (${formatNumber(minDownPayment)} ₽) собственных средств в первоначальном взносе`);
+                return;
+            }
+
+            // Материнский капитал добавляется к первоначальному взносу
+            const totalDownPayment = downPayment + maternalCapital;
+            const loanAmount = propertyPrice - totalDownPayment;
+
             const monthlyRate = interestRate / 100 / 12;
             const numberOfPayments = loanTerm * 12;
 

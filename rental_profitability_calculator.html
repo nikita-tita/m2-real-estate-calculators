@@ -1034,9 +1034,29 @@
             
             const annualNetIncome = monthlyNetIncome * 12;
             const netYield = (annualNetIncome / initialInvestment) * 100;
-            
+
+            // Общая доходность с учётом роста стоимости недвижимости
             const totalReturn = netYield + appreciation;
-            const paybackPeriod = initialInvestment / annualNetIncome;
+
+            // Срок окупаемости с учётом роста стоимости: уменьшается благодаря приросту капитала
+            // Формула: находим год, когда сумма доходов + прирост стоимости >= первоначальным инвестициям
+            let cumulativeReturn = 0;
+            let paybackPeriod = 0;
+            for (let year = 1; year <= 50; year++) {
+                const yearlyRentalIncome = annualNetIncome;
+                const propertyValueGrowth = initialInvestment * (Math.pow(1 + appreciation / 100, year) - 1);
+                cumulativeReturn = (yearlyRentalIncome * year) + propertyValueGrowth;
+
+                if (cumulativeReturn >= initialInvestment) {
+                    paybackPeriod = year;
+                    break;
+                }
+            }
+
+            // Если не окупается за 50 лет, используем упрощённую формулу
+            if (paybackPeriod === 0) {
+                paybackPeriod = initialInvestment / (annualNetIncome + (initialInvestment * appreciation / 100));
+            }
 
             document.getElementById('basicNetYield').textContent = formatPercent(netYield);
             document.getElementById('grossYield').textContent = formatPercent(grossYield);

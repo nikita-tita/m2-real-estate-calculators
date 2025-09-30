@@ -490,14 +490,16 @@
 
             const savings = baseTotalInterest - newTotalInterest;
             const timeSaved = (baseMonths - newMonths) / 12;
-            const totalSaved = savings + (extraPayment * newMonths);
+
+            // ИСПРАВЛЕНО: убран двойной учёт - экономия уже включена в разницу процентов
+            const totalSaved = savings;
             const payoffYears = newMonths / 12;
 
             // Обновляем отображение
             document.getElementById('savings').textContent = formatCurrency(savings);
             document.getElementById('newPayment').textContent = formatCurrency(newPayment);
             document.getElementById('timeSaved').textContent = timeSaved.toFixed(1) + ' года';
-            document.getElementById('totalSaved').textContent = formatCurrency(savings);
+            document.getElementById('totalSaved').textContent = formatCurrency(totalSaved);
             document.getElementById('payoffTime').textContent = payoffYears.toFixed(1) + ' года';
         }
 

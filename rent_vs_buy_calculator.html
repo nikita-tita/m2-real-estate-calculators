@@ -657,6 +657,16 @@
                         <label class="input-label" for="transactionCosts">Расходы на покупку (нотариус, риэлтор)</label>
                         <input type="number" id="transactionCosts" class="input-field" value="400000" min="0" step="10000">
                     </div>
+
+                    <div class="input-group">
+                        <label class="input-label" for="taxDeduction">Налоговый вычет (13% до 2 млн + 3 млн процентов)</label>
+                        <input type="number" id="taxDeduction" class="input-field" value="650000" min="0" step="10000">
+                        <div class="quick-buttons">
+                            <button class="quick-btn" onclick="setValue('taxDeduction', 0)">Нет</button>
+                            <button class="quick-btn" onclick="setValue('taxDeduction', 260000)">260 тыс</button>
+                            <button class="quick-btn active" onclick="setValue('taxDeduction', 650000)">650 тыс</button>
+                        </div>
+                    </div>
                     </div>
                 </div>
 
@@ -901,6 +911,7 @@
             const propertyTax = parseFloat(document.getElementById('propertyTax').value) || 0;
             const investmentReturn = parseFloat(document.getElementById('investmentReturn').value) || 0;
             const transactionCosts = parseFloat(document.getElementById('transactionCosts').value) || 0;
+            const taxDeduction = parseFloat(document.getElementById('taxDeduction').value) || 0;
             const comparisonPeriod = parseFloat(document.getElementById('comparisonPeriod').value) || 0;
 
             if (propertyPrice <= 0 || monthlyRent <= 0 || comparisonPeriod <= 0) {
@@ -919,22 +930,45 @@
             const utilityCost = totalRentCost * 0.15;
             totalRentCost += utilityCost;
 
-            // Add opportunity cost of down payment
-            const opportunityCost = downPayment * Math.pow(1 + investmentReturn / 100, comparisonPeriod) - downPayment;
-            totalRentCost += opportunityCost;
-
             // Calculate buy costs
             const loanAmount = propertyPrice - downPayment;
             const monthlyRate = mortgageRate / 100 / 12;
             const numberOfPayments = 30 * 12; // Assuming 30-year mortgage
-            
+
             let monthlyPayment = 0;
             if (loanAmount > 0 && monthlyRate > 0) {
-                monthlyPayment = loanAmount * (monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments)) / 
+                monthlyPayment = loanAmount * (monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments)) /
                                 (Math.pow(1 + monthlyRate, numberOfPayments) - 1);
             }
 
-            const mortgagePayments = Math.min(monthlyPayment * 12 * comparisonPeriod, loanAmount * 1.5); // Cap at reasonable total
+            // ИСПРАВЛЕНО: убрано искусственное ограничение, которое искажало долгосрочные расчёты
+            const mortgagePayments = monthlyPayment * 12 * comparisonPeriod;
+
+            // Упущенная выгода от первоначального взноса
+            const downPaymentOpportunityCost = downPayment * Math.pow(1 + investmentReturn / 100, comparisonPeriod) - downPayment;
+
+            // ИСПРАВЛЕНО: Упущенная выгода от ежемесячной разницы в платежах
+            // Если аренда дешевле ипотеки, эта разница могла бы быть инвестирована
+            let monthlySavingsOpportunityCost = 0;
+            let tempRent = monthlyRent;
+            for (let year = 1; year <= comparisonPeriod; year++) {
+                const yearlyRent = tempRent * 12;
+                const yearlyMortgage = monthlyPayment * 12;
+                const yearlyDifference = yearlyMortgage - yearlyRent;
+
+                if (yearlyDifference > 0) {
+                    // Если ипотека дороже аренды, инвестируем разницу
+                    const yearsRemaining = comparisonPeriod - year;
+                    const futureValue = yearlyDifference * Math.pow(1 + investmentReturn / 100, yearsRemaining);
+                    monthlySavingsOpportunityCost += futureValue;
+                }
+
+                tempRent *= (1 + rentGrowth / 100);
+            }
+
+            // Общая упущенная выгода при аренде
+            const totalOpportunityCost = downPaymentOpportunityCost + monthlySavingsOpportunityCost;
+            totalRentCost += totalOpportunityCost;
             const maintenanceTotal = maintenanceCost * 12 * comparisonPeriod;
             const propertyTaxTotal = propertyTax * comparisonPeriod;
             
@@ -948,8 +982,9 @@
                 capitalGainsTax = grossAppreciation * 0.13; // 13% подоходный налог
             }
             const netAppreciation = grossAppreciation - capitalGainsTax;
-            
-            const totalBuyCost = downPayment + mortgagePayments + maintenanceTotal + propertyTaxTotal + transactionCosts - netAppreciation;
+
+            // ИСПРАВЛЕНО: Добавлен налоговый вычет при покупке (260 тыс с покупки + до 390 тыс с процентов)
+            const totalBuyCost = downPayment + mortgagePayments + maintenanceTotal + propertyTaxTotal + transactionCosts - netAppreciation - taxDeduction;
 
             // Calculate savings and winner
             const savings = totalRentCost - totalBuyCost;
