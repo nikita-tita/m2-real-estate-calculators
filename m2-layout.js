@@ -1,0 +1,153 @@
+// M2 Layout Components - Header & Footer injection
+(function() {
+    'use strict';
+
+    const headerHTML = `
+    <header class="m2-header">
+        <div class="m2-header-content">
+            <div class="m2-header-logo">
+                <a href="https://m2.ru/">
+                    <svg width="58" height="52" viewBox="0 0 58 52" fill="none">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M17 0H58V41H41V52H0V11H17V0Z" fill="#3216B5"></path>
+                        <path d="M44.157 27.392V24.6531H37.5997V24.6298C39.9124 23.6013 43.9483 21.8471 43.9483 18.1997C43.9483 15.3184 41.5538 12.8572 38.1712 12.8572C34.7887 12.8572 33.0611 15.1883 32.3001 17.2899L34.8036 18.2698C35.3685 16.5165 36.363 15.4468 38.1945 15.4468C39.794 15.4468 41.1117 16.6404 40.9809 18.223C40.8122 20.2646 38.6293 21.7447 36.6206 22.8487C35.0867 23.692 32.7112 24.889 32.7112 24.889V27.392H44.157Z" fill="white"></path>
+                        <path d="M12.0522 24.663V38.3574H15.0083V28.0866L19.2383 38.3574H21.4807L25.6344 28.0866V38.3574H28.6158V24.663H24.3094L20.334 34.4851L16.3333 24.663H12.0522Z" fill="white"></path>
+                    </svg>
+                </a>
+            </div>
+            <nav class="m2-header-nav">
+                <div class="m2-header-nav-menu">
+                    <a href="https://m2.ru/moskva/novostroyki/" class="m2-header-nav-link">Новостройки</a>
+                    <a href="https://m2.ru/ipoteka/" class="m2-header-nav-link">Ипотека</a>
+                    <a href="https://m2.ru/services/deal/" class="m2-header-nav-link">Сделка</a>
+                    <a href="/" class="m2-header-nav-link m2-header-nav-link-active">Калькуляторы</a>
+                </div>
+            </nav>
+            <div class="m2-header-actions">
+                <a href="https://m2.ru/login/" class="m2-header-login-btn">Войти</a>
+            </div>
+        </div>
+    </header>`;
+
+    const footerHTML = `
+    <footer class="m2-footer">
+        <div class="m2-footer-content">
+            <div class="m2-footer-main">
+                <div class="m2-footer-section">
+                    <div class="m2-footer-logo">
+                        <svg width="48" height="42" viewBox="0 0 58 52" fill="none">
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M17 0H58V41H41V52H0V11H17V0Z" fill="#3216B5"></path>
+                            <path d="M44.157 27.392V24.6531H37.5997V24.6298C39.9124 23.6013 43.9483 21.8471 43.9483 18.1997C43.9483 15.3184 41.5538 12.8572 38.1712 12.8572C34.7887 12.8572 33.0611 15.1883 32.3001 17.2899L34.8036 18.2698C35.3685 16.5165 36.363 15.4468 38.1945 15.4468C39.794 15.4468 41.1117 16.6404 40.9809 18.223C40.8122 20.2646 38.6293 21.7447 36.6206 22.8487C35.0867 23.692 32.7112 24.889 32.7112 24.889V27.392H44.157Z" fill="white"></path>
+                            <path d="M12.0522 24.663V38.3574H15.0083V28.0866L19.2383 38.3574H21.4807L25.6344 28.0866V38.3574H28.6158V24.663H24.3094L20.334 34.4851L16.3333 24.663H12.0522Z" fill="white"></path>
+                        </svg>
+                    </div>
+                    <p class="m2-footer-description">М2 — экосистема для поиска и покупки недвижимости</p>
+                    <div class="m2-footer-contacts">
+                        <p><strong>Москва:</strong> +7 495 136-28-18</p>
+                        <p><strong>СПб:</strong> +7 495 230-00-21</p>
+                        <p>adv@m2.ru</p>
+                    </div>
+                    <div class="m2-footer-social">
+                        <a href="https://vk.com/metr_kvadratnyy" target="_blank" rel="noopener" aria-label="VK">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12.785 16.241s.288-.032.436-.191c.136-.146.132-.42.132-.42s-.019-1.284.564-1.472c.575-.186 1.315 1.24 2.099 1.788.592.415 1.042.324 1.042.324l2.095-.029s1.095-.069.576-.95c-.043-.072-.304-.656-1.564-1.855-1.32-1.255-1.143-1.052.447-3.222.968-1.32 1.354-2.126 1.234-2.472-.115-.33-.826-.243-.826-.243l-2.357.015s-.175-.024-.304.055c-.127.077-.209.257-.209.257s-.374 1.019-.873 1.885c-1.052 1.826-1.473 1.924-1.646 1.81-.4-.267-.3-1.073-.3-1.645 0-1.788.265-2.532-.516-2.724-.26-.064-.451-.106-1.116-.113-.853-.009-1.575.003-1.984.208-.272.136-.482.44-.354.457.158.022.516.099.706.364.245.342.236 1.11.236 1.11s.141 2.104-.329 2.365c-.322.179-.764-.186-1.713-1.852-.486-.839-.853-1.767-.853-1.767s-.071-.177-.198-.272c-.154-.115-.369-.152-.369-.152l-2.238.015s-.336.01-.46.159c-.11.132-.009.405-.009.405s1.755 4.199 3.742 6.316c1.825 1.946 3.895 1.816 3.895 1.816h.94z"/>
+                            </svg>
+                        </a>
+                        <a href="https://t.me/metrkvadratny/" target="_blank" rel="noopener" aria-label="Telegram">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.11.02-1.93 1.23-5.45 3.61-.52.36-.99.53-1.42.52-.47-.01-1.37-.26-2.03-.48-.82-.27-1.47-.42-1.42-.88.03-.24.37-.49 1.02-.74 4-1.74 6.68-2.89 8.03-3.45 3.82-1.59 4.61-1.87 5.13-1.87.11 0 .37.03.53.16.14.11.17.26.19.37-.01.06.01.24 0 .38z"/>
+                            </svg>
+                        </a>
+                        <a href="https://dzen.ru/metr_kvadratnyy" target="_blank" rel="noopener" aria-label="Дзен">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8zm-1-13h2v6h-2V7zm0 8h2v2h-2v-2z"/>
+                            </svg>
+                        </a>
+                        <a href="https://www.youtube.com/@m2ru" target="_blank" rel="noopener" aria-label="YouTube">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M21.58 7.19c-.23-.86-.91-1.54-1.77-1.77C18.25 5 12 5 12 5s-6.25 0-7.81.42c-.86.23-1.54.91-1.77 1.77C2 8.75 2 12 2 12s0 3.25.42 4.81c.23.86.91 1.54 1.77 1.77C5.75 19 12 19 12 19s6.25 0 7.81-.42c.86-.23 1.54-.91 1.77-1.77C22 15.25 22 12 22 12s0-3.25-.42-4.81zM10 15V9l5.2 3-5.2 3z"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                <div class="m2-footer-section">
+                    <h3 class="m2-footer-title">Сервисы</h3>
+                    <ul class="m2-footer-links">
+                        <li><a href="https://m2.ru/moskva/novostroyki/">Новостройки</a></li>
+                        <li><a href="https://m2.ru/ipoteka/">Ипотека</a></li>
+                        <li><a href="https://m2.ru/services/deal/">Сделка</a></li>
+                        <li><a href="https://m2.ru/services/guaranteed-deal/">Защита сделки</a></li>
+                        <li><a href="https://m2.ru/services/proverka-yuridicheskoy-chistoty-kvartiry/">Проверка недвижимости</a></li>
+                        <li><a href="https://m2.ru/ipoteka/calculator/">Ипотечный калькулятор</a></li>
+                    </ul>
+                </div>
+                <div class="m2-footer-section">
+                    <h3 class="m2-footer-title">Партнёрам</h3>
+                    <ul class="m2-footer-links">
+                        <li><a href="https://m2.ru/rieltoram/">Риелторам</a></li>
+                        <li><a href="https://m2.ru/partners/">Застройщикам</a></li>
+                        <li><a href="https://m2.ru/rieltoram/online-sdelka/">Онлайн-сделка</a></li>
+                        <li><a href="https://m2.ru/rieltoram/sbr/">Безопасные расчёты</a></li>
+                    </ul>
+                </div>
+                <div class="m2-footer-section">
+                    <h3 class="m2-footer-title">Компания</h3>
+                    <ul class="m2-footer-links">
+                        <li><a href="https://m2.ru/about/">О компании</a></li>
+                        <li><a href="https://m2.ru/career/">Карьера</a></li>
+                        <li><a href="https://m2.ru/press/">Пресс-центр</a></li>
+                        <li><a href="https://m2.ru/contacts/">Контакты</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="m2-footer-bottom">
+                <div class="m2-footer-legal">
+                    <p>© 2012–2025 ООО «Метр квадратный»</p>
+                    <p>
+                        <a href="https://m2.ru/terms/">Пользовательское соглашение</a>
+                        <span class="m2-footer-separator">|</span>
+                        <a href="https://m2.ru/privacy/">Политика конфиденциальности</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>`;
+
+    // Inject header at the beginning of body
+    function injectHeader() {
+        const body = document.body;
+        if (body && !document.querySelector('.m2-header')) {
+            body.insertAdjacentHTML('afterbegin', headerHTML);
+        }
+    }
+
+    // Inject footer at the end of body
+    function injectFooter() {
+        const body = document.body;
+        if (body && !document.querySelector('.m2-footer')) {
+            body.insertAdjacentHTML('beforeend', footerHTML);
+        }
+    }
+
+    // Load CSS if not already loaded
+    function loadM2CSS() {
+        if (!document.querySelector('link[href="m2-theme.css"]')) {
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = 'm2-theme.css';
+            document.head.appendChild(link);
+        }
+    }
+
+    // Initialize on DOM ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() {
+            loadM2CSS();
+            injectHeader();
+            injectFooter();
+        });
+    } else {
+        loadM2CSS();
+        injectHeader();
+        injectFooter();
+    }
+})();
