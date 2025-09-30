@@ -1,0 +1,228 @@
+<!-- M2.ru Header Component -->
+<header class="m2-header">
+    <div class="m2-header-content">
+        <!-- Logo -->
+        <div class="m2-header-logo">
+            <a href="https://m2.ru/">
+                <svg width="58" height="52" viewBox="0 0 58 52" fill="none">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M17 0H58V41H41V52H0V11H17V0Z" fill="#3216B5"></path>
+                    <path d="M44.157 27.392V24.6531H37.5997V24.6298C39.9124 23.6013 43.9483 21.8471 43.9483 18.1997C43.9483 15.3184 41.5538 12.8572 38.1712 12.8572C34.7887 12.8572 33.0611 15.1883 32.3001 17.2899L34.8036 18.2698C35.3685 16.5165 36.363 15.4468 38.1945 15.4468C39.794 15.4468 41.1117 16.6404 40.9809 18.223C40.8122 20.2646 38.6293 21.7447 36.6206 22.8487C35.0867 23.692 32.7112 24.889 32.7112 24.889V27.392H44.157Z" fill="white"></path>
+                    <path d="M12.0522 24.663V38.3574H15.0083V28.0866L19.2383 38.3574H21.4807L25.6344 28.0866V38.3574H28.6158V24.663H24.3094L20.334 34.4851L16.3333 24.663H12.0522Z" fill="white"></path>
+                </svg>
+            </a>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="m2-header-nav">
+            <div class="m2-header-nav-tabs">
+                <a href="https://m2.ru/" class="m2-header-nav-tab m2-header-nav-tab-active">Частным лицам</a>
+                <a href="https://m2.ru/rieltoram/" class="m2-header-nav-tab">Риелторам и агентствам</a>
+                <a href="https://m2.ru/partners/" class="m2-header-nav-tab">Партнёрам</a>
+            </div>
+
+            <div class="m2-header-nav-menu">
+                <a href="https://m2.ru/moskva/novostroyki/" class="m2-header-nav-link">Новостройки</a>
+
+                <div class="m2-header-nav-dropdown">
+                    <button class="m2-header-nav-link">Ипотека</button>
+                    <div class="m2-header-nav-dropdown-content">
+                        <a href="https://m2.ru/ipoteka/">Подать заявку</a>
+                        <a href="https://m2.ru/ipoteka/calculator/">Ипотечный калькулятор</a>
+                        <a href="https://m2.ru/ipoteka/stroitelstvo-doma/">Ипотека на строительство дома</a>
+                        <a href="https://m2.ru/ipoteka/semeinaya-ipoteka/">Семейная ипотека</a>
+                        <a href="https://m2.ru/ipoteka/refinansirovanie-ipoteki/">Рефинансирование ипотеки</a>
+                        <a href="https://m2.ru/ipoteka/lgotnaya-s-gospodderzhkoy/">Ипотека с господдержкой</a>
+                        <a href="https://m2.ru/ipoteka/na-zhile-na-pervichnom-rynke/">Ипотека на первичное жильё</a>
+                        <a href="https://m2.ru/ipoteka/na-zhile-na-vtorichnom-rynke/">Ипотека на вторичное жильё</a>
+                    </div>
+                </div>
+
+                <a href="https://m2.ru/services/deal/" class="m2-header-nav-link">Сделка</a>
+
+                <div class="m2-header-nav-dropdown">
+                    <button class="m2-header-nav-link">Юридические сервисы</button>
+                    <div class="m2-header-nav-dropdown-content">
+                        <a href="https://m2.ru/services/guaranteed-deal/">Защита сделки</a>
+                        <a href="https://m2.ru/services/proverka-yuridicheskoy-chistoty-kvartiry/">Проверка недвижимости</a>
+                        <a href="https://m2.ru/services/checkup/">Экспресс-проверка</a>
+                        <a href="https://m2.ru/legal-advice/">Консультация с юристом</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- User Actions -->
+        <div class="m2-header-actions">
+            <a href="https://m2.ru/login/" class="m2-header-login-btn">Войти</a>
+        </div>
+    </div>
+</header>
+
+<style>
+.m2-header {
+    background: #FFFFFF;
+    border-bottom: 1px solid #E1E1E3;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(26, 27, 34, 0.05);
+}
+
+.m2-header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 64px;
+}
+
+.m2-header-logo {
+    display: flex;
+    align-items: center;
+}
+
+.m2-header-logo svg {
+    width: 48px;
+    height: auto;
+}
+
+.m2-header-nav {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    margin-left: 40px;
+}
+
+.m2-header-nav-tabs {
+    display: flex;
+    gap: 32px;
+    margin-bottom: 8px;
+}
+
+.m2-header-nav-tab {
+    color: #797981;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 8px 0;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.m2-header-nav-tab:hover {
+    color: #4F2CD9;
+}
+
+.m2-header-nav-tab-active {
+    color: #1A1B22;
+    border-bottom-color: #4F2CD9;
+}
+
+.m2-header-nav-menu {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+}
+
+.m2-header-nav-link {
+    color: #1A1B22;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 500;
+    padding: 8px 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.m2-header-nav-link:hover {
+    color: #4F2CD9;
+}
+
+.m2-header-nav-dropdown {
+    position: relative;
+}
+
+.m2-header-nav-dropdown-content {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: #FFFFFF;
+    border: 1px solid #E1E1E3;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(26, 27, 34, 0.08);
+    min-width: 250px;
+    padding: 8px 0;
+    margin-top: 8px;
+    z-index: 1000;
+}
+
+.m2-header-nav-dropdown:hover .m2-header-nav-dropdown-content {
+    display: block;
+}
+
+.m2-header-nav-dropdown-content a {
+    display: block;
+    padding: 12px 20px;
+    color: #1A1B22;
+    text-decoration: none;
+    font-size: 14px;
+    transition: background 0.2s ease;
+}
+
+.m2-header-nav-dropdown-content a:hover {
+    background: #F6F5FF;
+    color: #4F2CD9;
+}
+
+.m2-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.m2-header-login-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 10px 20px;
+    background: #4F2CD9;
+    color: #FFFFFF;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+}
+
+.m2-header-login-btn:hover {
+    background: #3F23AE;
+}
+
+@media (max-width: 1024px) {
+    .m2-header-nav-tabs {
+        display: none;
+    }
+
+    .m2-header-nav {
+        margin-left: 20px;
+    }
+
+    .m2-header-nav-menu {
+        gap: 16px;
+    }
+}
+
+@media (max-width: 768px) {
+    .m2-header-nav-menu {
+        display: none;
+    }
+
+    .m2-header-content {
+        min-height: 56px;
+    }
+}
+</style>

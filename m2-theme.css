@@ -1,0 +1,203 @@
+/* M2 Theme CSS - Based on m2.ru design */
+:root {
+  /* Основные цвета */
+  --m2-purple: #4F2CD9;
+  --m2-purple-light: #6A4DFF;
+  --m2-purple-hover: #3F23AE;
+  --m2-purple-bg: #F6F5FF;
+  
+  /* Текст */
+  --m2-text-dark: #1A1B22;
+  --m2-text-gray: #797981;
+  --m2-text-light: #AAAAB4;
+  
+  /* Фоны и границы */
+  --m2-white: #FFFFFF;
+  --m2-bg-light: #F8F8F9;
+  --m2-border-light: #E1E1E3;
+  --m2-border-focus: #4F2CD9;
+  
+  /* Акцентные цвета */
+  --m2-blue: #2C7EF8;
+  --m2-orange: #FF4F37;
+  --m2-green: #00C27D;
+  
+  /* Тени */
+  --m2-shadow-sm: 0 2px 4px rgba(26, 27, 34, 0.05);
+  --m2-shadow-md: 0 4px 8px rgba(26, 27, 34, 0.08);
+  --m2-shadow-lg: 0 8px 16px rgba(26, 27, 34, 0.12);
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+  background-color: var(--m2-white);
+  color: var(--m2-text-dark);
+  line-height: 1.5;
+}
+
+.header {
+  background-color: var(--m2-purple-bg);
+  padding: 16px 0;
+  border-bottom: none;
+  box-shadow: none;
+}
+
+.logo {
+  color: var(--m2-purple);
+  font-weight: 700;
+}
+
+/* Input fields */
+.input-field, 
+input[type="text"], 
+input[type="number"], 
+input[type="email"],
+select {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid var(--m2-border-light);
+  border-radius: 12px;
+  font-size: 16px;
+  line-height: 1.4;
+  color: var(--m2-text-dark);
+  background-color: var(--m2-white);
+  transition: all 0.2s ease;
+}
+
+.input-field:hover,
+input:hover,
+select:hover {
+  border-color: var(--m2-text-light);
+}
+
+.input-field:focus,
+input:focus,
+select:focus {
+  outline: none;
+  border-color: var(--m2-border-focus);
+  box-shadow: var(--m2-shadow-sm);
+}
+
+.input-label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--m2-text-gray);
+  font-weight: 500;
+}
+
+/* Buttons */
+.button,
+button,
+input[type="button"],
+input[type="submit"] {
+  background-color: var(--m2-purple);
+  color: var(--m2-white);
+  border: none;
+  border-radius: 12px;
+  padding: 14px 24px;
+  font-size: 16px;
+  line-height: 1.4;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: var(--m2-shadow-sm);
+}
+
+.button:hover,
+button:hover,
+input[type="button"]:hover,
+input[type="submit"]:hover {
+  background-color: var(--m2-purple-hover);
+  box-shadow: var(--m2-shadow-md);
+}
+
+.button-secondary {
+  background-color: var(--m2-white);
+  color: var(--m2-purple);
+  border: 1px solid var(--m2-border-light);
+  box-shadow: none;
+}
+
+.button-secondary:hover {
+  background-color: var(--m2-bg-light);
+  border-color: var(--m2-purple);
+  color: var(--m2-purple-hover);
+}
+
+/* Calculator container */
+.calculator-container {
+  background-color: var(--m2-white);
+  border-radius: 16px;
+  box-shadow: var(--m2-shadow-lg);
+  padding: 32px;
+  margin-bottom: 32px;
+}
+
+.calculator-title {
+  font-size: 28px;
+  line-height: 1.3;
+  font-weight: 700;
+  margin-bottom: 32px;
+  color: var(--m2-text-dark);
+}
+
+.calculator-section {
+  margin-bottom: 32px;
+}
+
+.calculator-section-title {
+  font-size: 20px;
+  line-height: 1.4;
+  font-weight: 600;
+  margin-bottom: 24px;
+  color: var(--m2-text-dark);
+}
+
+/* Results */
+.result-card {
+  background-color: var(--m2-purple-bg);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+  border: 1px solid var(--m2-border-light);
+  transition: all 0.2s ease;
+}
+
+.result-card:hover {
+  box-shadow: var(--m2-shadow-md);
+  border-color: var(--m2-purple-light);
+}
+
+.result-title {
+  font-size: 16px;
+  line-height: 1.4;
+  color: var(--m2-text-gray);
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.result-value {
+  font-size: 24px;
+  line-height: 1.3;
+  font-weight: 700;
+  color: var(--m2-text-dark);
+}
+
+/* Form layout */
+.form-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.form-group {
+  flex: 1;
+}
+
+@media (max-width: 768px) {
+  .form-row {
+    flex-direction: column;
+  }
+}
