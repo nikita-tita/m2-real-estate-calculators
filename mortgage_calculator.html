@@ -807,14 +807,39 @@
                 </div>
 
                 <div class="input-group">
-                    <label class="input-label" for="downPayment">Первоначальный взнос</label>
+                    <label class="input-label" for="downPayment">Первоначальный взнос (собственные средства)</label>
                     <input type="number" id="downPayment" class="input-field" value="2400000" min="0" step="50000">
                     <div class="quick-buttons">
-                        <button class="quick-btn" onclick="setPercentage('downPayment', 10)">10%</button>
+                        <button class="quick-btn" onclick="setPercentage('downPayment', 15)" title="15% - минимум">15%</button>
                         <button class="quick-btn" onclick="setPercentage('downPayment', 20)">20%</button>
                         <button class="quick-btn" onclick="setPercentage('downPayment', 30)">30%</button>
                         <button class="quick-btn" onclick="setPercentage('downPayment', 50)">50%</button>
                     </div>
+                    <small style="color: #666; font-size: 12px; margin-top: 4px; display: block;">Минимум 15% от стоимости недвижимости</small>
+                </div>
+
+                <div class="input-group advanced-features">
+                    <label class="input-label" for="maternalCapital">Материнский капитал</label>
+                    <input type="number" id="maternalCapital" class="input-field" value="0" min="0" step="10000">
+                    <div class="quick-buttons">
+                        <button class="quick-btn" onclick="setValue('maternalCapital', 0)">Нет</button>
+                        <button class="quick-btn" onclick="setValue('maternalCapital', 630000)">630 тыс</button>
+                        <button class="quick-btn" onclick="setValue('maternalCapital', 775000)">775 тыс</button>
+                    </div>
+                    <small style="color: #666; font-size: 12px; margin-top: 4px; display: block;">Добавляется к первоначальному взносу</small>
+                </div>
+
+                <div class="input-group advanced-features">
+                    <label class="input-label" for="subsidyType">Программа субсидий</label>
+                    <select id="subsidyType" class="input-field" onchange="calculateMortgage()">
+                        <option value="none">Нет субсидий</option>
+                        <option value="family">Семейная ипотека (до 6%)</option>
+                        <option value="it">IT-ипотека (до 5%)</option>
+                        <option value="military">Военная ипотека (5.9%)</option>
+                        <option value="rural">Сельская ипотека (до 3%)</option>
+                        <option value="dv">Дальневосточная (до 2%)</option>
+                    </select>
+                    <small style="color: #666; font-size: 12px; margin-top: 4px; display: block;">Автоматически снижает процентную ставку</small>
                 </div>
 
                 <div class="input-group">
@@ -1066,7 +1091,76 @@
         function setPercentage(inputId, percent) {
             const propertyPrice = parseFloat(document.getElementById('propertyPrice').value) || 0;
             const value = Math.round(propertyPrice * percent / 100);
+
+            // Показываем сумму рядом с кнопкой
+            const button = event.target;
+            button.setAttribute('title', formatNumber(value) + ' ₽');
+
             setValue(inputId, value);
+        }
+
+        // Валидация в реальном времени
+        function validateInputs() {
+            const propertyPrice = parseFloat(document.getElementById('propertyPrice').value) || 0;
+            const downPayment = parseFloat(document.getElementById('downPayment').value) || 0;
+            const maternalCapital = parseFloat(document.getElementById('maternalCapital').value) || 0;
+
+            const downPaymentField = document.getElementById('downPayment');
+            const propertyPriceField = document.getElementById('propertyPrice');
+
+            // Проверка 1: Первоначальный взнос не может быть больше стоимости
+            if (downPayment > propertyPrice) {
+                downPaymentField.style.borderColor = '#dc3545';
+                showWarning('Первоначальный взнос не может превышать стоимость недвижимости');
+                return false;
+            }
+
+            // Проверка 2: Минимум 15% собственных средств
+            const minDownPayment = propertyPrice * 0.15;
+            if (downPayment < minDownPayment && propertyPrice > 0) {
+                downPaymentField.style.borderColor = '#ffc107';
+                showWarning(`Рекомендуется минимум 15% (${formatNumber(minDownPayment)} ₽) первоначального взноса`);
+            } else {
+                downPaymentField.style.borderColor = '#dee2e6';
+                hideWarning();
+            }
+
+            // Проверка 3: Стоимость недвижимости в разумных пределах
+            if (propertyPrice > 0 && propertyPrice < 500000) {
+                propertyPriceField.style.borderColor = '#ffc107';
+                showWarning('Слишком низкая стоимость недвижимости. Проверьте введённое значение.');
+            } else {
+                propertyPriceField.style.borderColor = '#dee2e6';
+            }
+
+            return true;
+        }
+
+        function showWarning(message) {
+            let warningDiv = document.getElementById('validationWarning');
+            if (!warningDiv) {
+                warningDiv = document.createElement('div');
+                warningDiv.id = 'validationWarning';
+                warningDiv.style.cssText = 'background: #fff3cd; border: 1px solid #ffc107; color: #856404; padding: 12px 16px; border-radius: 8px; margin: 16px 0; font-size: 14px; display: flex; align-items: center; gap: 8px;';
+                const inputsSection = document.querySelector('.inputs');
+                inputsSection.insertBefore(warningDiv, inputsSection.children[1]);
+            }
+            warningDiv.innerHTML = `
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                    <line x1="12" y1="9" x2="12" y2="13"></line>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+                ${message}
+            `;
+            warningDiv.style.display = 'flex';
+        }
+
+        function hideWarning() {
+            const warningDiv = document.getElementById('validationWarning');
+            if (warningDiv) {
+                warningDiv.style.display = 'none';
+            }
         }
 
         function switchMode(mode) {
@@ -1092,6 +1186,11 @@
         }
 
         function calculateMortgage() {
+            // Валидация перед расчётом
+            if (!validateInputs()) {
+                return; // Прерываем расчёт если валидация не прошла
+            }
+
             const propertyPrice = parseFloat(document.getElementById('propertyPrice').value) || 0;
             const downPayment = parseFloat(document.getElementById('downPayment').value) || 0;
             const maternalCapital = parseFloat(document.getElementById('maternalCapital').value) || 0;
@@ -1324,8 +1423,111 @@
         }
 
         function exportToPDF() {
-            // Use the improved PDF export system
-            exportMortgageToPDF();
+            // Показываем индикатор загрузки
+            const loadingOverlay = document.createElement('div');
+            loadingOverlay.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.7);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                z-index: 10000;
+                color: white;
+                font-size: 18px;
+            `;
+            loadingOverlay.innerHTML = `
+                <div style="text-align: center;">
+                    <div style="width: 50px; height: 50px; border: 4px solid #f3f3f3; border-top: 4px solid #4F2CD9; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px;"></div>
+                    <div>Генерируем PDF...</div>
+                </div>
+            `;
+            document.body.appendChild(loadingOverlay);
+
+            // Добавляем анимацию вращения
+            if (!document.getElementById('pdfSpinnerStyle')) {
+                const spinnerStyle = document.createElement('style');
+                spinnerStyle.id = 'pdfSpinnerStyle';
+                spinnerStyle.textContent = `
+                    @keyframes spin {
+                        0% { transform: rotate(0deg); }
+                        100% { transform: rotate(360deg); }
+                    }
+                `;
+                document.head.appendChild(spinnerStyle);
+            }
+
+            // Даём время на отрисовку индикатора
+            setTimeout(() => {
+                try {
+                    exportMortgageToPDF();
+                    document.body.removeChild(loadingOverlay);
+                    showNotification('PDF успешно сохранён', 'success');
+                } catch (error) {
+                    document.body.removeChild(loadingOverlay);
+                    showNotification('Ошибка при создании PDF: ' + error.message, 'error');
+                    console.error('PDF Export Error:', error);
+                }
+            }, 100);
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            const bgColor = type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#4F2CD9';
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${bgColor};
+                color: white;
+                padding: 16px 24px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                z-index: 10001;
+                font-size: 14px;
+                max-width: 400px;
+                animation: slideInRight 0.3s ease-out;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.animation = 'slideOutRight 0.3s ease-out';
+                setTimeout(() => notification.remove(), 300);
+            }, 4000);
+
+            // Добавляем стили анимации если их ещё нет
+            if (!document.getElementById('notificationStyles')) {
+                const style = document.createElement('style');
+                style.id = 'notificationStyles';
+                style.textContent = `
+                    @keyframes slideInRight {
+                        from {
+                            transform: translateX(400px);
+                            opacity: 0;
+                        }
+                        to {
+                            transform: translateX(0);
+                            opacity: 1;
+                        }
+                    }
+                    @keyframes slideOutRight {
+                        from {
+                            transform: translateX(0);
+                            opacity: 1;
+                        }
+                        to {
+                            transform: translateX(400px);
+                            opacity: 0;
+                        }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
         }
 
         // Дебаунсинг для оптимизации производительности
@@ -1349,14 +1551,80 @@
             }, 150); // Соблюдение порога Доэрти (<400ms)
         }
 
-        // Event listeners с дебаунсингом
-        document.getElementById('propertyPrice').addEventListener('input', debouncedCalculate);
-        document.getElementById('downPayment').addEventListener('input', debouncedCalculate);
-        document.getElementById('interestRate').addEventListener('input', debouncedCalculate);
-        document.getElementById('loanTerm').addEventListener('input', debouncedCalculate);
-        document.getElementById('paymentType').addEventListener('change', calculateMortgage);
+        // Автосохранение в localStorage
+        function saveToLocalStorage() {
+            const data = {
+                propertyPrice: document.getElementById('propertyPrice').value,
+                downPayment: document.getElementById('downPayment').value,
+                maternalCapital: document.getElementById('maternalCapital')?.value || 0,
+                interestRate: document.getElementById('interestRate').value,
+                loanTerm: document.getElementById('loanTerm').value,
+                paymentType: document.getElementById('paymentType').value,
+                subsidyType: document.getElementById('subsidyType')?.value || 'none',
+                timestamp: new Date().toISOString()
+            };
+            try {
+                localStorage.setItem('m2_mortgage_calculator', JSON.stringify(data));
+            } catch (e) {
+                console.warn('Could not save to localStorage:', e);
+            }
+        }
 
-        // Initial calculation
+        function loadFromLocalStorage() {
+            try {
+                const saved = localStorage.getItem('m2_mortgage_calculator');
+                if (saved) {
+                    const data = JSON.parse(saved);
+                    // Проверяем, что данные не старше 7 дней
+                    const savedDate = new Date(data.timestamp);
+                    const daysDiff = (new Date() - savedDate) / (1000 * 60 * 60 * 24);
+
+                    if (daysDiff < 7) {
+                        document.getElementById('propertyPrice').value = data.propertyPrice || 8000000;
+                        document.getElementById('downPayment').value = data.downPayment || 2400000;
+                        if (document.getElementById('maternalCapital')) {
+                            document.getElementById('maternalCapital').value = data.maternalCapital || 0;
+                        }
+                        document.getElementById('interestRate').value = data.interestRate || 8.5;
+                        document.getElementById('loanTerm').value = data.loanTerm || 20;
+                        document.getElementById('paymentType').value = data.paymentType || 'annuity';
+                        if (document.getElementById('subsidyType')) {
+                            document.getElementById('subsidyType').value = data.subsidyType || 'none';
+                        }
+                    }
+                }
+            } catch (e) {
+                console.warn('Could not load from localStorage:', e);
+            }
+        }
+
+        // Event listeners с дебаунсингом и автосохранением
+        function debouncedCalculateWithSave() {
+            debouncedCalculate();
+            saveToLocalStorage();
+        }
+
+        document.getElementById('propertyPrice').addEventListener('input', debouncedCalculateWithSave);
+        document.getElementById('downPayment').addEventListener('input', debouncedCalculateWithSave);
+        document.getElementById('interestRate').addEventListener('input', debouncedCalculateWithSave);
+        document.getElementById('loanTerm').addEventListener('input', debouncedCalculateWithSave);
+        document.getElementById('paymentType').addEventListener('change', () => {
+            calculateMortgage();
+            saveToLocalStorage();
+        });
+
+        if (document.getElementById('maternalCapital')) {
+            document.getElementById('maternalCapital').addEventListener('input', debouncedCalculateWithSave);
+        }
+        if (document.getElementById('subsidyType')) {
+            document.getElementById('subsidyType').addEventListener('change', () => {
+                calculateMortgage();
+                saveToLocalStorage();
+            });
+        }
+
+        // Initial load and calculation
+        loadFromLocalStorage();
         calculateMortgage();
         
         // Register Service Worker
