@@ -720,10 +720,11 @@
             background: #c82333;
         }
 
+        /* Улучшенная адаптивность для мобильных устройств */
         @media (max-width: 768px) {
             .calculator {
                 grid-template-columns: 1fr;
-                gap: 24px;
+                gap: 20px;
             }
 
             .calculator.basic-mode {
@@ -731,11 +732,36 @@
             }
 
             .container {
-                padding: 24px 16px;
+                padding: 16px 12px;
+            }
+
+            .header h1 {
+                font-size: 28px;
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 16px;
             }
 
             .inputs, .results, .payment-breakdown, .payment-schedule, .early-payment {
-                padding: 24px;
+                padding: 20px 16px;
+            }
+
+            .input-field, .input-field select {
+                font-size: 16px; /* Предотвращает zoom на iOS */
+                padding: 14px; /* Больше для touch */
+                min-height: 48px; /* Минимум для touch-friendly */
+            }
+
+            .quick-buttons {
+                gap: 8px;
+            }
+
+            .quick-btn {
+                padding: 12px 16px; /* Больше touch-область */
+                font-size: 14px;
+                min-height: 44px; /* iOS рекомендует минимум 44px */
             }
 
             .breakdown-grid {
@@ -749,27 +775,87 @@
             }
 
             .basic-result .result-value {
-                font-size: 36px;
+                font-size: 32px;
             }
 
             .action-buttons {
                 flex-direction: column;
-                align-items: center;
+                align-items: stretch;
+                gap: 12px;
             }
 
             .btn {
                 width: 100%;
                 justify-content: center;
+                min-height: 48px;
+                font-size: 16px;
             }
 
             .schedule-table {
-                font-size: 14px;
+                font-size: 13px;
+                display: block;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
             }
 
             .schedule-table th,
             .schedule-table td {
-                padding: 8px;
+                padding: 10px 8px;
+                white-space: nowrap;
             }
+
+            .mode-buttons {
+                width: 100%;
+            }
+
+            .mode-btn {
+                flex: 1;
+                min-height: 44px;
+                font-size: 15px;
+            }
+
+            /* Скрываем сложные элементы на маленьких экранах по умолчанию */
+            .advanced-features {
+                display: none;
+            }
+
+            .advanced-features.active {
+                display: block;
+            }
+        }
+
+        /* Дополнительные оптимизации для очень маленьких экранов */
+        @media (max-width: 375px) {
+            .container {
+                padding: 12px 8px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .quick-btn {
+                padding: 10px 12px;
+                font-size: 13px;
+            }
+
+            .basic-result .result-value {
+                font-size: 28px;
+            }
+
+            .section-title {
+                font-size: 20px;
+            }
+        }
+
+        /* Оптимизация для планшетов в портретной ориентации */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .calculator {
+                grid-template-columns: 1fr;
+                max-width: 700px;
+                margin: 0 auto;
+            }
+        }
         }
     </style>
 </head>
@@ -1063,7 +1149,13 @@
         <!-- Action Buttons -->
         <div class="action-buttons">
             <button class="btn btn-primary" onclick="exportToPDF()">
-                📄 Экспорт в PDF
+                📄 PDF
+            </button>
+            <button class="btn btn-primary" onclick="exportToExcel()" style="background: #28a745;">
+                📊 Excel
+            </button>
+            <button class="btn btn-secondary" onclick="openCompareModal()">
+                ⚖️ Сравнить
             </button>
             <button class="btn btn-secondary" onclick="resetCalculator()">
                 🔄 Сбросить
@@ -1071,9 +1163,42 @@
         </div>
     </div>
 
+    <!-- Модальное окно сравнения вариантов -->
+    <div id="compareModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 10000; overflow-y: auto; padding: 20px;">
+        <div style="max-width: 1200px; margin: 40px auto; background: white; border-radius: 16px; padding: 32px; position: relative;">
+            <button onclick="closeCompareModal()" style="position: absolute; top: 16px; right: 16px; background: none; border: none; font-size: 28px; cursor: pointer; color: #666;">&times;</button>
+
+            <h2 style="color: #4F2CD9; margin-bottom: 24px; font-size: 28px;">⚖️ Сравнение вариантов</h2>
+
+            <div id="compareDescription" style="background: #F6F5FF; padding: 16px; border-radius: 8px; margin-bottom: 24px; font-size: 14px; color: #666;">
+                Сохраните до 3 вариантов расчёта для сравнения. Измените параметры калькулятора и нажмите "Добавить текущий расчёт".
+            </div>
+
+            <div style="margin-bottom: 24px;">
+                <button onclick="saveCurrentCalculation()" class="btn btn-primary" style="width: 100%;">
+                    ➕ Добавить текущий расчёт
+                </button>
+            </div>
+
+            <div id="compareGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                <!-- Варианты будут добавлены через JS -->
+            </div>
+
+            <div id="comparisonTable" style="margin-top: 32px; display: none;">
+                <h3 style="margin-bottom: 16px;">Сравнительная таблица</h3>
+                <div style="overflow-x: auto;">
+                    <table id="comparisonTableContent" style="width: 100%; border-collapse: collapse;">
+                        <!-- Таблица будет заполнена через JS -->
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         let currentMode = 'basic';
         let earlyPayments = [];
+        let savedCalculations = [];
 
         function formatNumber(num) {
             return new Intl.NumberFormat('ru-RU').format(Math.round(num));
@@ -1627,6 +1752,168 @@
         loadFromLocalStorage();
         calculateMortgage();
         
+        // ===== ФУНКЦИИ СРАВНЕНИЯ ВАРИАНТОВ =====
+        function openCompareModal() {
+            document.getElementById('compareModal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            renderSavedCalculations();
+        }
+
+        function closeCompareModal() {
+            document.getElementById('compareModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        function saveCurrentCalculation() {
+            if (savedCalculations.length >= 3) {
+                alert('Максимум 3 варианта. Удалите один из существующих вариантов.');
+                return;
+            }
+
+            const propertyPrice = parseFloat(document.getElementById('propertyPrice').value) || 0;
+            const downPayment = parseFloat(document.getElementById('downPayment').value) || 0;
+            const interestRate = parseFloat(document.getElementById('interestRate').value) || 0;
+            const loanTerm = parseFloat(document.getElementById('loanTerm').value) || 0;
+            const monthlyPayment = parseFloat(document.getElementById('basicMonthlyPayment')?.textContent.replace(/[^\d]/g, '')) || 0;
+            const totalOverpayment = parseFloat(document.getElementById('basicOverpayment')?.textContent.replace(/[^\d]/g, '')) || 0;
+
+            const calculation = {
+                id: Date.now(),
+                label: `Вариант ${savedCalculations.length + 1}`,
+                propertyPrice,
+                downPayment,
+                loanAmount: propertyPrice - downPayment,
+                interestRate,
+                loanTerm,
+                monthlyPayment,
+                totalOverpayment,
+                timestamp: new Date().toLocaleString('ru-RU')
+            };
+
+            savedCalculations.push(calculation);
+            renderSavedCalculations();
+            showNotification('Вариант добавлен для сравнения', 'success');
+        }
+
+        function removeCalculation(id) {
+            savedCalculations = savedCalculations.filter(calc => calc.id !== id);
+            renderSavedCalculations();
+        }
+
+        function renderSavedCalculations() {
+            const grid = document.getElementById('compareGrid');
+            const table = document.getElementById('comparisonTable');
+            const tableContent = document.getElementById('comparisonTableContent');
+
+            if (savedCalculations.length === 0) {
+                grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #666; padding: 40px;">Нет сохранённых вариантов. Добавьте текущий расчёт для сравнения.</div>';
+                table.style.display = 'none';
+                return;
+            }
+
+            // Рендерим карточки
+            grid.innerHTML = savedCalculations.map(calc => `
+                <div style="background: #F6F5FF; border: 2px solid #4F2CD9; border-radius: 12px; padding: 20px; position: relative;">
+                    <button onclick="removeCalculation(${calc.id})" style="position: absolute; top: 10px; right: 10px; background: #dc3545; color: white; border: none; border-radius: 50%; width: 28px; height: 28px; cursor: pointer; font-size: 18px; line-height: 1;">×</button>
+
+                    <h3 style="color: #4F2CD9; margin-bottom: 16px; font-size: 18px;">${calc.label}</h3>
+
+                    <div style="font-size: 13px; color: #666; margin-bottom: 12px;">${calc.timestamp}</div>
+
+                    <div style="margin-bottom: 8px;"><strong>Стоимость:</strong> ${formatNumber(calc.propertyPrice)} ₽</div>
+                    <div style="margin-bottom: 8px;"><strong>Взнос:</strong> ${formatNumber(calc.downPayment)} ₽</div>
+                    <div style="margin-bottom: 8px;"><strong>Кредит:</strong> ${formatNumber(calc.loanAmount)} ₽</div>
+                    <div style="margin-bottom: 8px;"><strong>Ставка:</strong> ${calc.interestRate}%</div>
+                    <div style="margin-bottom: 8px;"><strong>Срок:</strong> ${calc.loanTerm} лет</div>
+                    <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #4F2CD9;">
+                        <div style="font-size: 16px; color: #4F2CD9; font-weight: bold;">${formatNumber(calc.monthlyPayment)} ₽/мес</div>
+                        <div style="font-size: 13px; color: #666;">Переплата: ${formatNumber(calc.totalOverpayment)} ₽</div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Рендерим сравнительную таблицу
+            if (savedCalculations.length > 1) {
+                table.style.display = 'block';
+                tableContent.innerHTML = `
+                    <thead style="background: #4F2CD9; color: white;">
+                        <tr>
+                            <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Параметр</th>
+                            ${savedCalculations.map(calc => `<th style="padding: 12px; text-align: center; border: 1px solid #ddd;">${calc.label}</th>`).join('')}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="background: #f8f9fa;">
+                            <td style="padding: 12px; font-weight: bold; border: 1px solid #ddd;">Ежемесячный платёж</td>
+                            ${savedCalculations.map(calc => `<td style="padding: 12px; text-align: center; border: 1px solid #ddd; font-weight: bold; color: #4F2CD9;">${formatNumber(calc.monthlyPayment)} ₽</td>`).join('')}
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px; border: 1px solid #ddd;">Переплата</td>
+                            ${savedCalculations.map(calc => `<td style="padding: 12px; text-align: center; border: 1px solid #ddd;">${formatNumber(calc.totalOverpayment)} ₽</td>`).join('')}
+                        </tr>
+                        <tr style="background: #f8f9fa;">
+                            <td style="padding: 12px; border: 1px solid #ddd;">Сумма кредита</td>
+                            ${savedCalculations.map(calc => `<td style="padding: 12px; text-align: center; border: 1px solid #ddd;">${formatNumber(calc.loanAmount)} ₽</td>`).join('')}
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px; border: 1px solid #ddd;">Процентная ставка</td>
+                            ${savedCalculations.map(calc => `<td style="padding: 12px; text-align: center; border: 1px solid #ddd;">${calc.interestRate}%</td>`).join('')}
+                        </tr>
+                        <tr style="background: #f8f9fa;">
+                            <td style="padding: 12px; border: 1px solid #ddd;">Срок кредита</td>
+                            ${savedCalculations.map(calc => `<td style="padding: 12px; text-align: center; border: 1px solid #ddd;">${calc.loanTerm} лет</td>`).join('')}
+                        </tr>
+                    </tbody>
+                `;
+            } else {
+                table.style.display = 'none';
+            }
+        }
+
+        // ===== ЭКСПОРТ В EXCEL/CSV =====
+        function exportToExcel() {
+            const propertyPrice = parseFloat(document.getElementById('propertyPrice').value) || 0;
+            const downPayment = parseFloat(document.getElementById('downPayment').value) || 0;
+            const interestRate = parseFloat(document.getElementById('interestRate').value) || 0;
+            const loanTerm = parseFloat(document.getElementById('loanTerm').value) || 0;
+            const loanAmount = propertyPrice - downPayment;
+            const monthlyPayment = parseFloat(document.getElementById('basicMonthlyPayment')?.textContent.replace(/[^\d]/g, '')) || 0;
+            const totalOverpayment = parseFloat(document.getElementById('basicOverpayment')?.textContent.replace(/[^\d]/g, '')) || 0;
+
+            // Создаём CSV контент
+            let csvContent = '\uFEFF'; // BOM для корректного отображения кириллицы в Excel
+            csvContent += 'М2 - Ипотечный калькулятор\n';
+            csvContent += `Дата расчёта,${new Date().toLocaleString('ru-RU')}\n\n`;
+
+            csvContent += 'Параметры расчёта\n';
+            csvContent += 'Параметр,Значение\n';
+            csvContent += `Стоимость недвижимости,${formatNumber(propertyPrice)} ₽\n`;
+            csvContent += `Первоначальный взнос,${formatNumber(downPayment)} ₽\n`;
+            csvContent += `Сумма кредита,${formatNumber(loanAmount)} ₽\n`;
+            csvContent += `Процентная ставка,${interestRate}%\n`;
+            csvContent += `Срок кредита,${loanTerm} лет\n\n`;
+
+            csvContent += 'Результаты расчёта\n';
+            csvContent += 'Показатель,Значение\n';
+            csvContent += `Ежемесячный платёж,${formatNumber(monthlyPayment)} ₽\n`;
+            csvContent += `Переплата по кредиту,${formatNumber(totalOverpayment)} ₽\n`;
+            csvContent += `Общая сумма выплат,${formatNumber(loanAmount + totalOverpayment)} ₽\n\n`;
+
+            // Создаём blob и скачиваем
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+
+            link.setAttribute('href', url);
+            link.setAttribute('download', `m2_ипотека_${new Date().getTime()}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            showNotification('Excel файл успешно загружен', 'success');
+        }
+
         // Register Service Worker
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('/sw.js');
