@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>М2 — Калькулятор налога на недвижимость</title>
+    <meta name="description" content="Точный калькулятор налога на недвижимость от М2. Рассчитайте налог на квартиру, дом, земельный участок по кадастровой стоимости.">
+    <meta name="keywords" content="налог на недвижимость, налог на квартиру, кадастровая стоимость, М2, расчет налога">
+
+    <link rel="stylesheet" href="m2-theme.css">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <meta name="theme-color" content="#4F2CD9">
+
+    <!-- Яндекс.Метрика -->
+    <script type="text/javascript" >
+       (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+       m[i].l=1*new Date();
+       for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+       k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+       (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+
+       ym(98765432, "init", {
+            clickmap:true,
+            trackLinks:true,
+            accurateTrackBounce:true,
+            webvisor:true,
+            trackHash:true
+       });
+    </script>
+    <noscript><div><img src="https://mc.yandex.ru/watch/98765432" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    <!-- /Яндекс.Метрика -->
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #FFFFFF;
+            color: #1A1B22;
+            line-height: 1.5;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid #E1E1E3;
+        }
+
+        .back-link {
+            display: inline-block;
+            color: #4F2CD9;
+            text-decoration: none;
+            font-size: 14px;
+            margin-bottom: 20px;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover {
+            color: #3F23AE;
+        }
+
+        .title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1A1B22;
+            margin-bottom: 15px;
+        }
+
+        .subtitle {
+            font-size: 16px;
+            color: #797981;
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .calculator-container {
+            background: #FFFFFF;
+            border-radius: 16px;
+            box-shadow: 0 8px 16px rgba(26, 27, 34, 0.12);
+            padding: 32px;
+            margin-bottom: 32px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1A1B22;
+            margin-bottom: 24px;
+        }
+
+        .input-group {
+            margin-bottom: 24px;
+        }
+
+        .input-label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #797981;
+            font-weight: 500;
+        }
+
+        .input-field, select {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid #E1E1E3;
+            border-radius: 12px;
+            font-size: 16px;
+            color: #1A1B22;
+            background-color: #FFFFFF;
+            transition: all 0.2s ease;
+        }
+
+        .input-field:hover, select:hover {
+            border-color: #AAAAB4;
+        }
+
+        .input-field:focus, select:focus {
+            outline: none;
+            border-color: #4F2CD9;
+            box-shadow: 0 2px 4px rgba(26, 27, 34, 0.05);
+        }
+
+        .btn {
+            background-color: #4F2CD9;
+            color: #FFFFFF;
+            border: none;
+            border-radius: 12px;
+            padding: 14px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(26, 27, 34, 0.05);
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            background-color: #3F23AE;
+            box-shadow: 0 4px 8px rgba(26, 27, 34, 0.08);
+        }
+
+        .results {
+            margin-top: 40px;
+        }
+
+        .result-card {
+            background-color: #F6F5FF;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 16px;
+            border: 1px solid #E1E1E3;
+            transition: all 0.2s ease;
+        }
+
+        .result-card:hover {
+            box-shadow: 0 4px 8px rgba(26, 27, 34, 0.08);
+            border-color: #6A4DFF;
+        }
+
+        .result-title {
+            font-size: 14px;
+            color: #797981;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .result-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #4F2CD9;
+        }
+
+        .info-box {
+            background-color: #F8F8F9;
+            border-left: 4px solid #4F2CD9;
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin-top: 24px;
+            font-size: 14px;
+            color: #797981;
+            line-height: 1.6;
+        }
+
+        .info-box strong {
+            color: #1A1B22;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #1A1B22;
+            margin-top: 12px;
+            cursor: pointer;
+        }
+
+        .checkbox-label input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 15px;
+            }
+
+            .calculator-container {
+                padding: 24px 20px;
+            }
+
+            .title {
+                font-size: 24px;
+            }
+
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+
+            .input-field, select {
+                font-size: 16px;
+                min-height: 48px;
+            }
+
+            .btn {
+                min-height: 48px;
+                padding: 16px 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="index.html" class="back-link">← Все калькуляторы</a>
+            <h1 class="title">Калькулятор налога на недвижимость</h1>
+            <p class="subtitle">
+                Рассчитайте налог на недвижимость (квартира, дом, земельный участок) на основе кадастровой стоимости по актуальным ставкам 2025 года
+            </p>
+        </div>
+
+        <div class="calculator-container">
+            <h2 class="section-title">Параметры объекта</h2>
+
+            <div class="input-group">
+                <label class="input-label" for="propertyType">Тип недвижимости</label>
+                <select id="propertyType" onchange="updateTaxRate()">
+                    <option value="apartment">Квартира</option>
+                    <option value="house">Жилой дом</option>
+                    <option value="room">Комната</option>
+                    <option value="garage">Гараж / машино-место</option>
+                    <option value="land">Земельный участок</option>
+                    <option value="commercial">Коммерческая недвижимость</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label class="input-label" for="cadastralValue">Кадастровая стоимость, ₽</label>
+                <input type="number" id="cadastralValue" class="input-field" value="5000000" min="0" step="100000" oninput="calculateTax()">
+            </div>
+
+            <div class="input-group">
+                <label class="input-label" for="taxRate">Налоговая ставка, %</label>
+                <input type="number" id="taxRate" class="input-field" value="0.1" min="0" max="2" step="0.01" oninput="calculateTax()">
+                <small style="color: #797981; font-size: 12px; margin-top: 4px; display: block;">
+                    Ставка зависит от региона и типа недвижимости
+                </small>
+            </div>
+
+            <div class="input-group">
+                <label class="input-label" for="ownershipShare">Доля в собственности, %</label>
+                <input type="number" id="ownershipShare" class="input-field" value="100" min="0" max="100" step="1" oninput="calculateTax()">
+            </div>
+
+            <div class="input-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="hasDeduction" onchange="calculateTax()">
+                    <span>Применить налоговый вычет</span>
+                </label>
+            </div>
+
+            <div class="input-group" id="deductionBlock" style="display: none;">
+                <label class="input-label" for="deductionArea">Площадь для вычета, м²</label>
+                <input type="number" id="deductionArea" class="input-field" value="0" min="0" step="1" oninput="calculateTax()">
+                <small style="color: #797981; font-size: 12px; margin-top: 4px; display: block;">
+                    Квартира: 20 м², дом: 50 м², комната: 10 м²
+                </small>
+            </div>
+
+            <button class="btn" onclick="calculateTax()">Рассчитать налог</button>
+        </div>
+
+        <div id="results" class="results" style="display: none;">
+            <h2 class="section-title">Результаты расчёта</h2>
+
+            <div class="grid-2">
+                <div class="result-card">
+                    <div class="result-title">Налог за год</div>
+                    <div class="result-value" id="annualTax">0 ₽</div>
+                </div>
+
+                <div class="result-card">
+                    <div class="result-title">Налоговая база</div>
+                    <div class="result-value" id="taxBase" style="font-size: 24px;">0 ₽</div>
+                </div>
+            </div>
+
+            <div class="result-card" id="deductionInfo" style="display: none; background: #E8F5E9;">
+                <div class="result-title" style="color: #2E7D32;">Сумма вычета</div>
+                <div class="result-value" style="color: #2E7D32; font-size: 24px;" id="deductionAmount">0 ₽</div>
+            </div>
+
+            <div class="info-box">
+                <strong>Важная информация:</strong><br>
+                • Налог уплачивается до 1 декабря года, следующего за налоговым периодом<br>
+                • Налоговое уведомление приходит за 30 дней до срока уплаты<br>
+                • За несвоевременную уплату начисляется пеня 1/300 ставки ЦБ за каждый день просрочки<br>
+                • Льготы предоставляются пенсионерам, инвалидам, многодетным семьям и другим категориям
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function updateTaxRate() {
+            const propertyType = document.getElementById('propertyType').value;
+            const taxRateInput = document.getElementById('taxRate');
+            const deductionAreaInput = document.getElementById('deductionArea');
+
+            // Типичные ставки налога
+            const rates = {
+                'apartment': 0.1,
+                'house': 0.1,
+                'room': 0.1,
+                'garage': 0.1,
+                'land': 0.3,
+                'commercial': 2.0
+            };
+
+            // Стандартные вычеты
+            const deductions = {
+                'apartment': 20,
+                'house': 50,
+                'room': 10,
+                'garage': 0,
+                'land': 0,
+                'commercial': 0
+            };
+
+            taxRateInput.value = rates[propertyType] || 0.1;
+            deductionAreaInput.value = deductions[propertyType] || 0;
+
+            calculateTax();
+        }
+
+        function calculateTax() {
+            // Отправка цели в Яндекс.Метрику
+            if (typeof ym !== 'undefined') {
+                ym(98765432, 'reachGoal', 'calculation_made', {
+                    calculator: 'property_tax'
+                });
+            }
+
+            const cadastralValue = parseFloat(document.getElementById('cadastralValue').value) || 0;
+            const taxRate = parseFloat(document.getElementById('taxRate').value) || 0;
+            const ownershipShare = parseFloat(document.getElementById('ownershipShare').value) || 100;
+            const hasDeduction = document.getElementById('hasDeduction').checked;
+            const deductionArea = parseFloat(document.getElementById('deductionArea').value) || 0;
+
+            // Показываем/скрываем блок вычета
+            document.getElementById('deductionBlock').style.display = hasDeduction ? 'block' : 'none';
+
+            // Расчет налоговой базы
+            let taxBase = cadastralValue;
+            let deductionAmount = 0;
+
+            if (hasDeduction && deductionArea > 0) {
+                // Вычет = (Кадастровая стоимость / общая площадь) * площадь вычета
+                // Для упрощения используем фиксированную сумму на м²
+                const pricePerSqm = cadastralValue / 50; // Примерная общая площадь
+                deductionAmount = pricePerSqm * deductionArea;
+                taxBase = Math.max(0, cadastralValue - deductionAmount);
+            }
+
+            // Расчет налога с учетом доли
+            const annualTax = (taxBase * (taxRate / 100) * (ownershipShare / 100));
+
+            // Отображение результатов
+            document.getElementById('results').style.display = 'block';
+            document.getElementById('annualTax').textContent = formatNumber(Math.round(annualTax)) + ' ₽';
+            document.getElementById('taxBase').textContent = formatNumber(Math.round(taxBase)) + ' ₽';
+
+            if (hasDeduction && deductionAmount > 0) {
+                document.getElementById('deductionInfo').style.display = 'block';
+                document.getElementById('deductionAmount').textContent = formatNumber(Math.round(deductionAmount)) + ' ₽';
+            } else {
+                document.getElementById('deductionInfo').style.display = 'none';
+            }
+        }
+
+        function formatNumber(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+        }
+
+        // Инициализация
+        updateTaxRate();
+        calculateTax();
+    </script>
+</body>
+</html>

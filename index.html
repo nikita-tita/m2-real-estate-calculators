@@ -34,6 +34,25 @@
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     
+    <!-- Яндекс.Метрика -->
+    <script type="text/javascript" >
+       (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+       m[i].l=1*new Date();
+       for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+       k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+       (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+
+       ym(98765432, "init", {
+            clickmap:true,
+            trackLinks:true,
+            accurateTrackBounce:true,
+            webvisor:true,
+            trackHash:true
+       });
+    </script>
+    <noscript><div><img src="https://mc.yandex.ru/watch/98765432" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    <!-- /Яндекс.Метрика -->
+
     <script src="performance.js"></script>
     <script src="components.js"></script>
     <script src="analytics.js"></script>
@@ -886,7 +905,7 @@
                 
                 <div class="stats-grid">
                     <div class="stat-item">
-                        <span class="stat-number">7</span>
+                        <span class="stat-number">8</span>
                         <span class="stat-label">Калькуляторов</span>
                     </div>
                     <div class="stat-item">
@@ -1073,7 +1092,7 @@
                     </div>
                     <h3 class="calculator-title">Новостройка vs Вторичка</h3>
                     <p class="calculator-description">
-                        Инновационный калькулятор с конструктором параметров. 
+                        Инновационный калькулятор с конструктором параметров.
                         Добавляйте свои критерии сравнения и получайте детальный анализ.
                     </p>
                     <ul class="calculator-features">
@@ -1083,6 +1102,33 @@
                         <li>Прогноз роста стоимости</li>
                     </ul>
                     <a href="new_vs_secondary_calculator.html" class="calculator-link">
+                        Открыть калькулятор →
+                    </a>
+                </div>
+
+                <!-- Налог на недвижимость -->
+                <div class="calculator-card">
+                    <div class="calculator-icon tax-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2"/>
+                            <path d="M9 3v18"/>
+                            <path d="M15 3v18"/>
+                            <path d="M3 9h18"/>
+                            <path d="M3 15h18"/>
+                        </svg>
+                    </div>
+                    <h3 class="calculator-title">Налог на недвижимость</h3>
+                    <p class="calculator-description">
+                        Точный расчет налога на недвижимость по кадастровой стоимости.
+                        Поддержка всех типов объектов и налоговых вычетов.
+                    </p>
+                    <ul class="calculator-features">
+                        <li>Квартиры, дома, земельные участки</li>
+                        <li>Налоговые вычеты и льготы</li>
+                        <li>Учет доли в собственности</li>
+                        <li>Актуальные ставки 2025 года</li>
+                    </ul>
+                    <a href="property_tax_calculator.html" class="calculator-link">
                         Открыть калькулятор →
                     </a>
                 </div>
@@ -1231,14 +1277,21 @@
                 observer.observe(card);
             });
             
-            // Отслеживание кликов
+            // Отслеживание кликов с Яндекс.Метрикой
             document.querySelectorAll('.calculator-link, .cta-button').forEach(link => {
                 link.addEventListener('click', function(e) {
                     this.style.transform = 'scale(0.95)';
                     setTimeout(() => this.style.transform = '', 150);
-                    
+
                     const calculatorName = this.textContent.trim();
                     console.log('Calculator clicked:', calculatorName);
+
+                    // Отправка цели в Яндекс.Метрику
+                    if (typeof ym !== 'undefined') {
+                        ym(98765432, 'reachGoal', 'calculator_opened', {
+                            calculator: calculatorName
+                        });
+                    }
                 });
             });
 
