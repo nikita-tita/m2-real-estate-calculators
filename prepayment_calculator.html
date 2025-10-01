@@ -11,10 +11,10 @@
    m[i].l=1*new Date();
    for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
    k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
-   (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
-   ym(98765432, "init", {clickmap:true,trackLinks:true,accurateTrackBounce:true,webvisor:true,trackHash:true});
+   (window, document, "script", "https://mc.yandex.ru/metrika/tag.js?id=104341432", "ym");
+   ym(104341432, "init", {clickmap:true,trackLinks:true,accurateTrackBounce:true,webvisor:true,trackHash:true});
 </script>
-<noscript><div><img src="https://mc.yandex.ru/watch/98765432" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<noscript><div><img src="https://mc.yandex.ru/watch/104341432" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
 <!-- /Яндекс.Метрика -->
     <style>
         * {
@@ -475,7 +475,7 @@
 
         function calculate() {
             if (typeof ym !== 'undefined') {
-                ym(98765432, 'reachGoal', 'calculation_made', {calculator: 'prepayment'});
+                ym(104341432, 'reachGoal', 'calculation_made', {calculator: 'prepayment'});
             }
             const remainingDebt = parseFloat(document.getElementById('remainingDebt').value) || 0;
             const currentPayment = parseFloat(document.getElementById('currentPayment').value) || 0;
@@ -537,14 +537,14 @@
 
         function exportToPDF() {
             if (typeof ym !== 'undefined') {
-                ym(98765432, 'reachGoal', 'pdf_export', {calculator: 'prepayment'});
+                ym(104341432, 'reachGoal', 'pdf_export', {calculator: 'prepayment'});
             }
             alert('PDF export для калькулятора досрочного погашения находится в разработке');
         }
 
         function exportToExcel() {
             if (typeof ym !== 'undefined') {
-                ym(98765432, 'reachGoal', 'excel_export', {calculator: 'prepayment'});
+                ym(104341432, 'reachGoal', 'excel_export', {calculator: 'prepayment'});
             }
             let csvContent = '\uFEFF';
             csvContent += 'М2 - Досрочное погашение\n';
