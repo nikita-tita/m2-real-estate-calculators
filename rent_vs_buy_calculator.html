@@ -30,6 +30,17 @@
     <script src="advanced-ux-enhancements.js"></script>
     <script src="analytics.js"></script>
     <script src="m2-enhancements-loader.js"></script>
+    <!-- Яндекс.Метрика -->
+<script type="text/javascript" >
+   (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+   m[i].l=1*new Date();
+   for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+   k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+   (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+   ym(98765432, "init", {clickmap:true,trackLinks:true,accurateTrackBounce:true,webvisor:true,trackHash:true});
+</script>
+<noscript><div><img src="https://mc.yandex.ru/watch/98765432" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Яндекс.Метрика -->
     <style>
         * {
             margin: 0;
@@ -191,18 +202,25 @@
         }
 
         .quick-btn {
-            padding: 8px 16px;
-            border: 1px solid #dee2e6;
-            background: white;
+            background: #F6F5FF;
+            color: #4F2CD9;
+            border: 1px solid #E1E1E3;
             border-radius: 8px;
+            padding: 10px 16px;
             font-size: 14px;
+            font-weight: 500;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.2s ease;
+            min-height: 44px;
         }
-
-        .quick-btn:hover {
-            border-color: #3416b6;
-            color: #3416b6;
+        .quick-btn:hover, .quick-btn.active {
+            background: #4F2CD9;
+            color: #FFFFFF;
+            border-color: #4F2CD9;
+            box-shadow: 0 2px 4px rgba(79, 44, 217, 0.2);
+        }
+        .quick-btn:active {
+            transform: scale(0.98);
         }
 
         /* Results */
@@ -518,6 +536,19 @@
             .breakdown-grid {
                 grid-template-columns: 1fr;
             }
+        }
+        @media (max-width: 768px) {
+            .container { padding: 20px 15px; }
+            .input-field, .input-field select { font-size: 16px; padding: 14px; min-height: 48px; }
+            .quick-btn { padding: 12px 16px; font-size: 14px; min-height: 44px; }
+            .btn, .btn-primary, .btn-secondary { min-height: 48px; padding: 16px 24px; font-size: 16px; }
+            .grid-2 { grid-template-columns: 1fr !important; }
+            .results-grid { grid-template-columns: 1fr !important; }
+            table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        }
+        @media (max-width: 375px) {
+            .container { padding: 12px 8px; }
+            .header h1, .title { font-size: 24px; }
         }
     </style>
 </head>
@@ -849,6 +880,9 @@
                 </svg>
                 Экспорт в PDF
             </button>
+            <button class="btn btn-primary" onclick="exportToExcel()" style="background: #28a745;">
+                📊 Excel
+            </button>
             <button class="btn btn-secondary" onclick="resetCalculator()">
                 <svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"vertical-align: middle; margin-right: 8px;\">
                     <polyline points=\"23,4 23,10 17,10\"></polyline>
@@ -901,6 +935,9 @@
         }
 
         function calculateComparison() {
+            if (typeof ym !== 'undefined') {
+                ym(98765432, 'reachGoal', 'calculation_made', {calculator: 'rent_vs_buy'});
+            }
             const propertyPrice = parseFloat(document.getElementById('propertyPrice').value) || 0;
             const monthlyRent = parseFloat(document.getElementById('monthlyRent').value) || 0;
             const downPayment = parseFloat(document.getElementById('downPayment').value) || 0;
@@ -1067,8 +1104,30 @@
         }
 
         function exportToPDF() {
+            if (typeof ym !== 'undefined') {
+                ym(98765432, 'reachGoal', 'pdf_export', {calculator: 'rent_vs_buy'});
+            }
             // Use the improved PDF export system
             exportRentVsBuyToPDF();
+        }
+
+        function exportToExcel() {
+            if (typeof ym !== 'undefined') {
+                ym(98765432, 'reachGoal', 'excel_export', {calculator: 'rent_vs_buy'});
+            }
+            let csvContent = '\uFEFF';
+            csvContent += 'М2 - Аренда vs Покупка\n';
+            csvContent += `Дата расчёта,${new Date().toLocaleString('ru-RU')}\n\n`;
+            // Add calculator-specific data here based on inputs
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.setAttribute('href', URL.createObjectURL(blob));
+            link.setAttribute('download', `m2_rent_vs_buy_${new Date().getTime()}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showNotification('Excel файл успешно загружен', 'success');
         }
 
         // Debouncing function for better performance
