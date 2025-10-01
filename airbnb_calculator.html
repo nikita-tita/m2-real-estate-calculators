@@ -160,25 +160,20 @@
         }
 
         .quick-btn {
-            background: #F6F5FF;
-            color: #4F2CD9;
-            border: 1px solid #E1E1E3;
-            border-radius: 8px;
+            background: #4F2CD9;
+            color: white;
+            border: none;
             padding: 10px 16px;
+            border-radius: 8px;
             font-size: 14px;
             font-weight: 500;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: background 0.2s ease;
             min-height: 44px;
         }
+
         .quick-btn:hover, .quick-btn.active {
-            background: #4F2CD9;
-            color: #FFFFFF;
-            border-color: #4F2CD9;
-            box-shadow: 0 2px 4px rgba(79, 44, 217, 0.2);
-        }
-        .quick-btn:active {
-            transform: scale(0.98);
+            background: #3F23AE;
         }
 
         .result-item {
@@ -309,38 +304,42 @@
             flex-wrap: wrap;
         }
 
-        .btn {
-            padding: 12px 24px;
+        .btn, .btn-primary {
+            background: #4F2CD9;
+            color: white;
             border: none;
-            border-radius: 8px;
+            padding: 14px 28px;
+            border-radius: 12px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: background 0.2s ease;
+            min-height: 48px;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
             gap: 8px;
         }
 
-        .btn-primary {
-            background: #007bff;
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: #0056b3;
+        .btn:hover, .btn-primary:hover {
+            background: #3F23AE;
         }
 
         .btn-secondary {
-            background: white;
-            color: #007bff;
-            border: 2px solid #007bff;
+            background: #797981;
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            min-height: 48px;
         }
 
         .btn-secondary:hover {
-            background: #007bff;
-            color: white;
+            background: #5A5A61;
         }
 
         /* Parameter Groups */

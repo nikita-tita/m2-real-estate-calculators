@@ -263,25 +263,24 @@
         }
 
         .quick-btn {
-            padding: 12px 20px;
-            border: 1px solid #dee2e6;
-            background: white;
-            border-radius: 24px;
+            background: #4F2CD9;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px;
             font-size: 14px;
             font-weight: 500;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: background 0.2s ease;
             min-height: 44px;
-            min-width: 64px;
             display: flex;
             align-items: center;
             justify-content: center;
             white-space: nowrap;
         }
 
-        .quick-btn:hover {
-            border-color: #007bff;
-            color: #007bff;
+        .quick-btn:hover, .quick-btn.active {
+            background: #3F23AE;
         }
 
         .select-field {
@@ -629,66 +628,45 @@
             flex-wrap: wrap;
         }
 
-        .btn {
-            padding: 12px 24px;
+        .btn, .btn-primary {
+            background: #4F2CD9;
+            color: white;
             border: none;
-            border-radius: 8px;
+            padding: 14px 28px;
+            border-radius: 12px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: background 0.2s ease;
+            min-height: 48px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
             text-decoration: none;
+        }
+
+        .btn:hover, .btn-primary:hover {
+            background: #3F23AE;
+        }
+
+        .btn-secondary {
+            background: #797981;
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            min-height: 48px;
             display: inline-flex;
             align-items: center;
             gap: 8px;
         }
 
-        .btn-primary {
-            background: linear-gradient(135deg, #0f2027 0%, #2c5364 100%);
-            color: white;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn-primary:hover {
-            background: linear-gradient(135deg, #2c5364 0%, #0f2027 100%);
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-        }
-        
-        .btn-primary:active {
-            transform: translateY(1px);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        
-        .btn-primary::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255,255,255,0.1);
-            transform: scaleX(0);
-            transform-origin: right;
-            transition: transform 0.5s ease;
-        }
-        
-        .btn-primary:hover::after {
-            transform: scaleX(1);
-            transform-origin: left;
-        }
-
-        .btn-secondary {
-            background: white;
-            color: #007bff;
-            border: 2px solid #007bff;
-        }
-
         .btn-secondary:hover {
-            background: #007bff;
-            color: white;
+            background: #5A5A61;
         }
 
         /* Early Payment Section */
