@@ -1,0 +1,95 @@
+/* Быстрые фиксы UI - перекрывают старые стили */
+
+/* Исправление toggle кнопок везде */
+.mode-toggle button,
+.payment-toggle button,
+.toggle-btn,
+.mode-btn {
+    background: transparent !important;
+    color: #4F2CD9 !important;
+    border: none !important;
+    padding: 10px 20px !important;
+    transition: background 0.2s ease !important;
+    box-shadow: none !important;
+}
+
+.mode-toggle button.active,
+.payment-toggle button.active,
+.toggle-btn.active,
+.mode-btn.active {
+    background: #4F2CD9 !important;
+    color: white !important;
+}
+
+.mode-toggle button:hover,
+.payment-toggle button:hover,
+.toggle-btn:hover,
+.mode-btn:hover {
+    background: rgba(79, 44, 217, 0.1) !important;
+}
+
+.mode-toggle button.active:hover,
+.payment-toggle button.active:hover {
+    background: #3F23AE !important;
+}
+
+/* Исправление результатов - белый текст на фиолетовом */
+.result-value,
+.primary-result,
+.main-result,
+.result-number {
+    color: white !important;
+}
+
+.result-block,
+.primary-result-block {
+    background: #4F2CD9 !important;
+    color: white !important;
+}
+
+/* Breadcrumbs */
+.back-link,
+.breadcrumb {
+    color: #4F2CD9 !important;
+}
+
+/* Логотип М2 */
+.logo {
+    color: #4F2CD9 !important;
+}
+
+/* Блоки сравнения в airbnb */
+.comparison-card.short-term,
+.comparison-card.long-term {
+    color: white !important;
+}
+
+.comparison-card.short-term h3,
+.comparison-card.short-term .metric-value,
+.comparison-card.short-term .metric-label {
+    color: white !important;
+}
+
+.comparison-card.long-term h3,
+.comparison-card.long-term .metric-value,
+.comparison-card.long-term .metric-label {
+    color: white !important;
+}
+
+/* Сезонный анализ */
+.season-details {
+    background: #4F2CD9 !important;
+    color: white !important;
+}
+
+/* Кнопка показать расчёты */
+.toggle-details-btn,
+.show-calc-btn {
+    background: #4F2CD9 !important;
+    color: white !important;
+    border: none !important;
+}
+
+.toggle-details-btn:hover {
+    background: #3F23AE !important;
+}
