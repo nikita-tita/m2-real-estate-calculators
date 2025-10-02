@@ -128,9 +128,15 @@
             gap: 24px;
             margin-bottom: 24px;
         }
-        
+
         .input-row:last-child {
             margin-bottom: 0;
+        }
+
+        /* Если в ряду нечётное количество элементов, последний занимает всю ширину */
+        .input-row .input-group:only-child,
+        .input-row .input-group:last-child:nth-child(odd) {
+            grid-column: 1 / -1;
         }
 
         .input-group {
