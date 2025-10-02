@@ -1,0 +1,112 @@
+/* M2 Header Styles */
+
+.m2-header {
+    background: #FFFFFF;
+    border-bottom: 1px solid #E1E1E3;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(26, 27, 34, 0.05);
+}
+
+.m2-header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 64px;
+}
+
+.m2-header-logo {
+    display: flex;
+    align-items: center;
+}
+
+.m2-header-logo svg {
+    width: 48px;
+    height: auto;
+}
+
+.m2-header-nav {
+    display: flex;
+    flex: 1;
+    margin-left: 40px;
+}
+
+.m2-header-nav-menu {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+}
+
+.m2-header-nav-link {
+    color: #1A1B22;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 500;
+    padding: 8px 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.m2-header-nav-link:hover {
+    color: #4F2CD9;
+}
+
+.m2-header-nav-link-active {
+    color: #4F2CD9;
+    font-weight: 600;
+}
+
+.m2-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.m2-header-login-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 10px 20px;
+    background: #4F2CD9;
+    color: #FFFFFF;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+}
+
+.m2-header-login-btn:hover {
+    background: #3F23AE;
+}
+
+/* Main content offset for sticky header */
+body {
+    padding-top: 0;
+}
+
+.main-content,
+.container {
+    margin-top: 20px;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .m2-header-nav {
+        display: none;
+    }
+
+    .m2-header-logo svg {
+        width: 40px;
+    }
+
+    .m2-header-login-btn {
+        padding: 8px 16px;
+        font-size: 13px;
+    }
+}
