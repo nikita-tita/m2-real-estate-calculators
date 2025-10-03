@@ -33,17 +33,17 @@
     background: #3F23AE !important;
 }
 
-/* Исправление результатов - белый текст на фиолетовом */
-.result-value,
-.primary-result,
-.main-result,
-.result-number {
-    color: white !important;
-}
-
+/* Исправление результатов - только для блоков с фиолетовым фоном */
 .result-block,
 .primary-result-block {
     background: #4F2CD9 !important;
+    color: white !important;
+}
+
+.result-block .result-value,
+.result-block .result-number,
+.primary-result-block .result-value,
+.primary-result-block .result-number {
     color: white !important;
 }
 
