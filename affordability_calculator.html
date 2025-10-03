@@ -1527,16 +1527,16 @@
         document.getElementById('loanTerm').addEventListener('input', debouncedCalculateAffordability);
         document.getElementById('desiredLoanAmount').addEventListener('input', debouncedCalculateReverseIncome);
 
-        // Initial calculation
-        calculateAffordability();
-        
         // Initialize UX enhancements after DOM is ready
         document.addEventListener('DOMContentLoaded', function() {
+            // Initial calculation on page load
+            calculateAffordability();
+
             if (window.uxEnhancer) {
                 // Highlight main results
                 window.uxEnhancer.highlightMainResult('#basicMaxLoan');
                 window.uxEnhancer.highlightMainResult('#maxLoanAmount');
-                
+
                 // Group results sections
                 window.uxEnhancer.groupResults(['.result-item', '.basic-result']);
             }
