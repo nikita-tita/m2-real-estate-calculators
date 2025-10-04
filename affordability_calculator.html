@@ -32,6 +32,8 @@
     <script src="ux-enhancements.js"></script>
     <script src="analytics.js"></script>
     <script src="auto-sliders.js"></script>
+    <script src="loading-states.js"></script>
+    <script src="input-validation.js"></script>
     <script src="m2-enhancements-loader.js"></script>
 
     <!-- Яндекс.Метрика -->
@@ -1158,7 +1160,21 @@
             calculateAffordability();
         }
 
+        // Debounced calculation with loading state
+        let calculateTimeout;
         function calculateAffordability() {
+            clearTimeout(calculateTimeout);
+            calculateTimeout = setTimeout(() => {
+                performCalculation();
+            }, 300);
+        }
+
+        function performCalculation() {
+            // Show loading state
+            if (window.M2Loading) {
+                M2Loading.show('.results');
+            }
+
             // Track calculation
             if (typeof ym !== 'undefined') {
                 ym(104341432, 'reachGoal', 'calculation_made', {
@@ -1237,6 +1253,11 @@
             }
 
             calculateReverseIncome();
+
+            // Hide loading state
+            if (window.M2Loading) {
+                M2Loading.hide('.results');
+            }
         }
 
         function updateResults(maxLoan, maxProperty, downPayment, payment, free, debtRatio) {
