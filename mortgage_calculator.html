@@ -53,6 +53,8 @@
     <script src="analytics.js"></script>
     <script src="client-share.js"></script>
     <script src="auto-sliders.js"></script>
+    <script src="loading-states.js"></script>
+    <script src="input-validation.js"></script>
     <script src="m2-enhancements-loader.js"></script>
     <style>
         * {
@@ -1343,9 +1345,24 @@
             calculateMortgage();
         }
 
+        // Debounced calculation with loading state
+        let mortgageCalculateTimeout;
         function calculateMortgage() {
+            clearTimeout(mortgageCalculateTimeout);
+            mortgageCalculateTimeout = setTimeout(() => {
+                performMortgageCalculation();
+            }, 300);
+        }
+
+        function performMortgageCalculation() {
+            // Show loading state
+            if (window.M2Loading) {
+                M2Loading.show('.results');
+            }
+
             // Валидация перед расчётом
             if (!validateInputs()) {
+                if (window.M2Loading) M2Loading.hide('.results');
                 return; // Прерываем расчёт если валидация не прошла
             }
 
@@ -1430,6 +1447,11 @@
 
             if (currentMode === 'advanced') {
                 updateAdvancedResults(loanAmount, monthlyPayment, totalAmount, totalOverpayment, monthlyRate, numberOfPayments, paymentType);
+            }
+
+            // Hide loading state
+            if (window.M2Loading) {
+                M2Loading.hide('.results');
             }
         }
 
