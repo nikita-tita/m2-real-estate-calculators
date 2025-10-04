@@ -1,0 +1,287 @@
+/**
+ * M2 Result Animations - Smooth transitions when results update
+ * Automatically applied to result elements
+ */
+
+/* Result containers */
+.results,
+.basic-result,
+.advanced-results,
+.result-card {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Individual result items */
+.result-item,
+.result-value,
+.result-label,
+.breakdown-item {
+    transition: all 0.2s ease;
+}
+
+/* Pulse animation for updated values */
+@keyframes m2-pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes m2-highlight {
+    0% {
+        background: transparent;
+    }
+    50% {
+        background: rgba(79, 44, 217, 0.1);
+    }
+    100% {
+        background: transparent;
+    }
+}
+
+@keyframes m2-slide-in {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes m2-fade-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes m2-bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+@keyframes m2-glow {
+    0%, 100% {
+        box-shadow: 0 0 0 rgba(79, 44, 217, 0);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(79, 44, 217, 0.3);
+    }
+}
+
+/* Updated class - applied when value changes */
+.m2-updated {
+    animation: m2-pulse 0.4s ease;
+}
+
+.m2-highlighted {
+    animation: m2-highlight 0.6s ease;
+}
+
+/* Result appearance animations */
+.m2-slide-in {
+    animation: m2-slide-in 0.4s ease;
+}
+
+.m2-fade-in {
+    animation: m2-fade-in 0.3s ease;
+}
+
+/* Important results - bounce attention */
+.result-value.primary.m2-updated,
+.basic-result .result-value.m2-updated {
+    animation: m2-bounce 0.5s ease, m2-glow 0.5s ease;
+}
+
+/* Number counting animation */
+.m2-counting {
+    display: inline-block;
+    transition: transform 0.1s ease;
+}
+
+.m2-counting.up {
+    color: #00C27D;
+}
+
+.m2-counting.down {
+    color: #FF4F37;
+}
+
+/* Smooth color transitions */
+.result-value {
+    transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.result-value:hover {
+    transform: scale(1.02);
+}
+
+/* Chart animations */
+canvas {
+    transition: opacity 0.3s ease;
+}
+
+.chart-updating canvas {
+    opacity: 0.5;
+}
+
+/* Skeleton loading during updates */
+.m2-skeleton-result {
+    background: linear-gradient(90deg,
+        #f0f0f0 25%,
+        #e0e0e0 50%,
+        #f0f0f0 75%
+    );
+    background-size: 200% 100%;
+    animation: m2-shimmer 1.5s infinite;
+    border-radius: 8px;
+    height: 24px;
+    width: 120px;
+}
+
+@keyframes m2-shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* Stagger animation for multiple results */
+.results .result-item:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.results .result-item:nth-child(2) {
+    animation-delay: 0.05s;
+}
+
+.results .result-item:nth-child(3) {
+    animation-delay: 0.1s;
+}
+
+.results .result-item:nth-child(4) {
+    animation-delay: 0.15s;
+}
+
+.results .result-item:nth-child(5) {
+    animation-delay: 0.2s;
+}
+
+.results .result-item:nth-child(6) {
+    animation-delay: 0.25s;
+}
+
+/* Comparison card animations */
+.comparison-card {
+    transition: all 0.3s ease;
+}
+
+.comparison-card.winner {
+    animation: m2-glow 1s ease;
+}
+
+/* Recommendation items slide in */
+.recommendation-item {
+    animation: m2-slide-in 0.4s ease;
+}
+
+.recommendation-item:nth-child(1) { animation-delay: 0s; }
+.recommendation-item:nth-child(2) { animation-delay: 0.1s; }
+.recommendation-item:nth-child(3) { animation-delay: 0.2s; }
+.recommendation-item:nth-child(4) { animation-delay: 0.3s; }
+
+/* Toggle transitions */
+.mode-toggle,
+.payment-toggle {
+    transition: all 0.2s ease;
+}
+
+.mode-btn,
+.toggle-btn {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.mode-btn:active,
+.toggle-btn:active {
+    transform: scale(0.95);
+}
+
+/* Progress indicators */
+@keyframes m2-progress {
+    from {
+        width: 0%;
+    }
+    to {
+        width: 100%;
+    }
+}
+
+.m2-progress-bar {
+    height: 3px;
+    background: #4F2CD9;
+    animation: m2-progress 0.3s ease;
+}
+
+/* Hover effects */
+.result-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.breakdown-item:hover {
+    background: rgba(79, 44, 217, 0.05);
+}
+
+/* Error state animation */
+@keyframes m2-shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
+}
+
+.m2-error {
+    animation: m2-shake 0.4s ease;
+    border-color: #FF4F37 !important;
+}
+
+/* Success state */
+.m2-success {
+    animation: m2-bounce 0.5s ease;
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+    .result-card:hover {
+        transform: none;
+    }
+
+    .m2-updated {
+        animation-duration: 0.3s;
+    }
+}

@@ -1,0 +1,364 @@
+/**
+ * M2 Print Styles - Optimized for printing results
+ * Automatically applied when user prints the page
+ */
+
+@media print {
+    /* Reset page margins */
+    @page {
+        margin: 1.5cm;
+        size: A4;
+    }
+
+    /* Hide non-essential elements */
+    .m2-header,
+    header,
+    .header,
+    .breadcrumb,
+    .back-link,
+    .footer,
+    footer,
+    .mode-toggle,
+    .payment-toggle,
+    button,
+    .btn,
+    .btn-primary,
+    .btn-secondary,
+    .export-buttons,
+    .quick-buttons,
+    .m2-loading-overlay,
+    .m2-validation-icon,
+    .m2-keyboard-hints,
+    .slider-container,
+    .m2-range-slider,
+    nav,
+    .navigation,
+    .share-buttons,
+    .tooltip,
+    .help-icon,
+    .toggle-details-btn,
+    .show-calc-btn,
+    .add-parameter-btn,
+    .reset-btn,
+    .calculate-btn,
+    script,
+    noscript {
+        display: none !important;
+    }
+
+    /* Body and layout */
+    body {
+        background: white !important;
+        color: black !important;
+        font-size: 11pt;
+        line-height: 1.4;
+    }
+
+    .container {
+        max-width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    /* Headings */
+    h1, .title {
+        font-size: 18pt;
+        margin-bottom: 12pt;
+        color: black !important;
+        page-break-after: avoid;
+    }
+
+    h2, .section-title, .calculator-section-title {
+        font-size: 14pt;
+        margin-top: 12pt;
+        margin-bottom: 8pt;
+        color: black !important;
+        page-break-after: avoid;
+    }
+
+    h3 {
+        font-size: 12pt;
+        margin-top: 8pt;
+        margin-bottom: 6pt;
+        color: black !important;
+    }
+
+    /* Logo */
+    .logo {
+        font-size: 24pt;
+        color: black !important;
+        margin-bottom: 12pt;
+    }
+
+    /* Input section - show values only */
+    .inputs,
+    .calculator-inputs,
+    .input-section {
+        page-break-inside: avoid;
+        margin-bottom: 16pt;
+    }
+
+    .input-group {
+        margin-bottom: 8pt;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .input-label,
+    label {
+        font-weight: 600;
+        color: black !important;
+    }
+
+    input[type="number"],
+    input[type="text"],
+    select,
+    .input-field {
+        border: none !important;
+        background: transparent !important;
+        color: black !important;
+        font-weight: 600;
+        padding: 0 !important;
+        box-shadow: none !important;
+    }
+
+    /* Results - prominent display */
+    .results,
+    .basic-result,
+    .advanced-results,
+    .result-card {
+        page-break-inside: avoid;
+        margin-bottom: 16pt;
+        padding: 12pt !important;
+        border: 2pt solid black !important;
+        background: white !important;
+        box-shadow: none !important;
+    }
+
+    .result-item {
+        margin-bottom: 8pt;
+        display: flex;
+        justify-content: space-between;
+        border-bottom: 1pt solid #E1E1E3;
+        padding-bottom: 6pt;
+    }
+
+    .result-item:last-child {
+        border-bottom: none;
+    }
+
+    .result-label {
+        font-weight: normal;
+        color: #666 !important;
+    }
+
+    .result-value {
+        font-weight: 700 !important;
+        color: black !important;
+        font-size: 12pt;
+    }
+
+    .result-value.primary {
+        font-size: 16pt !important;
+        color: black !important;
+    }
+
+    /* Basic result - highlight */
+    .basic-result {
+        text-align: center;
+        border: 3pt solid black !important;
+        padding: 16pt !important;
+    }
+
+    .basic-result .result-value {
+        font-size: 24pt !important;
+        color: black !important;
+    }
+
+    .basic-result .result-label {
+        font-size: 12pt;
+        margin-top: 8pt;
+    }
+
+    /* Charts - ensure visibility */
+    canvas,
+    .chart-container {
+        max-width: 100% !important;
+        page-break-inside: avoid;
+        margin: 12pt 0;
+    }
+
+    /* Tables */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        page-break-inside: avoid;
+        margin: 12pt 0;
+    }
+
+    th, td {
+        border: 1pt solid #E1E1E3;
+        padding: 6pt;
+        text-align: left;
+        color: black !important;
+    }
+
+    th {
+        background: #f8f9fa !important;
+        font-weight: 600;
+    }
+
+    /* Breakdown sections */
+    .breakdown,
+    .breakdown-section,
+    .calculation-details {
+        page-break-inside: avoid;
+        margin: 12pt 0;
+    }
+
+    .breakdown-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 4pt 0;
+        border-bottom: 1pt solid #E1E1E3;
+    }
+
+    .breakdown-label {
+        color: #666 !important;
+    }
+
+    .breakdown-value {
+        font-weight: 600;
+        color: black !important;
+    }
+
+    /* Comparison sections */
+    .comparison-section {
+        page-break-inside: avoid;
+        margin: 12pt 0;
+    }
+
+    .comparison-card {
+        border: 2pt solid black !important;
+        background: white !important;
+        padding: 12pt !important;
+        margin-bottom: 12pt;
+    }
+
+    /* Recommendations */
+    .recommendations,
+    .recommendation-item {
+        page-break-inside: avoid;
+        margin: 8pt 0;
+        padding: 8pt;
+        border-left: 3pt solid black;
+        background: white !important;
+    }
+
+    /* Budget breakdown */
+    .budget-breakdown,
+    .monthly-budget {
+        page-break-inside: avoid;
+    }
+
+    /* Remove colors - use grayscale */
+    * {
+        color-adjust: exact !important;
+        -webkit-print-color-adjust: exact !important;
+    }
+
+    /* Links - show URL */
+    a[href]:after {
+        content: " (" attr(href) ")";
+        font-size: 9pt;
+        color: #666 !important;
+    }
+
+    /* Force show advanced results if present */
+    .advanced-mode,
+    .advanced-results {
+        display: block !important;
+    }
+
+    /* Page breaks */
+    .page-break {
+        page-break-after: always;
+    }
+
+    .no-break {
+        page-break-inside: avoid;
+    }
+
+    /* Footer with metadata */
+    .print-footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        text-align: center;
+        font-size: 9pt;
+        color: #666 !important;
+        border-top: 1pt solid #E1E1E3;
+        padding-top: 8pt;
+    }
+
+    /* Add print timestamp */
+    body:after {
+        content: "Распечатано: " attr(data-print-date);
+        display: block;
+        text-align: right;
+        font-size: 9pt;
+        color: #666;
+        margin-top: 12pt;
+    }
+
+    /* Ensure colors print correctly for important elements */
+    .result-value.success,
+    .positive {
+        color: #006837 !important;
+    }
+
+    .result-value.danger,
+    .negative {
+        color: #8B0000 !important;
+    }
+
+    .result-value.warning {
+        color: #856404 !important;
+    }
+
+    /* Icons - convert to text */
+    svg {
+        display: none !important;
+    }
+
+    /* Grid layouts */
+    .input-row,
+    .result-grid {
+        display: block !important;
+    }
+
+    .input-row > *,
+    .result-grid > * {
+        display: block !important;
+        width: 100% !important;
+        margin-bottom: 8pt;
+    }
+}
+
+/* Print button visible only on screen */
+@media screen {
+    .print-only {
+        display: none;
+    }
+}
+
+@media print {
+    .print-only {
+        display: block;
+    }
+
+    .no-print {
+        display: none !important;
+    }
+}
